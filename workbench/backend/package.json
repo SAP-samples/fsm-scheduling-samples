@@ -18,7 +18,7 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "postinstall": "npm run license-checker",
-    "license-checker": "license-checker --csv --out ../../LICENSES/backend-full.csv"
+    "license-checker": "license-checker --csv --out ../../docs/3rd-party-licenses/backend-full.csv"
   },
   "dependencies": {
     "@nestjs/common": "^7.0.0",

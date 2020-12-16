@@ -11,7 +11,7 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "postinstall": "npm run license-checker",
-    "license-checker": "license-checker --csv --out ../../LICENSES/frontend-full.csv"
+    "license-checker": "license-checker --csv --out ../../docs/3rd-party-licenses/frontend-full.csv"
   },
   "private": true,
   "dependencies": {
