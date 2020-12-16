@@ -93,14 +93,14 @@ export class OptimisationAPIDAO {
         try {
           const elapsedMilliseconds: number = new Date().getTime() - requestStart.getTime();
           console.debug(
-            `[OptimisationDAO:${config.method}] url: [${config.url}] response: [${JSON.stringify(response ? response.status : null)}], time: [${elapsedMilliseconds}]`,
+            `[OptimisationAPIDAO:${config.method}] url: [${config.url}] response: [${JSON.stringify(response ? response.status : null)}], time: [${elapsedMilliseconds}]`,
           );
         } catch {
-          console.debug(`[OptimisationDAO:${config.method}] url: [${config.url}] response[UNPROCESSIBLE]`);
+          console.debug(`[OptimisationAPIDAO:${config.method}] url: [${config.url}] response[UNPROCESSIBLE]`);
         }
       }),
       catchError((error: AxiosError) => {
-        console.error('OptimisationDAO', error);
+        console.error('OptimisationAPIDAO', error);
         return throwError({ error });
       })
     );

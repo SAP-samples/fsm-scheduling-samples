@@ -1,5 +1,6 @@
 {
   "name": "backend",
+  "license": "see LICENSES-folder in repository",
   "version": "0.0.0",
   "scripts": {
     "prebuild": "rimraf dist && npm run license-checker",

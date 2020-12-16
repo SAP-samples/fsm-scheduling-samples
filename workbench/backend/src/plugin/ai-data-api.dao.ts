@@ -58,14 +58,14 @@ export class AiDataAPIDAO {
         try {
           const elapsedMilliseconds: number = new Date().getTime() - requestStart.getTime();
           console.debug(
-            `[AiDataDAO:${config.method}] url: [${config.url}] response: [${JSON.stringify(response ? response.status : null)}], time: [${elapsedMilliseconds}]`,
+            `[AiDataAPIDAO:${config.method}] url: [${config.url}] response: [${JSON.stringify(response ? response.status : null)}], time: [${elapsedMilliseconds}]`,
           );
         } catch {
-          console.debug(`[AiDataDAO:${config.method}] url: [${config.url}] response[UNPROCESSIBLE]`);
+          console.debug(`[AiDataAPIDAO:${config.method}] url: [${config.url}] response[UNPROCESSIBLE]`);
         }
       }),
       catchError((error: AxiosError) => {
-        console.error('AiDataDAO', error);
+        console.error('AiDataAPIDAO', error);
         return throwError({ error });
       })
     );

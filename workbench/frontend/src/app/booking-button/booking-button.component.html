@@ -1,6 +1,7 @@
 <div style="display: flex; margin-top: 5px; margin-bottom: 5px;">
 
-  <button mat-raised-button (click)="book()" [disabled]="(disabled$ | async) || (isLoading$ | async) || (canNotBeBooked$ | async)" color="primary">
+  <button mat-raised-button (click)="book()"
+    [disabled]="(disabled$ | async) || (isLoading$ | async) || (canNotBeBooked$ | async)" color="primary">
     <mat-icon>book_online</mat-icon> Book Slot
   </button>
 
@@ -18,7 +19,7 @@
   </div>
 
   <div *ngIf="(canNotBeBooked$ | async)" style="margin-left: 10px; padding-top: 8px; color: red;">
-    solt is booked 
+    solt is booked
   </div>
 
 </div>

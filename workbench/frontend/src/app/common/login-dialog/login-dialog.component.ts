@@ -65,7 +65,7 @@ export class LoginDialogComponent implements OnInit {
     private snackBar: MatSnackBar,
   ) { }
 
-  ngOnInit() {
+  public ngOnInit() {
     this.loginForm = this.fb.group({
       user: [undefined, Validators.required],
       password: [undefined, Validators.required],
@@ -80,7 +80,7 @@ export class LoginDialogComponent implements OnInit {
     return snackBarRef;
   }
 
-  cancel() {
+  public cancel() {
     this.dialogRef.close(null);
   }
 

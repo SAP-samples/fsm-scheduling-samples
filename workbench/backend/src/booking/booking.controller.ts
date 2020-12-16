@@ -46,14 +46,14 @@ export class BookingController {
   async create(@Res() res: Response, @Context() ctx: Context, @Body() bookingRequest: BookingRequest) {
 
     try {
+      // Todos: 
+      // - UDFs 
+      // - transcation
 
       const client = this.factory.fromContext(ctx);
       const builder = DTOBuilder.from(bookingRequest);
 
       // create necessary FSM objects
-      // Todos: 
-      // - UDFs 
-      // - transations ?
       const related = builder.buildPlanningRelatedObjects();
       const [{ businessPartner }] = await client.post('BusinessPartner', related.businessPartner).then(x => x.data);
       const [{ address }] = await client.post('Address', related.address).then(x => x.data);

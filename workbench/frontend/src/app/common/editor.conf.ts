@@ -1,6 +1,5 @@
 import { NgxMonacoEditorConfig } from 'ngx-monaco-editor';
 
-
 const dtos = [
   'Activity'
   , 'ActivitySubType'
@@ -85,13 +84,9 @@ const dtos = [
   , 'WorkTimePattern'
   , 'WorkTimeTask'];
 
-
-
 export function onMonacoLoad() {
 
   const monaco = (window as any).monaco;
-  // console.log(monaco.languages);
-
 
   monaco.languages.registerCompletionItemProvider('pgsql', {
     provideCompletionItems: function (model, position) {
@@ -112,10 +107,9 @@ export function onMonacoLoad() {
         endColumn: word.endColumn
       };
 
-
-      console.log(textUntilPosition);
-      console.log(word);
-      console.log(range);
+      // console.log(textUntilPosition);
+      // console.log(word);
+      // console.log(range);
 
       const key = ['SELECT', 'FROM', 'LIMIT'];
       const ops = ['AND', 'BETWEEN', 'IN', 'LIKE', 'NOT', 'OR', 'IS', 'NULL', 'INTERSECT', 'UNION', 'INNER', 'JOIN', 'LEFT', 'OUTER', 'RIGHT'];

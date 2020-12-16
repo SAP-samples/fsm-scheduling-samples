@@ -3,8 +3,8 @@ import * as express from 'express';
 
 @Controller()
 export class AppController {
-  constructor() { }
 
+  constructor() { }
 
   @Get()
   async getHello(@Res() response: express.Response, @Req() request: express.Request) {

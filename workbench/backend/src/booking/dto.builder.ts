@@ -28,7 +28,7 @@ export class DTOBuilder {
     return {
       "id": CoreAPIClient.createUUID(),
       "subject": "PLACEHOLDER",
-      "externalId": this._externalId, // ID from S4 
+      "externalId": this._externalId, // ID from external systems (for example S4)  
       "contact": null,
 
       "responsibles": [], // is set on planing
@@ -51,7 +51,8 @@ export class DTOBuilder {
       "travelTimeFromInMinutes": null,
       "travelTimeToInMinutes": this._br.bookable.trip.durationInMinutes,
 
-      // to be able to plan activity 
+      // Notes: 
+      // to be able to plan activity conditions: 
       // -> status(DRAFT) && executionStage(DISPATCHING) && responsibles[] empty 
       "status": "DRAFT", // CLOSED | OPEN | DRAFT
       "executionStage": "DISPATCHING", // PLANNING | DISPATCHING | EXECUTION | CLOSED | CANCELLED,

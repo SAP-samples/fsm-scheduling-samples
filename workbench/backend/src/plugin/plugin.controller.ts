@@ -9,7 +9,6 @@ export class PluginController {
 
   @Post()
   async create(@Context() ctx: Context, @Body() plugin: Partial<PluginDto>) {
-
     const { data } = await this.dao.create(ctx, plugin).toPromise();
     return data;
   }
@@ -19,7 +18,7 @@ export class PluginController {
     const { data } = await this.dao.getAll(ctx).toPromise();
     return data;
   }
-  
+
   @Delete(':id')
   async delete(@Context() ctx: Context, @Param('id') id: string) {
     const { data } = await this.dao.deleteById(ctx, id).toPromise();

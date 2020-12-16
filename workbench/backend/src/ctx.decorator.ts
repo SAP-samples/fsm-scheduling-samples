@@ -1,7 +1,4 @@
-
-// After
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-
 
 export interface Context {
   authToken: string;
@@ -39,7 +36,6 @@ export const Context = createParamDecorator(
       clientId: headers.get('x-client-id'),
       clientVersion: headers.get('x-client-version'),
       requestId: headers.get('x-request-id'),
-
     } as Context;
 
     return context

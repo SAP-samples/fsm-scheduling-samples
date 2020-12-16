@@ -1,7 +1,4 @@
-######### BUILD BACKEND ##########
-
-
-######### BUILD ADMIN FRONTEND #########
+######### BUILD FRONTEND #########
 FROM node:10 AS frontend
 
 RUN mkdir -p /app
@@ -12,7 +9,7 @@ COPY ./frontend .
 RUN npm install
 RUN npm run build
 
-######### MERGE ##################
+######### BUILD BACKEND ##########
 FROM node:10 AS builder_backend
 RUN mkdir -p /app
 
@@ -25,12 +22,12 @@ COPY ./backend .
 RUN npm install
 RUN npm run build
 
+######### MERGE ##################
 WORKDIR /app/backend/dist/static
 COPY --from=frontend app/frontend/dist/frontend ./frontend
-# RUN cp -r ./frontend/dist/frontend ./backend/dist/static
 
 
-# check if all wass copied correct
+# lgo all copied files 
 RUN ls -a -l /app/backend/dist/**
 
 WORKDIR /app/backend

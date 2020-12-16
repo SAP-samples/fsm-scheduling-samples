@@ -1,6 +1,7 @@
 {
   "name": "frontend",
   "version": "0.0.0",
+  "license": "see LICENSES-folder in repository",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
