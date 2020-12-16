@@ -1,0 +1,49 @@
+<form [formGroup]="form">
+
+  <mat-error *ngIf="form.errors"> {{ form.errors | json }}</mat-error>
+
+
+  <section>
+    <div class="action-row">
+
+      <mat-form-field appearance="fill" style="width: 250px;">
+        <mat-label>Plugin-Name</mat-label>
+        <mat-select [formControl]="selectedPlugin">
+          <mat-option *ngFor="let it of selectList$ | async " [value]="it.value">{{ it.text }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+
+      <button mat-button [disabled]="form.invalid" (click)="save()" color="primary" class="inline-btn">
+        <mat-icon>save</mat-icon>
+      </button>
+
+      <button mat-button [disabled]="selectedPlugin.value === 'create new (unsaved)'" (click)="delete()" color="primary"
+        class="inline-btn">
+        <mat-icon>delete</mat-icon>
+      </button>
+
+      <button mat-button [disabled]="(selectedPlugin.value !== 'create new (unsaved)')" (click)="newFromTemplate()"
+        color="primary" class="inline-btn">
+        <mat-icon>insert_drive_file</mat-icon>
+      </button>
+
+
+    </div>
+  </section>
+
+  <mat-divider></mat-divider>
+
+  <div style="height: 5px;">
+    <mat-progress-bar *ngIf="!!(isLoading$ | async)" style="height: 5px;" mode="indeterminate"></mat-progress-bar>
+  </div>
+
+  <ngx-monaco-editor class="monaco-editor" [options]="editorOptions" (onInit)="onEditor($event)"
+    formControlName="pluginCode" style="min-height: 700px;">
+  </ngx-monaco-editor>
+
+</form>
+
+<!-- 
+  <pre>{{ form.value | json }}</pre>
+-->

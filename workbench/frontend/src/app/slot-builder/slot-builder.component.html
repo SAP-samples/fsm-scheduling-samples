@@ -1,0 +1,71 @@
+<form [formGroup]="form">
+  <ng-container formArrayName="slots">
+    <h2>Slots cout: {{ slotsCtrl.controls.length }}</h2>
+
+    <div *ngFor="let x of slotsCtrl.controls; index as i" [formGroupName]="i">
+
+      <div *ngIf="i === 0 || getDate(slotsCtrl.controls[i]) !== getDate(slotsCtrl.controls[i-1])"
+        style="margin-top: 10px;">
+
+        {{ getDate(slotsCtrl.controls[i]) }}
+
+        <button mat-button color="accent" class="inline-btn" (click)="copyDay(getDate(slotsCtrl.controls[i]))">
+          <mat-icon>content_copy</mat-icon>
+        </button>
+
+      </div>
+
+      <div class="row item" style="margin-left: 30px;">
+        <mat-icon style="font-size: 19px;">calendar_today</mat-icon>
+        <input matInput type="datetime-local" formControlName="start" placeholder="start date" class="date-edit">
+        <span>to </span>
+        <input matInput type="datetime-local" formControlName="end" placeholder="end date" class="date-edit">
+        <span style="margin-left: 5px;"> {{ getDuration(form.value.slots[i]) }} hrs </span>
+        <button mat-button color="accent" class="inline-btn" (click)="remove(i)">
+          <mat-icon>clear</mat-icon>
+        </button>
+      </div>
+      <mat-error *ngIf="slotsCtrl.controls[i].errors"> ERROR -> {{ slotsCtrl.controls[i].errors | json }}
+      </mat-error>
+    </div>
+  </ng-container>
+</form>
+
+<h3>Generate slots in time frame</h3>
+
+<div class="row" [formGroup]="options.form">
+
+  <mat-form-field appearance="fill" style="width: 200px">
+    <mat-label>from</mat-label>
+    <input matInput type="text" formControlName="from" [matDatepicker]="picker_from">
+    <mat-datepicker-toggle matSuffix [for]="picker_from"></mat-datepicker-toggle>
+    <mat-datepicker #picker_from></mat-datepicker>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" style="width: 200px">
+    <mat-label>to</mat-label>
+    <input matInput type="text" formControlName="to" [matDatepicker]="picker_to">
+    <mat-datepicker-toggle matSuffix [for]="picker_to"></mat-datepicker-toggle>
+    <mat-datepicker #picker_to></mat-datepicker>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" style="width: 100px">
+    <mat-label>size (hrs)</mat-label>
+    <mat-select formControlName="size">
+      <mat-option *ngFor="let x of options.n" [value]="x">{{ x }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <div style="padding-top: 10px;">
+    <mat-slide-toggle formControlName="includeWeekend">include Weekends?</mat-slide-toggle>
+  </div>
+
+  <button mat-stroked-button color="primary" class="inline-btn" (click)="addslots()">
+    <mat-icon>calendar_today</mat-icon> generate
+  </button>
+
+  <button mat-stroked-button color="warn" class="inline-btn" (click)="removeAll()">
+    <mat-icon>clear</mat-icon> all
+  </button>
+
+</div>

@@ -1,0 +1,19 @@
+.monaco-editor {
+  padding-top: 10px;
+  height: 100vh;
+}
+
+section {
+  display: table;
+}
+
+.action-row {
+  display: table-cell;
+  width: 100%;
+  
+  .inline-btn {
+    height: 50px;
+    margin-left: 10px;
+  }
+
+}
