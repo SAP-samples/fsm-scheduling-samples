@@ -1,0 +1,43 @@
+<mat-sidenav-container class="sidenav-container">
+
+  <mat-sidenav #drawer class="sidenav" fixedInViewport [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
+    [mode]="(isHandset$ | async) ? 'over' : 'side'" [opened]="(isHandset$ | async) === false">
+    <mat-toolbar style="color: #354a5f; font-size: 16px;">
+      <div class="sap-logo"></div> FSM AI
+    </mat-toolbar>
+    <mat-nav-list>
+
+      <a mat-list-item href="#/slot-search">Slots & Booking</a>
+
+      <mat-divider></mat-divider>
+      <h3 matSubheader></h3>
+
+      <a mat-list-item *ngIf="(isLoggedIn$ | async)" (click)="logout()">
+        <mat-icon>exit_to_app</mat-icon>&nbsp;&nbsp;Logout
+      </a>
+
+      <a mat-list-item *ngIf="!(isLoggedIn$ | async)" (click)="login()">
+        <mat-icon>exit_to_app</mat-icon>&nbsp;&nbsp;login
+      </a>
+
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+    <mat-toolbar>
+
+      <button type="button" aria-label="Toggle sidenav" mat-icon-button (click)="drawer.toggle()"
+        *ngIf="isHandset$ | async">
+        <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+      </button>
+
+      <div *ngIf="(isLoggedIn$ | async)">
+        <span *ngIf="(ctx$ | async) as ctx;">Hi, {{ ctx.account }}/{{ ctx.company }}/{{ ctx.user }}</span>
+      </div>
+
+    </mat-toolbar>
+
+    <router-outlet></router-outlet>
+
+  </mat-sidenav-content>
+</mat-sidenav-container>

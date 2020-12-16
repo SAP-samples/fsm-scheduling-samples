@@ -1,0 +1,25 @@
+<div style="display: flex; margin-top: 5px; margin-bottom: 5px;">
+
+  <button mat-raised-button (click)="book()"
+    [disabled]="(disabled$ | async) || (isLoading$ | async) || (canNotBeBooked$ | async)" color="primary">
+    <mat-icon>book_online</mat-icon> Book Slot
+  </button>
+
+  <div *ngIf="!!(progress$ | async)" style="display: flex; padding-top: 8px;">
+    <mat-progress-spinner [diameter]="40" mode="determinate"
+      [value]="(( 100 / (progress$ | async)?.total) ) * ((progress$ | async)?.current)" style="margin-left: 5px;">
+    </mat-progress-spinner>
+    <span>[{{ (progress$ | async)?.current }}/{{ (progress$ | async)?.total }}] ->
+      {{ (progress$ | async)?.message }}</span>
+  </div>
+
+  <div style="margin-left: 10px; padding-top: 8px;">
+    <strong>{{ group.slot.start | date:'d.M.y HH:mm' }} - {{ group.slot.end | date:'HH:mm'}}</strong>
+    found <strong>{{ group.items.length }} techs</strong> with max score <strong>{{ group.maxScore }}</strong>
+  </div>
+
+  <div *ngIf="(canNotBeBooked$ | async)" style="margin-left: 10px; padding-top: 8px; color: red;">
+    solt is booked
+  </div>
+
+</div>
