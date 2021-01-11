@@ -1,11 +1,13 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import * as moment from 'moment';
 import { Observable, of } from 'rxjs';
 import { delay, map, mergeMap, take, tap } from 'rxjs/operators';
 import { ConfigService } from '../common/config.service';
 import { CLIENT_IDENTIFIER } from '../common/contants';
 import { AuthService, GlobalContext } from '../common/login-dialog/auth.service';
 import { Job } from '../job-builder/job-builder.component';
+import { QueryService } from '../resource-query/qurey.service';
 import { SearchResponseItem } from '../slot-search/optimization.service';
 
 export type Progress = {
@@ -24,6 +26,7 @@ export class BookingService {
     private config: ConfigService,
     private auth: AuthService,
     private http: HttpClient,
+    private query: QueryService
   ) { }
 
   private getHeaders(ctx: GlobalContext) {
@@ -64,13 +67,20 @@ export class BookingService {
           result: null
         }
 
-        op.next({ ...progress, message: `${bookable.score}, trying` });
+
+        const person = this.query.resourceFromCache(bookable.resource);
+        op.next({ ...progress, message: `...👷 trying to book ${person.firstName} ${person.lastName} with score [${bookable.score}]` });
 
         return this.book(bookable, job).pipe(take(1))
           .toPromise()
           .then(result => {
             // exit loop
-            return ({ ...progress, success: true, result })
+            return ({
+              ...progress,
+              success: true,
+              message: `🎉🎉 we booked a slot with ${person.firstName} ${person.lastName} from ${moment(bookable.start).format('HH:mm')} to ${moment(bookable.end).format('HH:mm')} `,
+              result
+            })
           })
           .catch(error => { throw progress; });
       }
@@ -88,7 +98,10 @@ export class BookingService {
           op.next(r);
           op.complete();
         })
-        .catch(error => op.error(error));
+        .catch((error: Progress) => {
+          op.next({ ...error, message: '❌ slot booking failed, all technicains are booked already ...' });
+          op.error(error);
+        });
 
       return () => {
         // clean ups

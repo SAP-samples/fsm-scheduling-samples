@@ -51,8 +51,8 @@ export class QueryService {
     );
   }
 
-  public resourceFromCache(id: string) {
-    return this.resourceCache.get(id);
+  public resourceFromCache(id: string): { id: string, firstName: string, lastName: string } {
+    return this.resourceCache.has(id) ? this.resourceCache.get(id) : { id, firstName: 'N/A', lastName: 'N/A' };
   }
 
 }

@@ -4,7 +4,7 @@ import { AxiosError } from 'axios';
 import { Response } from 'express';
 import { ServiceManagementAPIDAO } from './service-management-api.dao';
 import { FsmAPIClientFactory } from '../common/fsm-api-client.factory';
-import { DTOBuilder } from './dto.builder';
+import { BookingDTOsBuilder } from './booking-dtos.builder';
 
 
 export type BookingRequest = {
@@ -51,7 +51,7 @@ export class BookingController {
       // - transcation
 
       const client = this.factory.fromContext(ctx);
-      const builder = DTOBuilder.from(bookingRequest);
+      const builder = BookingDTOsBuilder.from(bookingRequest);
 
       // create necessary FSM objects
       const related = builder.buildPlanningRelatedObjects();

@@ -3,22 +3,18 @@ import path = require('path');
 import { NestApplicationOptions } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-
-const isProduction = false;
+import { configService } from './config/config.service';
 
 const config: NestApplicationOptions = {
   cors: true,
-  logger: isProduction ? console : undefined,
+  logger: configService.isProduction() ? console : undefined,
 };
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, config)
-
-  app.use('/app', express.static(path.join(__dirname, '/static/frontend')))
-  const port = process.env.PORT || 8000;
-
-  await app.listen(port);
-
-  console.log(`Application now running on => open http://localhost:${port}`);
+  const app = await NestFactory.create(AppModule, config);
+  app.use('/app', express.static(path.join(__dirname, '/static/frontend')));
+  await app.listen(configService.getPort());
+  console.log(`Application now running on => open http://localhost:${configService.getPort()}`);
 }
+
 bootstrap();

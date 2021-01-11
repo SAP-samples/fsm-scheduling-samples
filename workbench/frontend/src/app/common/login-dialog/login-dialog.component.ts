@@ -51,12 +51,12 @@ export class LoginDialogComponent implements OnInit {
   public loginForm: FormGroup;
 
   public cloudHosts = [
-    { text: 'PRODUCTION', value: 'ds.coresuite.com' },
-    { text: 'SANDBOX', value: 'sb.dev.coresuite.com' },
-    { text: 'DEV ET', value: 'et.dev.coresuite.com' },
-    { text: 'DEV QT', value: 'qt.dev.coresuite.com' },
-    { text: 'DEV DT', value: 'dt.dev.coresuite.com' },
-  ].map(({ text, value }) => ({ value, text: `${text} (${value})` }))
+    { text: 'Production', value: 'ds.coresuite.com' },
+    { text: 'Sandbox', value: 'sb.dev.coresuite.com' },
+    { text: 'ET Development', value: 'et.dev.coresuite.com' },
+    { text: 'QT Development', value: 'qt.dev.coresuite.com' },
+    { text: 'DT Development', value: 'dt.dev.coresuite.com' },
+  ].map(({ text, value }) => ({ value, text: `${text}` }))
 
   constructor(
     private http: HttpClient,
@@ -87,7 +87,7 @@ export class LoginDialogComponent implements OnInit {
   public login() {
 
     if (this.loginForm.invalid) {
-      return this.infoMessage('[ERROR] mäh ... fill form');
+      return this.infoMessage('[❌ ERROR ❌] input invalid');
     }
 
     const { account, cloudHost, user, password, save } = this.loginForm.value;
@@ -108,7 +108,7 @@ export class LoginDialogComponent implements OnInit {
         Authorization: `Basic ${basicAuth}`,
         'X-Client-Id': CLIENT_IDENTIFIER,
         'X-Client-Version': '0',
-        'X-Request-ID': '1'
+        'X-Request-ID': Date.now().toString()
       }
     })
       .subscribe(
@@ -122,7 +122,7 @@ export class LoginDialogComponent implements OnInit {
 
           const ctx: GlobalContext = {
             authToken: `${response.token_type} ${response.access_token}`,
-            cloudHost: cloudHost,
+            cloudHost: response.cluster_url.replace('https://', '') || cloudHost,
             account: response.account,
             accountId: response.account_id,
             company: selectedCompany.name,
@@ -141,7 +141,7 @@ export class LoginDialogComponent implements OnInit {
               ? e.error.error + '/' + e.error.error_description
               : 'Error. Check network tab.';
 
-          this.infoMessage('[ERROR] ' + msg);
+          this.infoMessage('[❌ ERROR ❌ ] ' + msg);
         }
       );
   }

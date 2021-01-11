@@ -5,7 +5,6 @@ import { tap, catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 import { FSM_HOSTS_CORESUITE_TO_COREINFRA } from 'src/common/constants';
 
-
 export type PluginDto = {
   is: string,
   name: string;
@@ -15,12 +14,13 @@ export type PluginDto = {
   scheduleConfigId: string;
 }
 
-
 @Injectable()
 export class AiDataAPIDAO {
 
+  constructor(private http: HttpService) { }
+
   private resolveHost(host: string) {
-    return FSM_HOSTS_CORESUITE_TO_COREINFRA.get(host.toLowerCase()) || '';
+    return `https://${FSM_HOSTS_CORESUITE_TO_COREINFRA.get(host.toLowerCase()) || ''}`;
   }
 
   private getParams(ctx: Context) {
@@ -31,11 +31,12 @@ export class AiDataAPIDAO {
       account: ctx.account
     }
   }
+
   private getHeaders(ctx: Context) {
     return {
       'Content-Type': 'application/json',
-      Accept: 'application/json',
-      Authorization: ctx.authToken,
+      'Accept': 'application/json',
+      'Authorization': ctx.authToken,
       'X-Request-Id': ctx.requestId,
       'X-Account-Id': ctx.accountId,
       'X-Account-Name': ctx.account,
@@ -48,8 +49,6 @@ export class AiDataAPIDAO {
       'accountId': ctx.accountId
     };
   }
-
-  constructor(private http: HttpService) { }
 
   private request<T>(config: AxiosRequestConfig) {
     const requestStart: Date = new Date();
@@ -74,7 +73,7 @@ export class AiDataAPIDAO {
   getAll(ctx: Context) {
     return this.request<PluginDto[]>({
       method: 'GET',
-      url: `https://${this.resolveHost(ctx.cloudHost)}/cloud-ai-data-service/api/autoscheduler/v1/optimization-plugins`,
+      url: `${this.resolveHost(ctx.cloudHost)}/cloud-ai-data-service/api/autoscheduler/v1/optimization-plugins`,
       headers: this.getHeaders(ctx),
       params: this.getParams(ctx),
       responseType: 'json',
@@ -84,7 +83,7 @@ export class AiDataAPIDAO {
   getById(ctx: Context, id: string) {
     return this.request<PluginDto>({
       method: 'GET',
-      url: `https://${this.resolveHost(ctx.cloudHost)}/cloud-ai-data-service/api/autoscheduler/v1/optimization-plugins/${id}`,
+      url: `${this.resolveHost(ctx.cloudHost)}/cloud-ai-data-service/api/autoscheduler/v1/optimization-plugins/${id}`,
       headers: this.getHeaders(ctx),
       params: this.getParams(ctx),
       responseType: 'json',
@@ -94,7 +93,7 @@ export class AiDataAPIDAO {
   getByName(ctx: Context, name: string) {
     return this.request<PluginDto[]>({
       method: 'GET',
-      url: `https://${this.resolveHost(ctx.cloudHost)}/cloud-ai-data-service/api/autoscheduler/v1/optimization-plugins/by-name/${name}`,
+      url: `${this.resolveHost(ctx.cloudHost)}/cloud-ai-data-service/api/autoscheduler/v1/optimization-plugins/by-name/${name}`,
       headers: this.getHeaders(ctx),
       params: this.getParams(ctx),
       responseType: 'json',
@@ -104,7 +103,7 @@ export class AiDataAPIDAO {
   create(ctx: Context, plugin: Partial<PluginDto>) {
     return this.request<PluginDto[]>({
       method: 'POST',
-      url: `https://${this.resolveHost(ctx.cloudHost)}/cloud-ai-data-service/api/autoscheduler/v1/optimization-plugins`,
+      url: `${this.resolveHost(ctx.cloudHost)}/cloud-ai-data-service/api/autoscheduler/v1/optimization-plugins`,
       headers: this.getHeaders(ctx),
       params: this.getParams(ctx),
       responseType: 'json',
@@ -115,7 +114,7 @@ export class AiDataAPIDAO {
   updateById(ctx: Context, id: string, plugin: Partial<PluginDto>) {
     return this.request<PluginDto[]>({
       method: 'PUT',
-      url: `https://${this.resolveHost(ctx.cloudHost)}/cloud-ai-data-service/api/autoscheduler/v1/optimization-plugins/${id}`,
+      url: `${this.resolveHost(ctx.cloudHost)}/cloud-ai-data-service/api/autoscheduler/v1/optimization-plugins/${id}`,
       headers: this.getHeaders(ctx),
       params: this.getParams(ctx),
       responseType: 'json',
@@ -126,7 +125,7 @@ export class AiDataAPIDAO {
   deleteById(ctx: Context, id: string) {
     return this.request<PluginDto>({
       method: 'DELETE',
-      url: `https://${this.resolveHost(ctx.cloudHost)}/cloud-ai-data-service/api/autoscheduler/v1/optimization-plugins/${id}`,
+      url: `${this.resolveHost(ctx.cloudHost)}/cloud-ai-data-service/api/autoscheduler/v1/optimization-plugins/${id}`,
       headers: this.getHeaders(ctx),
       params: this.getParams(ctx),
       responseType: 'json',

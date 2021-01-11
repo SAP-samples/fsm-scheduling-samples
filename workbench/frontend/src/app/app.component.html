@@ -32,7 +32,7 @@
       </button>
 
       <div *ngIf="(isLoggedIn$ | async)">
-        <span *ngIf="(ctx$ | async) as ctx;">Hi, {{ ctx.account }}/{{ ctx.company }}/{{ ctx.user }}</span>
+        <span *ngIf="(ctx$ | async) as ctx;">{{ ctx.account }}/{{ ctx.company }}/{{ ctx.user }}</span>
       </div>
 
     </mat-toolbar>

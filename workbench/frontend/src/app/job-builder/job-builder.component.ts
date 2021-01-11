@@ -71,7 +71,7 @@ export class JobBuilderComponent implements OnInit, OnDestroy, AfterContentInit 
       // must have lat/log
       map(list => list.filter(it => !!it.location && it.location.longitude && it.location.latitude)
         .map(it => ({
-          text: [(it.object ? it.object.objectType : ''), it.type, it.street, it.streetNo, it.city].filter(x => !!x).map(x => x.trim()).join(' '),
+          text: [`[${it.type}]`, it.street, it.streetNo, it.city].filter(x => !!x).map(x => x.trim()).join(' '),
           location: it.location
         })).sort((a, b) => a.text > b.text ? 1 : -1)
       )
@@ -112,7 +112,7 @@ export class JobBuilderComponent implements OnInit, OnDestroy, AfterContentInit 
     );
 
     this.form = this.fb.group({
-      durationMinutes: [(4*60), Validators.required],
+      durationMinutes: [(4 * 60), Validators.required],
       location_latitude: [52.5158595, Validators.required],
       location_longitude: [13.3175292, Validators.required],
       mandatorySkills: [[], Validators.required]

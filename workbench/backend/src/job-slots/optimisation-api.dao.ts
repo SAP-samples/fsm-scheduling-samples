@@ -1,9 +1,10 @@
 import { HttpService, Injectable } from '@nestjs/common';
-import { Context } from '../ctx.decorator';
 import { AxiosRequestConfig, AxiosError } from 'axios';
 import { tap, catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
-import { FSM_HOSTS_CORESUITE_TO_CORESYSTEMS } from 'src/common/constants';
+import { Context } from '../ctx.decorator';
+import { FSM_HOSTS_CORESUITE_TO_CORESYSTEMS } from '../common/constants';
+import { configService } from 'src/config/config.service';
 
 export type SearchRequest = Readonly<{
   job: Readonly<{
@@ -52,9 +53,11 @@ type SearchResponseItem = {
 @Injectable()
 export class OptimisationAPIDAO {
 
+  constructor(private http: HttpService) { }
 
   private resolveHost(host: string) {
-    return FSM_HOSTS_CORESUITE_TO_CORESYSTEMS.get(host.toLowerCase()) || '';
+    return configService.getOptimisationAPIHost()
+      || `https://${FSM_HOSTS_CORESUITE_TO_CORESYSTEMS.get(host.toLowerCase()) || ''}`;
   }
 
   private getParams(ctx: Context) {
@@ -69,8 +72,8 @@ export class OptimisationAPIDAO {
   private getHeaders(ctx: Context) {
     return {
       'Content-Type': 'application/json',
-      Accept: 'application/json',
-      Authorization: ctx.authToken,
+      'Accept': 'application/json',
+      'Authorization': ctx.authToken,
       'X-Request-Id': ctx.requestId,
       'X-Account-Id': ctx.accountId,
       'X-Account-Name': ctx.account,
@@ -78,13 +81,10 @@ export class OptimisationAPIDAO {
       'X-Company-Name': ctx.company,
       'X-Client-Id': ctx.clientId,
       'X-Client-Version': ctx.clientVersion,
-
       'companyId': ctx.companyId,
       'accountId': ctx.accountId
     };
   }
-
-  constructor(private http: HttpService) { }
 
   private request<T>(config: AxiosRequestConfig) {
     const requestStart: Date = new Date();
@@ -109,7 +109,7 @@ export class OptimisationAPIDAO {
   public slotsSearch(ctx: Context, data: SearchRequest) {
     return this.request<SearchResponse>({
       method: 'POST',
-      url: `https://${this.resolveHost(ctx.cloudHost)}/optimization/api/v2/job-slots/actions/search`,
+      url: `${this.resolveHost(ctx.cloudHost)}/optimization/api/v2/job-slots/actions/search`,
       headers: this.getHeaders(ctx),
       params: this.getParams(ctx),
       responseType: 'json',

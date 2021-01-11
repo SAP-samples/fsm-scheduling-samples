@@ -1,15 +1,7 @@
-<div style="color: red;">
-  <h1>Todos:</h1>
-
-  <pre>
-  - Check on BusinessRule
-</pre>
-</div>
-
 <mat-expansion-panel #request_response class="margin-10">
   <mat-expansion-panel-header>
     <mat-panel-title>
-      Slot Search Request / Repsone
+      Slot Search Request / Response
     </mat-panel-title>
   </mat-expansion-panel-header>
 
@@ -24,11 +16,13 @@
 
     <div *ngIf="response$ && (response$ | async) && (response$ | async).grouped">
 
-      <mat-expansion-panel *ngFor="let group of (response$ | async).grouped; index as i" class="margin-10" [expanded]="true">
+      <mat-expansion-panel *ngFor="let group of (response$ | async).grouped; index as i" class="margin-10"
+        [expanded]="true">
         <mat-expansion-panel-header>
           <mat-panel-title>
 
-            <booking-button (isLoading)="bookingLoading($event)" [group]="group" [disabled$]="isLoading$" [job]="jobBuilder$ | async">
+            <booking-button (isLoading)="bookingLoading($event)" [group]="group" [disabled$]="isLoading$"
+              [job]="jobBuilder$ | async">
             </booking-button>
 
           </mat-panel-title>
@@ -51,7 +45,7 @@
 
               <mat-list-item>
                 <mat-icon>access_time</mat-icon>
-                <p matLine>{{ item.start  | date:'HH:mm' }} - {{ item.end  | date:'HH:mm' }}</p>
+                <p matLine>{{ item.start | date:'HH:mm' }} - {{ item.end | date:'HH:mm' }}</p>
               </mat-list-item>
               <mat-list-item>
                 <mat-icon>directions_car</mat-icon>
@@ -88,7 +82,7 @@
       </div>
 
       <div style="width: 60%;">
-        <h2>Repsone</h2>
+        <h2>Response</h2>
 
         <mat-expansion-panel style="margin: 10px;">
           <mat-expansion-panel-header>Full JSON Response </mat-expansion-panel-header>
@@ -127,7 +121,7 @@
 <mat-expansion-panel class="margin-10">
   <mat-expansion-panel-header>
     <mat-panel-title>
-      <strong class="panel-title"> When / Timeing </strong>
+      <strong class="panel-title">🕑&nbsp;&nbsp;When / Timeing </strong>
       <mat-chip class="panel-title-chip"> {{ (requestPayload$ | async)?.slots.length }} Slots </mat-chip>
     </mat-panel-title>
     <mat-panel-description></mat-panel-description>
@@ -138,9 +132,10 @@
 <mat-expansion-panel class="margin-10">
   <mat-expansion-panel-header>
     <mat-panel-title>
-      <strong class="panel-title"> Where / Job</strong>
+      <strong class="panel-title">📍&nbsp;&nbsp;Where / Job</strong>
       <mat-chip class="panel-title-chip">
-        {{ (requestPayload$ | async)?.job?.location?.latitude }},{{ (requestPayload$ | async)?.job?.location?.longitude }}
+        {{ (requestPayload$ | async)?.job?.location?.latitude }},{{ (requestPayload$ | async)?.job?.location?.longitude
+        }}
       </mat-chip>
     </mat-panel-title>
     <mat-panel-description></mat-panel-description>
@@ -151,8 +146,9 @@
 <mat-expansion-panel class="margin-10">
   <mat-expansion-panel-header>
     <mat-panel-title>
-      <strong class="panel-title">Who / People</strong>
-      <mat-chip class="panel-title-chip">{{ (requestPayload$ | async)?.resources.personIds.length }} Technicians</mat-chip>
+      <strong class="panel-title">👷&nbsp;&nbsp;Who / People</strong>
+      <mat-chip class="panel-title-chip">{{ (requestPayload$ | async)?.resources.personIds.length }} Technicians
+      </mat-chip>
     </mat-panel-title>
     <mat-panel-description></mat-panel-description>
   </mat-expansion-panel-header>
@@ -162,7 +158,7 @@
 <mat-expansion-panel class="margin-10">
   <mat-expansion-panel-header>
     <mat-panel-title>
-      <strong class="panel-title">How / Plugin</strong>
+      <strong class="panel-title">🤖&nbsp;&nbsp;How / AI-Plugin</strong>
       <mat-chip class="panel-title-chip">{{ (requestPayload$ | async)?.optimizationPlugin }}</mat-chip>
     </mat-panel-title>
     <mat-panel-description></mat-panel-description>

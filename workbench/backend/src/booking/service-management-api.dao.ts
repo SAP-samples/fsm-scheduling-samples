@@ -7,23 +7,24 @@ import { FSM_HOSTS_CORESUITE_TO_CORESYSTEMS } from 'src/common/constants';
 import { ActivityActionsRequest } from './service-management.model';
 
 
-
 @Injectable()
 export class ServiceManagementAPIDAO {
 
+  constructor(private http: HttpService) { }
+
   private resolveHost(host: string) {
-    return FSM_HOSTS_CORESUITE_TO_CORESYSTEMS.get(host.toLowerCase()) || '';
+    return `https://${FSM_HOSTS_CORESUITE_TO_CORESYSTEMS.get(host.toLowerCase()) || ''}`;
   }
 
   private getParams(ctx: Context) {
-    return undefined
+    return undefined;
   }
 
   private getHeaders(ctx: Context) {
     return {
       'Content-Type': 'application/json',
-      Accept: 'application/json',
-      Authorization: ctx.authToken,
+      'Accept': 'application/json',
+      'Authorization': ctx.authToken,
       'X-Request-Id': ctx.requestId,
       'X-Account-Id': ctx.accountId,
       'X-Account-Name': ctx.account,
@@ -33,8 +34,6 @@ export class ServiceManagementAPIDAO {
       'X-Client-Version': ctx.clientVersion,
     };
   }
-
-  constructor(private http: HttpService) { }
 
   private request<T>(config: AxiosRequestConfig) {
     const requestStart: Date = new Date();
@@ -59,7 +58,7 @@ export class ServiceManagementAPIDAO {
   public plan(ctx: Context, activityId: {}, data: Partial<ActivityActionsRequest>) {
     return this.request<{}>({
       method: 'POST',
-      url: `https://${this.resolveHost(ctx.cloudHost)}/api/service-management/v2/activities/${activityId}/actions/plan`,
+      url: `${this.resolveHost(ctx.cloudHost)}/api/service-management/v2/activities/${activityId}/actions/plan`,
       headers: this.getHeaders(ctx),
       params: this.getParams(ctx),
       responseType: 'json',
@@ -70,7 +69,7 @@ export class ServiceManagementAPIDAO {
   public release(ctx: Context, activityId: {}) {
     return this.request<{}>({
       method: 'POST',
-      url: `https://${this.resolveHost(ctx.cloudHost)}/api/service-management/v2/activities/${activityId}/actions/release`,
+      url: `${this.resolveHost(ctx.cloudHost)}/api/service-management/v2/activities/${activityId}/actions/release`,
       headers: this.getHeaders(ctx),
       params: this.getParams(ctx),
       responseType: 'json'

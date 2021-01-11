@@ -44,24 +44,20 @@ export class BookingButtonComponent implements OnInit, OnDestroy {
 
   book() {
     this.isLoading$.next(true);
+    this.progress$.next(null);
     this.bookingSerivce.tryBookAll(this.group.items, this.job)
       .pipe(
         tap(progress => this.progress$.next(progress)),
-        filter(progress => {
-          console.log('progress.success', progress.success);
-          return progress.success;
-        }),
+        filter(progress => progress.success),
         tap(() => {
           this.isLoading$.next(false);
-          this.progress$.next(null);
           this.canNotBeBooked$.next(true);
-          this.snackBar.open(`[DONE] slot booked!`, 'ok', { duration: 3000 });
+          this.snackBar.open(`[✅ DONE ✅] slot booked!`, 'ok', { duration: 3000 });
         }),
         catchError((error: Error | Progress) => {
           this.isLoading$.next(false);
-          this.progress$.next(null);
           this.canNotBeBooked$.next(true);
-          this.snackBar.open(`[ERROR] Failed to book Slot ${moment(this.group.slot.start).format('HH:mm')} - ${moment(this.group.slot.end).format('HH:mm')}`, 'ok', { duration: 3000 });
+          this.snackBar.open(`[❌ ERROR ❌] Failed to book Slot ${moment(this.group.slot.start).format('HH:mm')} - ${moment(this.group.slot.end).format('HH:mm')}`, 'ok', { duration: 3000 });
           return of(null);
         })
       )

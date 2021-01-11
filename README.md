@@ -20,14 +20,16 @@ to use the examples in this repository you will need a SAP FSM account with admi
 
 # Getting started, Download and Installation
 
-## run workbench-app locally
+Checkout the [how-to.md](./docs/how-to.md) quick guide in the `/docs`-folder.
 
+## run workbench-app locally
 use the cli the following command in the `/workbench-app`-folder
 ```bash
 ./cli.sh 
 ```
+build and run, then open http://localhost:3000
 
-using pre build docker container 
+## using pre build docker container 
 ```
 docker run --rm -e PORT=3000 -p 3000:3000 --name fsm-scheduling-samples gausim/fsm-scheduling-samples:latest
 ```

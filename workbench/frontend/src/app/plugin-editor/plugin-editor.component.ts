@@ -1,10 +1,11 @@
-import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
+import { AfterContentInit, Component, ContentChild, EventEmitter, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { EditorComponent } from 'ngx-monaco-editor';
 
-import { BehaviorSubject, merge, Observable, Subject } from 'rxjs';
+import { BehaviorSubject, merge, Observable, Subject, throwError } from 'rxjs';
 import { of } from 'rxjs';
-import { takeUntil, tap, map, mergeMap, switchMap, take } from 'rxjs/operators';
+import { takeUntil, tap, map, mergeMap, switchMap, take, catchError, filter } from 'rxjs/operators';
 import { SaveDialog } from './dialogs/save-dialog.component';
 import { pluginTemplate } from './plugin-template';
 import { PluginDto, PluginService } from './plugin.service';
@@ -19,12 +20,13 @@ export interface PluginEditorData {
 const CREATE_NEW = 'create new (unsaved)';
 const BUILD_IN = ['Quickest', 'Best', 'SkillsAndDistance', 'Nearest'];
 const DEFAULT = { id: null, name: null, description: null, pluginCode: null };
+const DEFAULT_BUILD_IN = 'SkillsAndDistance';
 @Component({
   selector: 'plugin-editor',
   templateUrl: './plugin-editor.component.html',
   styleUrls: ['./plugin-editor.component.scss']
 })
-export class PluginEditorComponent implements OnInit, OnDestroy {
+export class PluginEditorComponent implements OnInit, OnDestroy, AfterContentInit {
 
   public selectList$: Observable<{ text: string, value: string }[]>;
 
@@ -34,31 +36,47 @@ export class PluginEditorComponent implements OnInit, OnDestroy {
   public selectedPlugin: FormControl;
   private onDistroy$ = new Subject();
   private refresh = new BehaviorSubject<boolean>(false);
+  private disableEditor = new BehaviorSubject<boolean>(false);
 
   public editorOptions = {
     theme: 'vs-light',
     language: 'java'
   };
 
-  @Output() change = new EventEmitter<PluginEditorData>();
+  @Output() change = new EventEmitter<string>();
+  @ViewChild('editorInstance') editorInstance: EditorComponent;
+
   constructor(
     private fb: FormBuilder,
     private service: PluginService,
     public dialog: MatDialog
   ) { }
 
-  public onEditor(editor) {
+  public onEditor(editor) { }
+
+  public ngAfterContentInit() {
+    this.disableEditor.pipe(
+      filter((value) => this.editorInstance && value === true),
+      tap((value) => this.editorInstance.options = { ...this.editorInstance.options, readOnly: true }),
+      takeUntil(this.onDistroy$)
+    ).subscribe();
   }
 
   public ngOnInit(): void {
 
     const pluginList$ = this.refresh.pipe(
       mergeMap(() => this.service.fetchAll()),
+      catchError((e) => {
+        // if fetch all fails lets disable editor
+        console.error('could not read plugins, disabled editor');
+        this.disableEditor.next(true);
+        return of([] as PluginDto[])
+      })
     );
 
     this.selectList$ = pluginList$.pipe(
       map((list) => {
-        const defaultPlugin = list.find(x => x.name === 'SkillsAndDistance') || list.find(x => !!x.defaultPlugin);
+        const defaultPlugin = list.find(x => x.name === DEFAULT_BUILD_IN) || list.find(x => !!x.defaultPlugin);
         if (defaultPlugin) {
           // select first [real] plugin 
           setTimeout(() => this.selectedPlugin.patchValue(defaultPlugin.name), 500)
@@ -89,7 +107,7 @@ export class PluginEditorComponent implements OnInit, OnDestroy {
     // sync to parent
     form$
       .pipe(
-        tap(value => this.change.emit(value)),
+        tap(value => this.change.emit(value.name || DEFAULT_BUILD_IN)),
         takeUntil(this.onDistroy$)
       ).subscribe();
 

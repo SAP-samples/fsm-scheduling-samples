@@ -1,7 +1,7 @@
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { of, throwError } from 'rxjs';
-import { catchError, mergeMap, tap } from 'rxjs/operators';
+import { catchError, mergeMap, retry, tap } from 'rxjs/operators';
 import { ConfigService } from '../common/config.service';
 import { CLIENT_IDENTIFIER } from '../common/contants';
 import { AuthService, GlobalContext } from '../common/login-dialog/auth.service';

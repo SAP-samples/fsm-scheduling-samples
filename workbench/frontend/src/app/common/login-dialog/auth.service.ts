@@ -70,13 +70,13 @@ export class AuthService {
     const ctx = this.restoreContext();
     if (ctx) {
       this.infoMessage(
-        '[INFO] session loaded from sessionStorage',
+        '[✅ INFO ✅] session loaded from sessionStorage',
         'logout', () => this.logout()
       );
       setTimeout(() => this.onContextReady(ctx), 1)
     } else {
       this.infoMessage(
-        '[WARN] no session found',
+        '[❌ WARN ❌ ] no session found',
         'login', () => this.openLoginDialog()
       );
     }
@@ -87,12 +87,12 @@ export class AuthService {
   }
 
   private clearContext() {
-    this.infoMessage('[INFO] session cleared from sessionStorage', 'login', () => this.openLoginDialog());
+    this.infoMessage('[✅ INFO ✅] session cleared from sessionStorage', 'login', () => this.openLoginDialog());
     sessionStorage.removeItem(this.AUTH_KEY);
   }
 
   private storeContext(ctx: GlobalContext) {
-    this.infoMessage('[INFO] session stored in sessionStorage');
+    this.infoMessage('[✅ INFO ✅] session stored in sessionStorage');
     sessionStorage.setItem(this.AUTH_KEY, JSON.stringify(ctx))
   }
 

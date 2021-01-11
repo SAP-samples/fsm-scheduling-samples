@@ -273,6 +273,7 @@
 "doctrine@1.5.0","BSD","https://github.com/eslint/doctrine"
 "doctrine@3.0.0","Apache-2.0","https://github.com/eslint/doctrine"
 "domexception@1.0.1","MIT","https://github.com/jsdom/domexception"
+"dotenv@8.2.0","BSD-2-Clause","https://github.com/motdotla/dotenv"
 "ecc-jsbn@0.1.2","MIT","https://github.com/quartzjer/ecc-jsbn"
 "ee-first@1.1.1","MIT","https://github.com/jonathanong/ee-first"
 "electron-to-chromium@1.3.621","ISC","https://github.com/kilian/electron-to-chromium"

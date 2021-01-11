@@ -1,4 +1,5 @@
 import { HttpModule, Module } from '@nestjs/common';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 import { AiDataAPIDAO } from './plugin/ai-data-api.dao';
 import { PluginController } from './plugin/plugin.controller';
 import { QueryController } from './query/query.controller';
@@ -8,6 +9,7 @@ import { OptimisationAPIDAO } from './job-slots/optimisation-api.dao';
 import { BookingController } from './booking/booking.controller';
 import { ServiceManagementAPIDAO } from './booking/service-management-api.dao';
 import { FsmAPIClientFactory } from './common/fsm-api-client.factory';
+import { TimeoutInterceptor } from './common/timeout.interceptor';
 
 @Module({
   imports: [HttpModule],
@@ -22,7 +24,8 @@ import { FsmAPIClientFactory } from './common/fsm-api-client.factory';
     AiDataAPIDAO,
     OptimisationAPIDAO,
     ServiceManagementAPIDAO,
-    FsmAPIClientFactory
+    FsmAPIClientFactory,
+    { provide: APP_INTERCEPTOR, useClass: TimeoutInterceptor }
   ],
 })
 export class AppModule { }

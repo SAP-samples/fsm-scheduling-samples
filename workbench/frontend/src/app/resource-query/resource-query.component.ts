@@ -107,7 +107,7 @@ export class ResourceQueryComponent implements OnInit {
 
             let errorMessage = error;
             if (error instanceof HttpErrorResponse) {
-              errorMessage = `Error [${error.status}]\n\n${error.message}`;
+              errorMessage = `Error [❌ ${error.status} ❌ ]\n\n${error.message}`;
             }
 
             const snackBarRef = this.snackBar.open(errorMessage, 'ok', { duration: 3000 });

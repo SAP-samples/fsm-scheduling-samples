@@ -3,7 +3,7 @@ import * as moment from 'moment';
 import { BookingRequest } from './booking.controller';
 import { ActivityActionsRequest } from './service-management.model';
 
-export class DTOBuilder {
+export class BookingDTOsBuilder {
 
   private _externalId: string
 
@@ -12,7 +12,7 @@ export class DTOBuilder {
   }
 
   public static from(br: BookingRequest) {
-    return new DTOBuilder(br);
+    return new BookingDTOsBuilder(br);
   }
 
   public buildPlanningRelatedObjects() {
@@ -243,21 +243,20 @@ export class DTOBuilder {
   }
 
   public buildPlanningRequest(): ActivityActionsRequest {
-
     return {
       duration: this._br.job.durationMinutes,
       plannedDurationInMinutes: this._br.job.durationMinutes,
-      resolution: null,
       startDateTime: this._br.bookable.start,
-      team: null,
       technician: {
         id: this._br.bookable.resource
         // code: string | null,
         // externalId: string | null,
       },
       travelTimeFromInMinutes: 0,
-      travelTimeToInMinutes: 0,
-      unit: null
+      travelTimeToInMinutes: this._br.bookable.trip.durationInMinutes,
+      unit: null,
+      resolution: null,
+      team: null
     }
   }
 }

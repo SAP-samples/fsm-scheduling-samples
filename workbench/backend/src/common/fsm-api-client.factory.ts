@@ -104,7 +104,7 @@ export class FsmAPIClientFactory {
     'WorkTimeTask': 15,
     'WorkTimePattern': 8,
     'WorkTime': 15,
-    'CrowdBusinessPartner': 8,
+    'CrowdBusinessPartner': 9,
     'CrowdAssignment': 8,
     'Notification': 8,
     'CrowdExecutionRecord': 8,

@@ -18,7 +18,7 @@ import { OptimizationService, SearchRequest, SearchResponseWrapper } from './opt
 export class SlotSearchComponent implements OnInit, OnDestroy {
 
   public slotBuilder$ = new BehaviorSubject<Slot[]>([]);
-  public pluginEditor$ = new BehaviorSubject<PluginEditorData | null>(null);
+  public pluginEditor$ = new BehaviorSubject<string | null>(null);
   public jobBuilder$ = new BehaviorSubject<Job | null>(null);
   public personIds$ = new BehaviorSubject<string[]>([]);
   public isLoading$ = new BehaviorSubject<boolean>(false);
@@ -80,7 +80,7 @@ export class SlotSearchComponent implements OnInit, OnDestroy {
               maxResultsPerSlot: 8
             },
 
-            optimizationPlugin: pluginEditor.name,
+            optimizationPlugin: pluginEditor,
 
           }
         })
@@ -109,8 +109,8 @@ export class SlotSearchComponent implements OnInit, OnDestroy {
     this.slotBuilder$.next(windows);
   }
 
-  public onChangePluginEditor(it: PluginEditorData) {
-    this.pluginEditor$.next(it);
+  public onChangePluginEditor(name: string) {
+    this.pluginEditor$.next(name);
   }
 
   public onChangeJobBuilder(job: Job) {
@@ -136,7 +136,7 @@ export class SlotSearchComponent implements OnInit, OnDestroy {
 
             let errorMessage = error;
             if (error instanceof HttpErrorResponse) {
-              errorMessage = `Error [${error.status}]\n\n${error.message}`;
+              errorMessage = `[❌ ERROR ❌] [${error.status}]\n\n${error.message}`;
             }
 
             if (error.error) {
