@@ -28,7 +28,7 @@ export class BookingDTOsBuilder {
     return {
       "id": CoreAPIClient.createUUID(),
       "subject": "PLACEHOLDER",
-      "externalId": this._externalId, // ID from external systems (for example S4)  
+      "externalId": this._externalId,
       "contact": null,
 
       "responsibles": [], // is set on planing
@@ -54,8 +54,8 @@ export class BookingDTOsBuilder {
       // Notes: 
       // to be able to plan activity conditions: 
       // -> status(DRAFT) && executionStage(DISPATCHING) && responsibles[] empty 
-      "status": "DRAFT", // CLOSED | OPEN | DRAFT
-      "executionStage": "DISPATCHING", // PLANNING | DISPATCHING | EXECUTION | CLOSED | CANCELLED,
+      "status": "DRAFT",
+      "executionStage": "DISPATCHING",
       "type": "ASSIGNMENT",
 
       "checkedOut": false,
@@ -165,7 +165,7 @@ export class BookingDTOsBuilder {
   private businessPartner() {
     return {
       "id": CoreAPIClient.createUUID(),
-      "name": "Created for Job",
+      "name": "PLACEHOLDER",
       "externalId": this._externalId,
       "type": "CUSTOMER",
       "language": "DE",
@@ -249,8 +249,6 @@ export class BookingDTOsBuilder {
       startDateTime: this._br.bookable.start,
       technician: {
         id: this._br.bookable.resource
-        // code: string | null,
-        // externalId: string | null,
       },
       travelTimeFromInMinutes: 0,
       travelTimeToInMinutes: this._br.bookable.trip.durationInMinutes,

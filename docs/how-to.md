@@ -28,7 +28,9 @@ The workbench offers a lightweight plugin editor. Here you can view and edit the
 
 Either choose from the pre-installed plugins in the dropdown or create a new plugin using the file-new button.
 
-Note: pre-installed default plugins will only be available to selected if no custom plugin is saved into the fsm-account.
+**Notes:** 
+- *The Plugin-Editor will only be available for development fsm-cloud hosts* such as ET/QT/DT/SANDBOX
+- pre-installed default plugins will only be available to selected if no custom plugin is saved into the fsm-account.
 
 ![5. Plgin](./assets/05-plugin-editor.png)
 

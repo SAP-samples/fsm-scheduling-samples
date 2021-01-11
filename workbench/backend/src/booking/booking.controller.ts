@@ -46,12 +46,11 @@ export class BookingController {
   async create(@Res() res: Response, @Context() ctx: Context, @Body() bookingRequest: BookingRequest) {
 
     try {
-      // Todos: 
-      // - UDFs 
-      // - transcation
 
       const client = this.factory.fromContext(ctx);
       const builder = BookingDTOsBuilder.from(bookingRequest);
+
+      // Note: This should be done in one TRANSACTION
 
       // create necessary FSM objects
       const related = builder.buildPlanningRelatedObjects();
@@ -77,6 +76,3 @@ export class BookingController {
   }
 
 }
-
-
-

@@ -34,9 +34,9 @@ export class PluginEditorComponent implements OnInit, OnDestroy, AfterContentIni
   public isLoading$ = new BehaviorSubject(false);
   public form: FormGroup;
   public selectedPlugin: FormControl;
+  public disableEditor$ = new BehaviorSubject<boolean>(false);
   private onDistroy$ = new Subject();
   private refresh = new BehaviorSubject<boolean>(false);
-  private disableEditor = new BehaviorSubject<boolean>(false);
 
   public editorOptions = {
     theme: 'vs-light',
@@ -55,7 +55,7 @@ export class PluginEditorComponent implements OnInit, OnDestroy, AfterContentIni
   public onEditor(editor) { }
 
   public ngAfterContentInit() {
-    this.disableEditor.pipe(
+    this.disableEditor$.pipe(
       filter((value) => this.editorInstance && value === true),
       tap((value) => this.editorInstance.options = { ...this.editorInstance.options, readOnly: true }),
       takeUntil(this.onDistroy$)
@@ -69,7 +69,7 @@ export class PluginEditorComponent implements OnInit, OnDestroy, AfterContentIni
       catchError((e) => {
         // if fetch all fails lets disable editor
         console.error('could not read plugins, disabled editor');
-        this.disableEditor.next(true);
+        this.disableEditor$.next(true);
         return of([] as PluginDto[])
       })
     );
@@ -172,7 +172,6 @@ export class PluginEditorComponent implements OnInit, OnDestroy, AfterContentIni
   public ngOnDestroy() {
     this.onDistroy$.next();
   }
-
 
   public newFromTemplate() {
     this.form.get('pluginCode').patchValue(pluginTemplate);

@@ -23,7 +23,7 @@
         <mat-icon>delete</mat-icon>
       </button>
 
-      <button mat-button [disabled]="(selectedPlugin.value !== 'create new (unsaved)') || (disableEditor | async)" (click)="newFromTemplate()"
+      <button mat-button [disabled]="(selectedPlugin.value !== 'create new (unsaved)') || (disableEditor$ | async)" (click)="newFromTemplate()"
         color="primary" class="inline-btn">
         <mat-icon>insert_drive_file</mat-icon>
       </button>

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { CoreAPIClient } from 'fsm-sdk';
+import { configService } from 'src/config/config.service';
 import { Context } from '../ctx.decorator';
 
 @Injectable()
@@ -7,7 +8,7 @@ export class FsmAPIClientFactory {
 
   public fromContext(ctx: Context) {
     return new CoreAPIClient({
-      debug: false,
+      debug: configService.useVerboseLogs(),
       clientIdentifier: ctx.clientId,
       clientVersion: ctx.clientVersion,
       clientSecret: 'none',
@@ -104,11 +105,8 @@ export class FsmAPIClientFactory {
     'WorkTimeTask': 15,
     'WorkTimePattern': 8,
     'WorkTime': 15,
-    'CrowdBusinessPartner': 9,
-    'CrowdAssignment': 8,
     'Notification': 8,
     'CrowdExecutionRecord': 8,
-    'CrowdPerson': 8,
     'UnifiedPerson': 8
   };
 }

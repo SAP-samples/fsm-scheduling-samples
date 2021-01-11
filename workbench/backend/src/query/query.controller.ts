@@ -11,7 +11,9 @@ export class QueryController {
 
   @Post()
   async query<T>(@Context() ctx: Context, @Body() { query }: { query: string }): Promise<T> {
-    return await this.factory.fromContext(ctx).query(query, Object.keys(this.factory.ALL_DTO_VERSIONS) as DTOName[]).then(x => x.data) as T;
+    return await this.factory.fromContext(ctx).query(query, Object.keys(this.factory.ALL_DTO_VERSIONS) as DTOName[])
+      .then(x => x.data)
+      .catch(e => { console.error(query); throw e; return undefined as any }) as T;
   }
 
   @Get('tags')

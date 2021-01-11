@@ -34,5 +34,6 @@ create a `.env`-file in `/backend`-folder
 ```bash
 PORT=8000
 MODE=local
+VERBOSE=true
 OVERWRITE_OPTIMISATION_HOST=http://localhost:2020
 ```

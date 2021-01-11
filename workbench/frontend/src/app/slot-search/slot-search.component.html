@@ -17,7 +17,7 @@
     <div *ngIf="response$ && (response$ | async) && (response$ | async).grouped">
 
       <mat-expansion-panel *ngFor="let group of (response$ | async).grouped; index as i" class="margin-10"
-        [expanded]="true">
+        [expanded]="i === 0">
         <mat-expansion-panel-header>
           <mat-panel-title>
 
@@ -30,7 +30,7 @@
         </mat-expansion-panel-header>
 
         <div style=" display: flex;">
-          <div *ngFor="let item of group.items; index as j" style="text-align: center; width: 300px;">
+          <div *ngFor="let item of group.items; index as j" class="matching-tech">
 
             <div style="margin: 0 auto; width: 100px; text-align: center;">
               <mat-spinner style="margin: 0 auto;" mode="determinate" [diameter]="50"

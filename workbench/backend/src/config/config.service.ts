@@ -32,6 +32,10 @@ export class ConfigService {
     return mode === 'local';
   }
 
+  public useVerboseLogs() {
+    return (!!this.getValue('VERBOSE', false)) || false
+  }
+
   public getOptimisationAPIHost() {
     return this.getValue('OVERWRITE_OPTIMISATION_HOST', false) || undefined
   }

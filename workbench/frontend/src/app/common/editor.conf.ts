@@ -17,8 +17,6 @@ const dtos = [
   , 'CompanyInfo'
   , 'CompanySettings'
   , 'Contact'
-  , 'CrowdAssignment'
-  , 'CrowdBusinessPartner'
   , 'CrowdExecutionRecord'
   , 'CrowdPerson'
   , 'Currency'
