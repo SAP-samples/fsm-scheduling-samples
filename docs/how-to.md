@@ -53,6 +53,10 @@ The workbench has a **example implementation** of a booking implemented in nodeJ
 
 **Note:**  *That the booking implementation highly depends on you data backend implementation, for example purposes when booking all needed fsm objects (such as customer/**business-partner**, **service-call**, **activity**, **address**) are created.*
 
+Find related source code 
+- booking => [booking/booking.controller.ts](https://github.com/SAP-samples/fsm-scheduling-samples/blob/main/workbench/backend/src/booking/booking.controller.ts)
+- data generation => [booking/booking-dtos.builder.ts](https://github.com/SAP-samples/fsm-scheduling-samples/blob/main/workbench/backend/src/booking/booking-dtos.builder.ts)
+
 ## 7.1 Booking with retry
 As in a real world scenario it might be likely that once step 6. is performed - meaning you fetch and are able to see free slots, there is a possibility, that in the mean time a other customer or system books the same slot you want to book. FSM does **not automatically block or reserve any slot** when you search for them.
 
