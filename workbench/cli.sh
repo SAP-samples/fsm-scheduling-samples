@@ -71,35 +71,52 @@ build_container() {
 }
 
 deploy (){
+  
+  CF_CLI=cf
+  CF_APP_ANME=$APP_NAME
+  CF_API="https://api.cf.eu10.hana.ondemand.com"
 
+  if ! command -v $CF_CLI &> /dev/null
+  then
+    if promptyn "[ACTION] missing cf (cloud foundry cli), wanne download & install now? (y/n) "; then 
+      TEMP_DIR=".temp";
+      echo "=================================================";
+      echo "installing...";
+      
+      (rm -rf $TEMP_DIR || :)
+      mkdir -p $TEMP_DIR && cd $TEMP_DIR;
+      
+      # MAC OS download :) 
+      # find more here https://github.com/cloudfoundry/cli/wiki/V7-CLI-Installation-Guide
+      curl -L "https://packages.cloudfoundry.org/stable?release=macosx64-binary&version=v7&source=github" | tar -zx
+      cd ..
+      
+      CF_CLI="./$TEMP_DIR/cf"
+      echo 
+    else 
+      exit 0
+    fi
+  fi
+
+  echo "=================================================";
+  # Login and deploy
+  # Login will ask for code... to pass code use
+  # $CF_CLI login -a $CF_API --sso-passcode $PASSCODE 
+  $CF_CLI login -a $CF_API --sso
+  $CF_CLI push $CF_APP_ANME --docker-image $IMAGE_LATEST
+  $CF_CLI app $CF_APP_ANME
+
+  # (rm -rf $TEMP_DIR || :)
   exit 1;
-
-  case $1 in
-      test)
-            echo "TODO";
-            exit 1;
-            ;;
-      stage)
-            echo "TODO";
-            exit 1;
-            ;;
-      prod)
-            echo "TODO";
-            exit 1;
-            ;;
-      *)
-            echo "missing <test|stage|prod>" && exit 1;
-            ;;
-  esac
 }
 
 
 pring_usage () {
   echo "[HELP]:";
   echo "";
-  echo "r -> run container";
+  echo "r -> run latest container";
   echo "b -> build container";
-  #TODO echo "d -> deploy <env>";
+  echo "d -> deploy";
   #TODO echo "bd -> build & deploy <env>";
   echo "";
   echo "CRL+C -> to quit"
@@ -117,9 +134,7 @@ while true; do
           run_container;
           ;;
       d)
-          read -p "environment: <test|stage|prod> ? " env
-          echo $env
-          deploy $env
+          deploy;
           ;;
       bd)
           read -p "environment: <test|stage|prod> ? " env

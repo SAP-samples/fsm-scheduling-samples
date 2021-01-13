@@ -17,31 +17,45 @@ to use the examples in this repository you will need a SAP FSM account with admi
 - nodejs v10.x
 - npm v6.9.x
 
+>**NOTE:** We recommend using unix based systems to follow this guide. Note that for OSX and Windows tools might be installed differently.
 
 # Getting started, Download and Installation
 
 Checkout the [how-to.md](./docs/how-to.md) quick guide in the `/docs`-folder.
 
-## run workbench-app locally
-use the cli the following command in the `/workbench-app`-folder
-```bash
-./cli.sh 
-```
-build and run, then open http://localhost:3000
+## Demo application 
 
-## using pre build docker container 
-```
+Find a workbench demo here:
+
+[https://fsm-scheduling-samples.cfapps.eu10.hana.ondemand.com](https://fsm-scheduling-samples.cfapps.eu10.hana.ondemand.com)
+
+
+## Running pre build docker container locally
+```bash
 docker run --rm -e PORT=3000 -p 3000:3000 --name fsm-scheduling-samples gausim/fsm-scheduling-samples:latest
 ```
+open http://localhost:3000 in your browser
 
+## Build from source & run workbench-app locally
+use the cli the following command in the `/workbench-app`-folder
+```bash
+cd workbench && ./cli.sh 
+```
+use commands:
+```
+r -> run container
+b -> build container
+d -> deploy
+```
 
 # Configuration
+- For workbench configuration options see this [readme](./workbench/README.md)-file
 
 # Limitations
-- refer to [constraints and limitations](https://help.sap.com/viewer/fsm_ai/Cloud/en-US/constraints-limitations.html) documentation
+- Refer to [constraints and limitations](https://help.sap.com/viewer/fsm_ai/Cloud/en-US/constraints-limitations.html) documentation
 
 # Known Issues
-There are no known issues for the moment.
+- There are no known issues for the moment.
 
 # How to obtain support
 
@@ -51,7 +65,7 @@ There are no known issues for the moment.
 ## Technical request 
 - [https://developers.sap.com/](https://developers.sap.com) and developers@sap.com
 
-- technical questions about code in this repository, please open an issue [here](https://github.com/SAP-samples/fsm-scheduling-samples/issues/new)
+- Technical questions about code in this repository, please open an issue [here](https://github.com/SAP-samples/fsm-scheduling-samples/issues/new)
 
 ## Related documentation 
 
