@@ -3,9 +3,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import * as moment from 'moment';
 import { BehaviorSubject, of, Subject } from 'rxjs';
 import { catchError, filter, takeUntil, tap } from 'rxjs/operators';
-import { Job } from '../job-builder/job-builder.component';
-import { GroupedSearchResponse } from '../slot-search/optimization.service';
-import { BookingService, Progress } from './booking.service';
+import { GroupedSearchResponse } from '../../services/slot.service';
+import { BookingService, Progress } from '../../services/booking.service';
+import { Job } from '../../services/job.service';
 
 
 @Component({

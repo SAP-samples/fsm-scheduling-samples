@@ -3,8 +3,7 @@ import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, Valida
 import * as moment from 'moment';
 import { Subject } from 'rxjs';
 import { takeUntil, tap } from 'rxjs/operators';
-import { validSlots } from './has-overlaps.validator';
-
+import { validSlots } from '../../validators/has-overlaps.validator';
 
 const HTML_INPUT_DATE_FORMAT = 'YYYY-MM-DDTHH:mm';
 
@@ -74,7 +73,7 @@ export class SlotBuilderComponent implements OnInit, OnDestroy {
     return this.form.get('slots') as FormArray;
   }
 
-  public getDate(it: FormControl|AbstractControl) {
+  public getDate(it: FormControl | AbstractControl) {
     const { start } = it.value as { start: string, end: string }
     return moment(start, HTML_INPUT_DATE_FORMAT).format('dddd, YYYY-MM-DD');
   }

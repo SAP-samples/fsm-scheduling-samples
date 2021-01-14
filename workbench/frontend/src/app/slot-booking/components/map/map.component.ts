@@ -13,12 +13,11 @@ import Point from 'ol/geom/Point';
 import {
   Circle as CircleStyle,
   Fill,
-  Icon,
   Stroke,
   Style,
 } from 'ol/style';
 import SimpleGeometry from 'ol/geom/SimpleGeometry';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { takeUntil, tap } from 'rxjs/operators';
 
 @Component({

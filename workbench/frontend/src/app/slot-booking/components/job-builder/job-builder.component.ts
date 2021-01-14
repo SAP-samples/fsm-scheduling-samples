@@ -1,21 +1,12 @@
 import { AfterContentInit, ElementRef, EventEmitter, OnDestroy, Output, ViewChild } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
-import { BehaviorSubject, Observable, Subject, combineLatest, merge, of, from, zip } from 'rxjs';
-import { JobService, TagDTO } from './job.service';
+import { BehaviorSubject, Observable, Subject, combineLatest, merge, of } from 'rxjs';
+import { JobService, TagDTO, Job } from '../../services/job.service';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { filter, map, take, takeUntil, tap } from 'rxjs/operators';
-
-export type Job = {
-  durationMinutes: number,
-  location: {
-    latitude: number,
-    longitude: number
-  } | null,
-  mandatorySkills: string[],
-}
 
 @Component({
   selector: 'job-builder',

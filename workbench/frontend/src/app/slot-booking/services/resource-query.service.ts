@@ -1,14 +1,14 @@
 import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { mergeMap, tap } from 'rxjs/operators';
-import { ConfigService } from '../common/config.service';
-import { CLIENT_IDENTIFIER } from '../common/contants';
-import { GlobalContext, AuthService } from '../common/login-dialog/auth.service';
+import { ConfigService } from '../../common/config.service';
+import { CLIENT_IDENTIFIER } from '../../common/contants';
+import { GlobalContext, AuthService } from '../../common/login-dialog/auth.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class QueryService {
+export class ResourceQueryService {
 
   private resourceCache = new Map<string, { id: string, firstName: string, lastName: string }>();
 

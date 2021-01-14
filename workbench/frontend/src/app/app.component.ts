@@ -10,7 +10,7 @@ import { GlobalContext, AuthService } from './common/login-dialog/auth.service';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-  title = 'frontend';
+  title = 'FSM AI';
 
   ctx$: Observable<GlobalContext>;
   isLoggedIn$: Observable<boolean>;

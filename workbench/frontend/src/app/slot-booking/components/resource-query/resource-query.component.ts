@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { BehaviorSubject, merge, of, Subject, throwError } from 'rxjs';
 import { catchError, mergeMap, take, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
-import { QueryService } from './qurey.service';
+import { ResourceQueryService } from '../../services/resource-query.service';
 
 
 
@@ -76,7 +76,7 @@ export class ResourceQueryComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private svc: QueryService,
+    private svc: ResourceQueryService,
     private snackBar: MatSnackBar,
   ) { }
   public ngOnDestroy() {

@@ -15,23 +15,30 @@ import { ConfigService } from './common/config.service';
 import { ngxMonacoEditorConfig } from './common/editor.conf';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { SlotSearchComponent } from './slot-search/slot-search.component';
-import { SlotBuilderComponent } from './slot-builder/slot-builder.component';
+
+import { SlotBookingComponent } from './slot-booking/slot-booking.component';
+
+import { SlotBuilderComponent } from './slot-booking/components/slot-builder/slot-builder.component';
+import { BookingButtonComponent } from './slot-booking/components/booking-button/booking-button.component';
+import { MapComponent } from './slot-booking/components/map/map.component';
+import { JobBuilderComponent } from './slot-booking/components/job-builder/job-builder.component';
+import { ResourceQueryComponent } from './slot-booking/components/resource-query/resource-query.component';
+
+import { BookingService } from './slot-booking/services/booking.service';
+import { ResourceQueryService } from './slot-booking/services/resource-query.service';
+import { SlotService } from './slot-booking/services/slot.service';
+
+
 import { PluginEditorComponent } from './plugin-editor/plugin-editor.component';
 import { PluginService } from './plugin-editor/plugin.service';
 import { SaveDialog } from './plugin-editor/dialogs/save-dialog.component';
-import { JobBuilderComponent } from './job-builder/job-builder.component';
-import { MapComponent } from './map/map.component';
-import { OptimizationService } from './slot-search/optimization.service';
-import { ResourceQueryComponent } from './resource-query/resource-query.component';
-import { QueryService } from './resource-query/qurey.service';
-import { BookingButtonComponent } from './booking-button/booking-button.component';
-import { BookingService } from './booking-button/booking.service';
+
+
 
 @NgModule({
   declarations: [
     AppComponent,
-    SlotSearchComponent,
+    SlotBookingComponent,
     LoginDialogComponent,
     SlotBuilderComponent,
     PluginEditorComponent,
@@ -56,8 +63,8 @@ import { BookingService } from './booking-button/booking.service';
     ConfigService,
     AuthService,
     PluginService,
-    OptimizationService,
-    QueryService,
+    SlotService,
+    ResourceQueryService,
     BookingService,
     { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { floatLabel: 'always' } },
     { provide: MAT_DATE_LOCALE, useValue: 'de-de' },

@@ -4,18 +4,17 @@ import { FormBuilder, FormGroup, } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
 import { catchError, filter, map, mergeMap, pairwise, take, takeUntil, tap } from 'rxjs/operators';
-import { Job } from '../job-builder/job-builder.component';
 import { AuthService } from '../common/login-dialog/auth.service';
-import { PluginEditorData } from '../plugin-editor/plugin-editor.component';
-import { Slot } from '../slot-builder/slot-builder.component';
-import { OptimizationService, SearchRequest, SearchResponseWrapper } from './optimization.service';
+import { Slot } from './components/slot-builder/slot-builder.component';
+import { SlotService, SearchRequest, SearchResponseWrapper } from './services/slot.service';
+import { Job } from './services/job.service';
 
 @Component({
-  selector: 'slot-search',
-  templateUrl: './slot-search.component.html',
-  styleUrls: ['./slot-search.component.scss']
+  selector: 'slot-booking',
+  templateUrl: './slot-booking.component.html',
+  styleUrls: ['./slot-booking.component.scss']
 })
-export class SlotSearchComponent implements OnInit, OnDestroy {
+export class SlotBookingComponent implements OnInit, OnDestroy {
 
   public slotBuilder$ = new BehaviorSubject<Slot[]>([]);
   public pluginEditor$ = new BehaviorSubject<string | null>(null);
@@ -30,7 +29,7 @@ export class SlotSearchComponent implements OnInit, OnDestroy {
 
   constructor(
     private fb: FormBuilder,
-    private service: OptimizationService,
+    private service: SlotService,
     private auth: AuthService,
     private snackBar: MatSnackBar,
   ) { }

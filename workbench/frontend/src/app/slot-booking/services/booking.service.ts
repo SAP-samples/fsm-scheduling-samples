@@ -1,14 +1,14 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import * as moment from 'moment';
-import { Observable, of } from 'rxjs';
-import { delay, map, mergeMap, take, tap } from 'rxjs/operators';
-import { ConfigService } from '../common/config.service';
-import { CLIENT_IDENTIFIER } from '../common/contants';
-import { AuthService, GlobalContext } from '../common/login-dialog/auth.service';
-import { Job } from '../job-builder/job-builder.component';
-import { QueryService } from '../resource-query/qurey.service';
-import { SearchResponseItem } from '../slot-search/optimization.service';
+import { Observable } from 'rxjs';
+import { mergeMap, take } from 'rxjs/operators';
+import { ConfigService } from '../../common/config.service';
+import { CLIENT_IDENTIFIER } from '../../common/contants';
+import { AuthService, GlobalContext } from '../../common/login-dialog/auth.service';
+import { Job } from './job.service';
+import { ResourceQueryService } from './resource-query.service';
+import { SearchResponseItem } from './slot.service';
 
 export type Progress = {
   message: string,
@@ -26,7 +26,7 @@ export class BookingService {
     private config: ConfigService,
     private auth: AuthService,
     private http: HttpClient,
-    private query: QueryService
+    private query: ResourceQueryService
   ) { }
 
   private getHeaders(ctx: GlobalContext) {

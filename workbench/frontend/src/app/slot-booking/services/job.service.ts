@@ -1,9 +1,18 @@
 import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { mergeMap, tap } from 'rxjs/operators';
-import { ConfigService } from '../common/config.service';
-import { CLIENT_IDENTIFIER } from '../common/contants';
-import { GlobalContext, AuthService } from '../common/login-dialog/auth.service';
+import { mergeMap } from 'rxjs/operators';
+import { ConfigService } from '../../common/config.service';
+import { CLIENT_IDENTIFIER } from '../../common/contants';
+import { GlobalContext, AuthService } from '../../common/login-dialog/auth.service';
+
+export type Job = {
+  durationMinutes: number,
+  location: {
+    latitude: number,
+    longitude: number
+  } | null,
+  mandatorySkills: string[],
+}
 
 export type TagDTO = {
   branches: null

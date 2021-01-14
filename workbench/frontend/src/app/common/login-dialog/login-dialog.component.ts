@@ -51,11 +51,11 @@ export class LoginDialogComponent implements OnInit {
   public loginForm: FormGroup;
 
   public cloudHosts = [
-    { text: 'Production', value: 'ds.coresuite.com' },
-    { text: 'Sandbox', value: 'sb.dev.coresuite.com' },
-    { text: 'ET Development', value: 'et.dev.coresuite.com' },
-    { text: 'QT Development', value: 'qt.dev.coresuite.com' },
-    { text: 'DT Development', value: 'dt.dev.coresuite.com' },
+    { text: 'production', value: 'ds.coresuite.com' },
+    { text: 'sandbox', value: 'sb.dev.coresuite.com' },
+    { text: 'ET development', value: 'et.dev.coresuite.com' },
+    { text: 'QT development', value: 'qt.dev.coresuite.com' },
+    { text: 'DT development', value: 'dt.dev.coresuite.com' },
   ].map(({ text, value }) => ({ value, text: `${text}` }))
 
   constructor(

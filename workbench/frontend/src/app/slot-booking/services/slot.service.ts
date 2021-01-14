@@ -2,11 +2,10 @@ import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
-import { ConfigService } from '../common/config.service';
-import { CLIENT_IDENTIFIER } from '../common/contants';
-import { GlobalContext, AuthService } from '../common/login-dialog/auth.service';
-import { QueryService } from '../resource-query/qurey.service';
-
+import { ConfigService } from '../../common/config.service';
+import { CLIENT_IDENTIFIER } from '../../common/contants';
+import { GlobalContext, AuthService } from '../../common/login-dialog/auth.service';
+import { ResourceQueryService } from './resource-query.service';
 
 export type GroupedSearchResponse = {
   items: SearchResponseItem[],
@@ -74,7 +73,7 @@ type ILocation = {
 @Injectable({
   providedIn: 'root'
 })
-export class OptimizationService {
+export class SlotService {
 
   private getHeaders(ctx: GlobalContext) {
     return new HttpHeaders({
@@ -97,13 +96,12 @@ export class OptimizationService {
     private config: ConfigService,
     private auth: AuthService,
     private http: HttpClient,
-    private queryService: QueryService
+    private queryService: ResourceQueryService
   ) {
   }
 
   public doRequest(body: SearchRequest): Observable<SearchResponseWrapper> {
     const t0 = performance.now();
-
 
 
     return this.auth.globalContextWithAuth$.pipe(

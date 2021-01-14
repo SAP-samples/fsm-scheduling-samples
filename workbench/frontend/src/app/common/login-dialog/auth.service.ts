@@ -79,6 +79,7 @@ export class AuthService {
         '[❌ WARN ❌ ] no session found',
         'login', () => this.openLoginDialog()
       );
+      this.openLoginDialog();
     }
   }
 
