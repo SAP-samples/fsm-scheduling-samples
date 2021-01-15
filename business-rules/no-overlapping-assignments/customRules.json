@@ -7,7 +7,7 @@
         "parameters": {
           "constraints": [
             {
-              "name": "Action not allowed - activity is overlapping other assignments. Context activity subject:[${activity.subject}] (id=${activity.id})",
+              "name": "Action not allowed - activity is overlapping other released activity. Context activity subject:[${activity.subject}] (id=${activity.id})",
               "value": "${overlapping_sa.length === 0}"
             }
           ]
@@ -16,7 +16,7 @@
     ],
     "code": "VALIDATION_RULE_NO_OVERLAPPING_ASSIGNMENTS",
     "conditions": [],
-    "description": "Don't allow overlapping assignments",
+    "description": "Don't allow overlapping assignments for released activities",
     "embedded": false,
     "enabled": true,
     "eventType": "CREATE_OR_UPDATE",
@@ -31,7 +31,7 @@
       {
         "name": "overlapping_sa",
         "dtoVersions": "ServiceAssignment.28",
-        "query": "select overlap.id from ServiceAssignment overlap WHERE overlap.id != ${serviceAssignment.id} AND overlap.technician = ${serviceAssignment.technician} AND ((overlap.startDateTime >= ${serviceAssignment.startDateTime} AND overlap.endDateTime <= ${serviceAssignment.endDateTime}) \tOR (overlap.startDateTime < ${serviceAssignment.startDateTime} AND overlap.endDateTime > ${serviceAssignment.startDateTime}) OR (overlap.startDateTime < ${serviceAssignment.endDateTime} AND overlap.endDateTime > ${serviceAssignment.endDateTime})) limit 20"
+        "query": "select overlap.id from ServiceAssignment overlap WHERE overlap.id != ${serviceAssignment.id} AND overlap.released = true AND overlap.technician = ${serviceAssignment.technician} AND ((overlap.startDateTime >= ${serviceAssignment.startDateTime} AND overlap.endDateTime <= ${serviceAssignment.endDateTime}) \tOR (overlap.startDateTime < ${serviceAssignment.startDateTime} AND overlap.endDateTime > ${serviceAssignment.startDateTime}) OR (overlap.startDateTime < ${serviceAssignment.endDateTime} AND overlap.endDateTime > ${serviceAssignment.endDateTime})) limit 20"
       },
       {
         "name": "activity",

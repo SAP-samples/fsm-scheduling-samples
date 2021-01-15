@@ -4,8 +4,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { BehaviorSubject } from 'rxjs';
-import { CLIENT_IDENTIFIER, CLIENT_SECRET } from '../contants';
-import { GlobalContext } from './auth.service';
+import { CLIENT_IDENTIFIER, CLIENT_SECRET } from '../../contants';
+import { GlobalContext } from '../../services/auth.service';
 
 
 export type OauthTokenResponse = {

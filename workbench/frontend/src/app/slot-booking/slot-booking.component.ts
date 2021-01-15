@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
 import { catchError, filter, map, mergeMap, pairwise, take, takeUntil, tap } from 'rxjs/operators';
-import { AuthService } from '../common/login-dialog/auth.service';
+import { AuthService } from '../common/services/auth.service';
 import { Slot } from './components/slot-builder/slot-builder.component';
 import { SlotService, SearchRequest, SearchResponseWrapper } from './services/slot.service';
 import { Job } from './services/job.service';

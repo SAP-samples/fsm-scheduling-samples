@@ -17,7 +17,7 @@
     <div *ngIf="response$ && (response$ | async) && (response$ | async).grouped">
 
       <mat-expansion-panel *ngFor="let group of (response$ | async).grouped; index as i" class="margin-10"
-        [expanded]="i === 0">
+        [expanded]="i === 0 && false">
         <mat-expansion-panel-header>
           <mat-panel-title>
 
@@ -98,25 +98,32 @@
 </mat-expansion-panel>
 
 
-<mat-card class="margin-10" style="display: flex;">
+<mat-card class="margin-10">
+
   <button mat-raised-button [disabled]="!(isLoggedIn$ | async) || (isLoading$ | async)"
     (click)="request_response.open(); doRequest();" color="primary" class="margin-10">
-    <mat-icon>search</mat-icon> Search Request
+    <mat-icon>search</mat-icon> Search for slots
   </button>
 
-  <div [formGroup]="requestOptions" style="margin-top: 5px;">
+  using <mat-chip>/api/v2/job-slots/actions/search</mat-chip> Search Job Slot API see
+
+  <a target="_blank" style="margin-top: 15px;"
+    href="https://eu.coresystems.net/optimization/api/v1/swagger-ui/#/Search%20Job%20Slot/post_api_v2_job_slots_actions_search">
+    documentation
+  </a>
+
+  <div [formGroup]="requestOptions" style="margin-top: 15px; display: none;">
     <mat-slide-toggle formControlName="refresh">auto refresh</mat-slide-toggle>
   </div>
 
   <div *ngIf="response$ && (response$ | async)" style="margin-top: 8px; margin-left: 10px;">
-    Timing: {{ (response$ | async).time }} ms for {{ (response$ | async).grouped.length }} solts with
+    Timing: {{ (response$ | async).time | number }} ms for {{ (response$ | async).grouped.length }} solts with
     {{ (response$ | async).results.length }} matches
   </div>
 
 </mat-card>
 
 <h2 class="margin-10">Slot Search Options:</h2>
-
 
 <mat-expansion-panel class="margin-10">
   <mat-expansion-panel-header>

@@ -1,10 +1,10 @@
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { of, throwError } from 'rxjs';
-import { catchError, mergeMap, retry, tap } from 'rxjs/operators';
-import { ConfigService } from '../common/config.service';
-import { CLIENT_IDENTIFIER } from '../common/contants';
-import { AuthService, GlobalContext } from '../common/login-dialog/auth.service';
+import { catchError, mergeMap, } from 'rxjs/operators';
+import { ConfigService } from './config.service';
+import { CLIENT_IDENTIFIER } from '../contants';
+import { AuthService, GlobalContext } from './auth.service';
 
 export type PluginDto = {
   id: string,

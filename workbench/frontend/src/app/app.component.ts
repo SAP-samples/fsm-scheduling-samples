@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
-import { GlobalContext, AuthService } from './common/login-dialog/auth.service';
+import { GlobalContext, AuthService } from './common/services/auth.service';
 
 @Component({
   selector: 'app-root',

@@ -8,10 +8,10 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
-import { LoginDialogComponent } from './common/login-dialog/login-dialog.component';
-import { AuthService } from './common/login-dialog/auth.service';
+import { LoginDialogComponent } from './common/components/login-dialog/login-dialog.component';
+import { AuthService } from './common/services/auth.service';
 import { MatModules } from './common/material.modules';
-import { ConfigService } from './common/config.service';
+import { ConfigService } from './common/services/config.service';
 import { ngxMonacoEditorConfig } from './common/editor.conf';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -30,8 +30,9 @@ import { SlotService } from './slot-booking/services/slot.service';
 
 
 import { PluginEditorComponent } from './plugin-editor/plugin-editor.component';
-import { PluginService } from './plugin-editor/plugin.service';
-import { SaveDialog } from './plugin-editor/dialogs/save-dialog.component';
+import { PluginService } from './common/services/plugin.service';
+import { SaveDialog } from './plugin-editor/save-dialog/save-dialog.component';
+import { ReOptimizeComponent } from './re-optimize/re-optimize.component';
 
 
 
@@ -46,7 +47,8 @@ import { SaveDialog } from './plugin-editor/dialogs/save-dialog.component';
     JobBuilderComponent,
     MapComponent,
     ResourceQueryComponent,
-    BookingButtonComponent
+    BookingButtonComponent,
+    ReOptimizeComponent
   ],
   entryComponents: [SaveDialog],
   imports: [

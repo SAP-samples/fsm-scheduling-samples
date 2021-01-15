@@ -1,14 +1,14 @@
-import { AfterContentInit, Component, ContentChild, EventEmitter, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
+import { AfterContentInit, Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { EditorComponent } from 'ngx-monaco-editor';
 
-import { BehaviorSubject, merge, Observable, Subject, throwError } from 'rxjs';
+import { BehaviorSubject, merge, Observable, Subject } from 'rxjs';
 import { of } from 'rxjs';
 import { takeUntil, tap, map, mergeMap, switchMap, take, catchError, filter } from 'rxjs/operators';
-import { SaveDialog } from './dialogs/save-dialog.component';
+import { SaveDialog } from './save-dialog/save-dialog.component';
 import { pluginTemplate } from './plugin-template';
-import { PluginDto, PluginService } from './plugin.service';
+import { PluginDto, PluginService } from '../common/services/plugin.service';
 
 export interface PluginEditorData {
   id: string,

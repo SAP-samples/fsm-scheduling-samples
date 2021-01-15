@@ -6,29 +6,25 @@
 
 In this repository you will find example code, code snippet and a example scheduling workbench-app application to work with SAP FSM APIs for advanced scheduling use cases and reference implementation for integration scenarios.
 
-related: 
-- [SAP Field Service Management - Product Website](https://www.sap.com/germany/products/field-service-management.html)
-- [SAP Field Service Management - AI-based Scheduling](https://help.sap.com/viewer/fsm_ai/Cloud/en-US/ai-based-scheduling-overview.html)
+## Demo application 
+
+Find a workbench demo here: [demo-application](https://fsm-scheduling-samples.cfapps.eu10.hana.ondemand.com)
+
 # Requirements
 
 to use the examples in this repository you will need a SAP FSM account with admin-role data access with account (id & name) / company (id & name)  / user (id & name) as well as the name of the data-cluster (eu|de|us|au|cn)
 
+to build and run the source code:
 - docker 19.x
 - nodejs v10.x
 - npm v6.9.x
 
 >**NOTE:** We recommend using unix based systems to follow this guide. Note that for OSX and Windows tools might be installed differently.
 
+
 # Getting started, Download and Installation
 
 Checkout the [how-to.md](./docs/how-to.md) quick guide in the `/docs`-folder.
-
-## Demo application 
-
-Find a workbench demo here:
-
-[https://fsm-scheduling-samples.cfapps.eu10.hana.ondemand.com](https://fsm-scheduling-samples.cfapps.eu10.hana.ondemand.com)
-
 
 ## Running pre build docker container locally
 ```bash
@@ -69,6 +65,8 @@ d -> deploy
 
 ## Related documentation 
 
+- [SAP Field Service Management - Product Website](https://www.sap.com/germany/products/field-service-management.html)
+- [SAP Field Service Management - AI-based Scheduling](https://help.sap.com/viewer/fsm_ai/Cloud/en-US/ai-based-scheduling-overview.html) 
 - [Sample Business Rules for Optimization](https://help.sap.com/viewer/fsm_ai/Cloud/en-US/optimization-business-rules.htm)
 - [Optimization API](https://eu.coresystems.net/optimization/api/v1/swagger-ui/#/)
 - [Service Management API](https://help.sap.com/viewer/fsm_service_api/Cloud/en-US/service-api-overview.html) [Spec](https://app.swaggerhub.com/apis/coresystemsFSM/ServiceManagementAPI) 
@@ -79,4 +77,4 @@ d -> deploy
 Want to contribute? Check out our [contribution](./CONTRIBUTING.md) guide and follow our [code of conduct](./CODE_OF_CONDUCT).
 
 # License
-Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved. This project is licensed under the Apache Software License, version 2.0 except as noted otherwise in the [LICENSE](./LICENSE) file.
+Copyright (c) 2021 SAP SE or an SAP affiliate company. All rights reserved. This project is licensed under the Apache Software License, version 2.0 except as noted otherwise in the [LICENSE](./LICENSE) file.

@@ -2,9 +2,9 @@ import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
-import { ConfigService } from '../../common/config.service';
+import { ConfigService } from '../../common/services/config.service';
 import { CLIENT_IDENTIFIER } from '../../common/contants';
-import { GlobalContext, AuthService } from '../../common/login-dialog/auth.service';
+import { GlobalContext, AuthService } from '../../common/services/auth.service';
 import { ResourceQueryService } from './resource-query.service';
 
 export type GroupedSearchResponse = {

@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { BehaviorSubject } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
-import { LoginDialogComponent } from './login-dialog.component';
+import { LoginDialogComponent } from '../components/login-dialog/login-dialog.component';
 
 export interface GlobalContext {
   authToken: string;
