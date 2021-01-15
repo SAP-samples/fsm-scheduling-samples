@@ -41,7 +41,9 @@ export class BookingDTOsBuilder {
       "businessPartner": businessPartnerId,
       "createDateTime": null,
       "address": addressId,
+      
       "durationInMinutes": this._br.job.durationMinutes,
+      "plannedDurationType": 'AUTOMATIC', //  AUTOMATIC, MANUAL, MANUAL_FIX 
 
       "startDateTime": this._br.bookable.start,
       "endDateTime": this._br.bookable.end,
@@ -54,10 +56,10 @@ export class BookingDTOsBuilder {
       // Notes: 
       // to be able to plan activity conditions: 
       // -> status(DRAFT) && executionStage(DISPATCHING) && responsibles[] empty 
+      "useAllEquipments":false,
       "status": "DRAFT",
       "executionStage": "DISPATCHING",
       "type": "ASSIGNMENT",
-
       "checkedOut": false,
       "inactive": false,
       "lastChanged": null,

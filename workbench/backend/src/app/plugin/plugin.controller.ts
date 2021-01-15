@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
-import { Context } from '../ctx.decorator';
+import { Context } from '../../ctx.decorator';
 import { AiDataAPIDAO, PluginDto } from './ai-data-api.dao';
 
 @Controller('api/plugin')

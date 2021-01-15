@@ -3,7 +3,7 @@ import path = require('path');
 import { NestApplicationOptions } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { configService } from './config/config.service';
+import { configService } from './common/config.service';
 
 const config: NestApplicationOptions = {
   cors: true,

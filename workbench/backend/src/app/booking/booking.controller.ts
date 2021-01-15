@@ -1,9 +1,9 @@
 import { Body, Controller, Post, Res } from '@nestjs/common';
-import { Context } from '../ctx.decorator';
+import { Context } from '../../ctx.decorator';
 import { AxiosError } from 'axios';
 import { Response } from 'express';
 import { ServiceManagementAPIDAO } from './service-management-api.dao';
-import { FsmAPIClientFactory } from '../common/fsm-api-client.factory';
+import { FsmAPIClientFactory } from '../../common/fsm-api-client.factory';
 import { BookingDTOsBuilder } from './booking-dtos.builder';
 
 

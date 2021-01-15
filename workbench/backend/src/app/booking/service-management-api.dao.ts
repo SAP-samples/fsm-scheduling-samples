@@ -1,5 +1,5 @@
 import { HttpService, Injectable } from '@nestjs/common';
-import { Context } from '../ctx.decorator';
+import { Context } from '../../ctx.decorator';
 import { AxiosRequestConfig, AxiosError } from 'axios';
 import { tap, catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';

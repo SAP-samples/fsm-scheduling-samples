@@ -1,14 +1,14 @@
 import { HttpModule, Module } from '@nestjs/common';
 import { APP_INTERCEPTOR } from '@nestjs/core';
-import { AiDataAPIDAO } from './plugin/ai-data-api.dao';
-import { PluginController } from './plugin/plugin.controller';
-import { QueryController } from './query/query.controller';
 import { AppController } from './app.controller';
-import { JobSlotsController } from './job-slots/job-slots.controller';
-import { OptimisationAPIDAO } from './job-slots/optimisation-api.dao';
-import { BookingController } from './booking/booking.controller';
-import { ServiceManagementAPIDAO } from './booking/service-management-api.dao';
 import { FsmAPIClientFactory } from './common/fsm-api-client.factory';
+import { BookingController } from './app/booking/booking.controller';
+import { PluginController } from './app/plugin/plugin.controller';
+import { QueryController } from './app/query/query.controller';
+import { JobSlotsController } from './app/job-slots/job-slots.controller';
+import { AiDataAPIDAO } from './app/plugin/ai-data-api.dao';
+import { OptimisationAPIDAO } from './app/job-slots/optimisation-api.dao';
+import { ServiceManagementAPIDAO } from './app/booking/service-management-api.dao';
 import { TimeoutInterceptor } from './common/timeout.interceptor';
 
 @Module({

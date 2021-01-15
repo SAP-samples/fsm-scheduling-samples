@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { CoreAPIClient } from 'fsm-sdk';
-import { configService } from 'src/config/config.service';
+import { configService } from 'src/common/config.service';
 import { Context } from '../ctx.decorator';
 
 @Injectable()

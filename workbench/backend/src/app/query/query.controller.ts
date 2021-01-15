@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
-import { Context } from '../ctx.decorator';
-import { AddressDTO, TagDTO } from '../common/dto-models';
-import { FsmAPIClientFactory } from '../common/fsm-api-client.factory';
+import { Context } from '../../ctx.decorator';
+import { AddressDTO, TagDTO } from '../../common/dto-models';
+import { FsmAPIClientFactory } from '../../common/fsm-api-client.factory';
 import { DTOName } from 'fsm-sdk/release/model/DTOModels';
 
 @Controller('api/query')

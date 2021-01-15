@@ -7,7 +7,7 @@ export class AppController {
   constructor() { }
 
   @Get()
-  async getHello(@Res() response: express.Response, @Req() request: express.Request) {
+  async redirectToApp(@Res() response: express.Response, @Req() request: express.Request) {
     return response.redirect(303, `/app`);
   }
 }

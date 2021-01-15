@@ -1,45 +1,43 @@
-[
-  {
-    "actions": [
-      {
-        "executionCount": "1",
-        "name": "Validate",
-        "parameters": {
-          "constraints": [
-            {
-              "name": "Action not allowed - activity is overlapping other released activity. Context activity subject:[${activity.subject}] (id=${activity.id})",
-              "value": "${overlapping_sa.length === 0}"
-            }
-          ]
-        }
-      }
-    ],
-    "code": "VALIDATION_RULE_NO_OVERLAPPING_ASSIGNMENTS",
-    "conditions": [],
-    "description": "Don't allow overlapping assignments for released activities",
-    "embedded": false,
-    "enabled": true,
-    "eventType": "CREATE_OR_UPDATE",
-    "executionType": "ON_VALIDATION",
-    "lastChanged": 1608205131050,
-    "name": "VALIDATION_RULE_NO_OVERLAPPING_ASSIGNMENTS",
-    "objectType": "SERVICEASSIGNMENT",
-    "permissionsType": "USER",
-    "responsible": "s.gausmann@sap.com",
-    "type": "TWO",
-    "variables": [
-      {
-        "name": "overlapping_sa",
-        "dtoVersions": "ServiceAssignment.28",
-        "query": "select overlap.id from ServiceAssignment overlap WHERE overlap.id != ${serviceAssignment.id} AND overlap.released = true AND overlap.technician = ${serviceAssignment.technician} AND ((overlap.startDateTime >= ${serviceAssignment.startDateTime} AND overlap.endDateTime <= ${serviceAssignment.endDateTime}) \tOR (overlap.startDateTime < ${serviceAssignment.startDateTime} AND overlap.endDateTime > ${serviceAssignment.startDateTime}) OR (overlap.startDateTime < ${serviceAssignment.endDateTime} AND overlap.endDateTime > ${serviceAssignment.endDateTime})) limit 20"
-      },
-      {
-        "name": "activity",
-        "type": "Activity",
-        "value": "${serviceAssignment.activity} = activity.id",
-        "variableType": "OBJECT",
-        "version": 37
-      }
-    ]
-  }
-]
+[ {
+  "actions" : [ {
+    "executionCount" : "1",
+    "name" : "Validate",
+    "parameters" : {
+      "constraints" : [ {
+        "name" : "Action not allowed - activity is overlapping other released activity (id=${activity.id}) of technician (${serviceAssignment.technician}).",
+        "value" : "${overlapping_sa.length === 0}"
+      }, {
+        "name" : "Action not allowed - activity is overlapping reservation of technician (${serviceAssignment.technician}).",
+        "value" : "${overlapping_pr.length === 0}"
+      } ]
+    }
+  } ],
+  "code" : "VALIDATION_RULE_NO_OVERLAPPING_ASSIGNMENTS",
+  "conditions" : [ ],
+  "description" : "Don't allow overlapping assignments for released activities",
+  "embedded" : false,
+  "enabled" : true,
+  "eventType" : "CREATE_OR_UPDATE",
+  "executionType" : "ON_VALIDATION",
+  "lastChanged" : 1610709005065,
+  "name" : "SAMPLE - Validation - Do not allow overlapping assignment",
+  "objectType" : "SERVICEASSIGNMENT",
+  "permissionsType" : "USER",
+  "responsible" : "s.gausmann@sap.com",
+  "type" : "TWO",
+  "variables" : [ {
+    "name" : "overlapping_sa",
+    "dtoVersions" : "ServiceAssignment.28",
+    "query" : "SELECT overlap.id FROM ServiceAssignment overlap WHERE overlap.id != ${serviceAssignment.id} AND overlap.released = true AND overlap.inactive = false AND overlap.technician = ${serviceAssignment.technician} AND ((overlap.startDateTime >= ${serviceAssignment.startDateTime} AND overlap.endDateTime <= ${serviceAssignment.endDateTime}) OR (overlap.startDateTime < ${serviceAssignment.startDateTime} AND overlap.endDateTime > ${serviceAssignment.startDateTime}) OR (overlap.startDateTime < ${serviceAssignment.endDateTime} AND overlap.endDateTime > ${serviceAssignment.endDateTime})) limit 20"
+  }, {
+    "name" : "activity",
+    "type" : "Activity",
+    "value" : "${serviceAssignment.activity} = activity.id",
+    "variableType" : "OBJECT",
+    "version" : 37
+  }, {
+    "name" : "overlapping_pr",
+    "dtoVersions" : "PersonReservation.18",
+    "query" : "SELECT overlap.id FROM PersonReservation overlap WHERE overlap.person = ${serviceAssignment.technician} AND ((overlap.startDate >= ${serviceAssignment.startDateTime} AND overlap.endDate <= ${serviceAssignment.endDateTime}) OR (overlap.startDate < ${serviceAssignment.startDateTime} AND overlap.endDate > ${serviceAssignment.startDateTime}) OR (overlap.startDate < ${serviceAssignment.endDateTime} AND overlap.endDate > ${serviceAssignment.endDateTime})) limit 20"
+  } ]
+} ]

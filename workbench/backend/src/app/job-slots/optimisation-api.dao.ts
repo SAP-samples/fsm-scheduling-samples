@@ -2,9 +2,9 @@ import { HttpService, Injectable } from '@nestjs/common';
 import { AxiosRequestConfig, AxiosError } from 'axios';
 import { tap, catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
-import { Context } from '../ctx.decorator';
-import { FSM_HOSTS_CORESUITE_TO_CORESYSTEMS } from '../common/constants';
-import { configService } from 'src/config/config.service';
+import { Context } from '../../ctx.decorator';
+import { FSM_HOSTS_CORESUITE_TO_CORESYSTEMS } from '../../common/constants';
+import { configService } from 'src/common/config.service';
 
 export type SearchRequest = Readonly<{
   job: Readonly<{

@@ -1,6 +1,5 @@
 require('dotenv').config();
 
-
 export class ConfigService {
 
   constructor(private env: { [k: string]: string | undefined }) { }
