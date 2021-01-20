@@ -5,6 +5,7 @@ import { Response } from 'express';
 import { ServiceManagementAPIDAO } from './service-management-api.dao';
 import { FsmAPIClientFactory } from '../../common/fsm-api-client.factory';
 import { BookingDTOsBuilder } from './booking-dtos.builder';
+import { CreateAction } from 'fsm-sdk/release/core/batch-action.model';
 
 
 export type BookingRequest = {
@@ -50,14 +51,14 @@ export class BookingController {
       const client = this.factory.fromContext(ctx);
       const builder = BookingDTOsBuilder.from(bookingRequest);
 
-      // Note: This should be done in one TRANSACTION
-
       // create necessary FSM objects
       const related = builder.buildPlanningRelatedObjects();
-      const [{ businessPartner }] = await client.post('BusinessPartner', related.businessPartner).then(x => x.data);
-      const [{ address }] = await client.post('Address', related.address).then(x => x.data);
-      const [{ serviceCall }] = await client.post('ServiceCall', related.serviceCall).then(x => x.data);
-      const [{ activity }] = await client.post('Activity', related.activity).then(x => x.data);
+      const [[{ businessPartner }], [{ address }], [{ serviceCall }], [{ activity }]] = await client.batch([
+        new CreateAction('BusinessPartner', related.businessPartner),
+        new CreateAction('Address', related.address),
+        new CreateAction('ServiceCall', related.serviceCall),
+        new CreateAction('Activity', related.activity),
+      ]).then(resp => resp.map(wrapper => wrapper.body.data));
 
       // book -> plan & release
       const planResult = await this.dao.plan(ctx, activity.id, builder.buildPlanningRequest()).toPromise().then(x => x.data);
