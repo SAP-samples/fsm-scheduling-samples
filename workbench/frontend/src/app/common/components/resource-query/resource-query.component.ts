@@ -2,11 +2,9 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { BehaviorSubject, merge, of, Subject, throwError } from 'rxjs';
+import { BehaviorSubject, merge, of, Subject } from 'rxjs';
 import { catchError, mergeMap, take, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
 import { ResourceQueryService } from '../../services/resource-query.service';
-
-
 
 const TEMPLATES = {
   default: `

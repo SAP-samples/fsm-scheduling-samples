@@ -6,7 +6,7 @@ import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
 import { catchError, filter, map, mergeMap, pairwise, take, takeUntil, tap } from 'rxjs/operators';
 import { AuthService } from '../common/services/auth.service';
 import { Slot } from './components/slot-builder/slot-builder.component';
-import { SlotService, SearchRequest, SearchResponseWrapper } from './services/slot.service';
+import { SlotSearchService, SearchRequest, SearchResponseWrapper } from './services/slot-booking.service';
 import { Job } from './services/job.service';
 
 @Component({
@@ -29,7 +29,7 @@ export class SlotBookingComponent implements OnInit, OnDestroy {
 
   constructor(
     private fb: FormBuilder,
-    private service: SlotService,
+    private service: SlotSearchService,
     private auth: AuthService,
     private snackBar: MatSnackBar,
   ) { }
@@ -123,6 +123,7 @@ export class SlotBookingComponent implements OnInit, OnDestroy {
   public doRequest() {
 
     this.isLoading$.next(true);
+
     this.requestPayload$.pipe(
       take(1),
       mergeMap(payload => {

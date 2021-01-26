@@ -8,7 +8,7 @@ import { of } from 'rxjs';
 import { takeUntil, tap, map, mergeMap, switchMap, take, catchError, filter } from 'rxjs/operators';
 import { SaveDialog } from './save-dialog/save-dialog.component';
 import { pluginTemplate } from './plugin-template';
-import { PluginDto, PluginService } from '../common/services/plugin.service';
+import { PluginDto, PluginService } from '../../services/plugin.service';
 
 export interface PluginEditorData {
   id: string,

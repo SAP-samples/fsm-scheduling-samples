@@ -7,9 +7,10 @@ import { PluginController } from './app/plugin/plugin.controller';
 import { QueryController } from './app/query/query.controller';
 import { JobSlotsController } from './app/job-slots/job-slots.controller';
 import { AiDataAPIDAO } from './app/plugin/ai-data-api.dao';
-import { OptimisationAPIDAO } from './app/job-slots/optimisation-api.dao';
+import { OptimisationAPIDAO } from './common/optimisation-api.dao';
 import { ServiceManagementAPIDAO } from './app/booking/service-management-api.dao';
 import { TimeoutInterceptor } from './common/timeout.interceptor';
+import { ReOptimizeController } from './app/re-optimize/re-optimize.controller';
 
 @Module({
   imports: [HttpModule],
@@ -18,6 +19,7 @@ import { TimeoutInterceptor } from './common/timeout.interceptor';
     JobSlotsController,
     PluginController,
     QueryController,
+    ReOptimizeController,
     AppController
   ],
   providers: [

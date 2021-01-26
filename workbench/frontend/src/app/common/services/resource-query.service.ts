@@ -1,9 +1,9 @@
 import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { mergeMap, tap } from 'rxjs/operators';
-import { ConfigService } from '../../common/services/config.service';
-import { CLIENT_IDENTIFIER } from '../../common/contants';
-import { GlobalContext, AuthService } from '../../common/services/auth.service';
+import { ConfigService } from './config.service';
+import { CLIENT_IDENTIFIER } from '../contants';
+import { GlobalContext, AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'

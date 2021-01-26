@@ -5,7 +5,7 @@ import { map, mergeMap } from 'rxjs/operators';
 import { ConfigService } from '../../common/services/config.service';
 import { CLIENT_IDENTIFIER } from '../../common/contants';
 import { GlobalContext, AuthService } from '../../common/services/auth.service';
-import { ResourceQueryService } from './resource-query.service';
+import { ResourceQueryService } from '../../common/services/resource-query.service';
 
 export type GroupedSearchResponse = {
   items: SearchResponseItem[],
@@ -73,7 +73,7 @@ type ILocation = {
 @Injectable({
   providedIn: 'root'
 })
-export class SlotService {
+export class SlotSearchService {
 
   private getHeaders(ctx: GlobalContext) {
     return new HttpHeaders({

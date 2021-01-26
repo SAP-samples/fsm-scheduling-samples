@@ -22,17 +22,21 @@ import { SlotBuilderComponent } from './slot-booking/components/slot-builder/slo
 import { BookingButtonComponent } from './slot-booking/components/booking-button/booking-button.component';
 import { MapComponent } from './slot-booking/components/map/map.component';
 import { JobBuilderComponent } from './slot-booking/components/job-builder/job-builder.component';
-import { ResourceQueryComponent } from './slot-booking/components/resource-query/resource-query.component';
 
 import { BookingService } from './slot-booking/services/booking.service';
-import { ResourceQueryService } from './slot-booking/services/resource-query.service';
-import { SlotService } from './slot-booking/services/slot.service';
+import { SlotSearchService } from './slot-booking/services/slot-booking.service';
 
-
-import { PluginEditorComponent } from './plugin-editor/plugin-editor.component';
-import { PluginService } from './common/services/plugin.service';
-import { SaveDialog } from './plugin-editor/save-dialog/save-dialog.component';
 import { ReOptimizeComponent } from './re-optimize/re-optimize.component';
+import { ReOptimizeService } from './re-optimize/services/re-optimize.service';
+
+
+import { PluginService } from './common/services/plugin.service';
+import { ResourceQueryService } from './common/services/resource-query.service';
+import { ResourceQueryComponent } from './common/components/resource-query/resource-query.component';
+
+import { SaveDialog } from './common/components/plugin-editor/save-dialog/save-dialog.component';
+import { PluginEditorComponent } from './common/components/plugin-editor/plugin-editor.component';
+
 
 
 
@@ -65,9 +69,10 @@ import { ReOptimizeComponent } from './re-optimize/re-optimize.component';
     ConfigService,
     AuthService,
     PluginService,
-    SlotService,
+    BookingService,
     ResourceQueryService,
     BookingService,
+    ReOptimizeService,
     { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { floatLabel: 'always' } },
     { provide: MAT_DATE_LOCALE, useValue: 'de-de' },
     { provide: MAT_MOMENT_DATE_ADAPTER_OPTIONS, useValue: { useUtc: true } },

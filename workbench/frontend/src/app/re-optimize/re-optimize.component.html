@@ -1,7 +1,26 @@
+<mat-expansion-panel #request_response class="margin-10">
+  <mat-expansion-panel-header>
+    <mat-panel-title>
+      Slot Search Request / Response
+    </mat-panel-title>
+  </mat-expansion-panel-header>
+
+  <div style="height: 5px;">
+    <mat-progress-bar *ngIf="(isLoading$ | async)" style="height: 5px;" mode="indeterminate"></mat-progress-bar>
+  </div>
+
+  resp here
+
+</mat-expansion-panel>
+
+
+
+
+
 <mat-card class="margin-10">
 
   <button mat-raised-button [disabled]="!(isLoggedIn$ | async) || (isLoading$ | async)"
-    (click)="doRequest();" color="primary" class="margin-10">
+    (click)="request_response.open(); doRequest();" color="primary" class="margin-10">
     <mat-icon>model_training</mat-icon> Perform Optimization
   </button>
 
@@ -18,3 +37,27 @@
   </div>
 
 </mat-card>
+
+<mat-expansion-panel class="margin-10">
+  <mat-expansion-panel-header>
+    <mat-panel-title>
+      <strong class="panel-title">👷&nbsp;&nbsp;Who / People</strong>
+      <mat-chip class="panel-title-chip">{{ (requestPayload$ | async)?.resources.personIds.length }} Technicians
+      </mat-chip>
+    </mat-panel-title>
+    <mat-panel-description></mat-panel-description>
+  </mat-expansion-panel-header>
+  <resource-query (change)="onChangePersonIds($event)"></resource-query>
+</mat-expansion-panel>
+
+
+<mat-expansion-panel class="margin-10">
+  <mat-expansion-panel-header>
+    <mat-panel-title>
+      <strong class="panel-title">🤖&nbsp;&nbsp;How / AI-Plugin</strong>
+      <mat-chip class="panel-title-chip">{{ (requestPayload$ | async)?.optimizationPlugin }}</mat-chip>
+    </mat-panel-title>
+    <mat-panel-description></mat-panel-description>
+  </mat-expansion-panel-header>
+  <plugin-editor (change)="onChangePluginEditor($event)"></plugin-editor>
+</mat-expansion-panel>

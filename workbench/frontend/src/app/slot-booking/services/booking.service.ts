@@ -7,8 +7,8 @@ import { ConfigService } from '../../common/services/config.service';
 import { CLIENT_IDENTIFIER } from '../../common/contants';
 import { AuthService, GlobalContext } from '../../common/services/auth.service';
 import { Job } from './job.service';
-import { ResourceQueryService } from './resource-query.service';
-import { SearchResponseItem } from './slot.service';
+import { ResourceQueryService } from '../../common/services/resource-query.service';
+import { SearchResponseItem } from './slot-booking.service';
 
 export type Progress = {
   message: string,

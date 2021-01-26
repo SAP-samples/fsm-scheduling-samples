@@ -2,8 +2,8 @@ import { HttpService, Injectable } from '@nestjs/common';
 import { AxiosRequestConfig, AxiosError } from 'axios';
 import { tap, catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
-import { Context } from '../../ctx.decorator';
-import { FSM_HOSTS_CORESUITE_TO_CORESYSTEMS } from '../../common/constants';
+import { Context } from '../ctx.decorator';
+import { FSM_HOSTS_CORESUITE_TO_CORESYSTEMS } from './constants';
 import { configService } from 'src/common/config.service';
 
 export type SearchRequest = Readonly<{
@@ -22,12 +22,34 @@ export type SearchRequest = Readonly<{
     maxResultsPerSlot: number;
   }>;
   optimizationPlugin: null | string;
-}>
+}>;
+
+export type ReOptimizeRequest = Readonly<{
+  activityIds: string[];
+  optimizationPlugin: string;
+  start: string;
+  end: string;
+  releaseOnSchedule: boolean;
+  skipLocking: boolean;
+  partitioningStrategy: { skills: string[] };
+  resources: {
+    includeInternalPersons: boolean;
+    includeCrowdPersons: boolean;
+    personIds: string[];
+  };
+  additionalDataOptions: {
+    useBlacklist: boolean;
+    enableRealTimeLocation: boolean;
+    realTimeLocationThresholdInMinutes: number;
+    includePlannedJobsAsBookings: boolean;
+    includeReleasedJobsAsBookings: boolean;
+  };
+}>;
 
 type ILocation = {
   latitude: number;
   longitude: number;
-}
+};
 
 type ISearchRequestSlot = Readonly<{
   start: string;
@@ -39,16 +61,18 @@ type SearchResponse = {
 }
 
 type SearchResponseItem = {
-  slot: { start: string; end: string; },
-  resource: string,
-  start: string,
-  end: string,
+  slot: { start: string; end: string; };
+  resource: string;
+  start: string;
+  end: string;
   trip: {
     durationInMinutes: number;
     distanceInMeters: number;
   }
-  score: number
-}
+  score: number;
+};
+
+
 
 @Injectable()
 export class OptimisationAPIDAO {
@@ -110,6 +134,17 @@ export class OptimisationAPIDAO {
     return this.request<SearchResponse>({
       method: 'POST',
       url: `${this.resolveHost(ctx.cloudHost)}/optimization/api/v2/job-slots/actions/search`,
+      headers: this.getHeaders(ctx),
+      params: this.getParams(ctx),
+      responseType: 'json',
+      data
+    });
+  }
+
+  public reOptimizeSync(ctx: Context, data: ReOptimizeRequest) {
+    return this.request<SearchResponse>({
+      method: 'POST',
+      url: `${this.resolveHost(ctx.cloudHost)}/optimization/api/v1/jobs/actions/re-optimize/sync`,
       headers: this.getHeaders(ctx),
       params: this.getParams(ctx),
       responseType: 'json',

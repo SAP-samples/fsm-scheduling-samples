@@ -1,6 +1,6 @@
 import { Body, Controller, Post, Res } from '@nestjs/common';
 import { Context } from '../../ctx.decorator';
-import { OptimisationAPIDAO, SearchRequest } from './optimisation-api.dao';
+import { OptimisationAPIDAO, SearchRequest } from '../../common/optimisation-api.dao';
 import { AxiosError } from 'axios';
 import { Response } from 'express';
 
