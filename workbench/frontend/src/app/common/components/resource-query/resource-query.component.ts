@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { BehaviorSubject, merge, of, Subject } from 'rxjs';
 import { catchError, mergeMap, take, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
-import { ResourceQueryService } from '../../services/resource-query.service';
+import { QueryService } from '../../services/query.service';
 
 const TEMPLATES = {
   default: `
@@ -74,9 +74,10 @@ export class ResourceQueryComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private svc: ResourceQueryService,
+    private svc: QueryService,
     private snackBar: MatSnackBar,
   ) { }
+
   public ngOnDestroy() {
     this.onDistroy$.next();
   }
@@ -99,7 +100,7 @@ export class ResourceQueryComponent implements OnInit {
       withLatestFrom(merge(of(this.form.value), this.form.valueChanges)),
       mergeMap(([_, form]) => {
         this.isLoading$.next(true);
-        return this.svc.query<{ id: string, lastName: string, firstName: string }>(form.query).pipe(
+        return this.svc.queryResource(form.query).pipe(
           catchError(error => {
             console.error(error);
 

@@ -9,7 +9,7 @@ import { CLIENT_IDENTIFIER } from '../../common/contants';
 import { GlobalContext, AuthService } from '../../common/services/auth.service';
 import { ReOptimizeRequest } from '../re-optimize.component';
 
-export type ReOptimizeReponse = {}
+export type ReOptimizeReponse = { result: boolean }
 export type ReOptimizeReponseWrapper = ReOptimizeReponse & {
   isError: boolean,
   errorMessage: string | null,
@@ -58,7 +58,8 @@ export class ReOptimizeService {
           isError: false,
           errorMessage: null,
           time: (performance.now() - t0),
-          grouped: []
+          grouped: [],
+          result: resp.result
         }
 
       })

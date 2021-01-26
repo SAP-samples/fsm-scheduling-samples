@@ -9,25 +9,25 @@ import { AuthService } from '../common/services/auth.service';
 import { ReOptimizeReponseWrapper, ReOptimizeService } from './services/re-optimize.service';
 
 export type ReOptimizeRequest = {
-  activityIds: string[];
+  activityIds?: string[];
   optimizationPlugin: string;
   start: string;
   end: string;
   releaseOnSchedule: boolean;
   skipLocking: boolean;
   partitioningStrategy?: { skills: string[] };
-  resources: {
+  resources?: Partial<{
     includeInternalPersons: boolean;
     includeCrowdPersons: boolean;
     personIds: string[];
-  };
-  additionalDataOptions: {
+  }>;
+  additionalDataOptions?: Partial<{
     useBlacklist: boolean;
     enableRealTimeLocation: boolean;
     realTimeLocationThresholdInMinutes: number;
     includePlannedJobsAsBookings: boolean;
     includeReleasedJobsAsBookings: boolean;
-  };
+  }>;
 };
 
 
@@ -64,15 +64,13 @@ export class ReOptimizeComponent implements OnInit {
         filter(([pluginEditor, personIds]) => !!(pluginEditor && personIds.length)),
         map(([pluginEditor, personIds]): ReOptimizeRequest => {
           return {
-            activityIds: [
-              "string"
-            ],
+            activityIds: [], // "string"
             optimizationPlugin: pluginEditor,
             start: startDate.toISOString(),
             end: endDate.toISOString(),
             releaseOnSchedule: true,
             skipLocking: true,
-            // partitioningStrategy: {    skills: []   },
+            // partitioningStrategy: {    skills: ["string"]   },
             resources: {
               includeInternalPersons: true,
               includeCrowdPersons: true,
@@ -127,7 +125,7 @@ export class ReOptimizeComponent implements OnInit {
               errorMessage,
               time: -1,
               grouped: [],
-              results: []
+              result: false
             })
 
           })

@@ -31,7 +31,7 @@ import { ReOptimizeService } from './re-optimize/services/re-optimize.service';
 
 
 import { PluginService } from './common/services/plugin.service';
-import { ResourceQueryService } from './common/services/resource-query.service';
+import { QueryService } from './common/services/query.service';
 import { ResourceQueryComponent } from './common/components/resource-query/resource-query.component';
 
 import { SaveDialog } from './common/components/plugin-editor/save-dialog/save-dialog.component';
@@ -70,7 +70,7 @@ import { PluginEditorComponent } from './common/components/plugin-editor/plugin-
     AuthService,
     PluginService,
     BookingService,
-    ResourceQueryService,
+    QueryService,
     BookingService,
     ReOptimizeService,
     { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { floatLabel: 'always' } },

@@ -9,13 +9,9 @@
     <mat-progress-bar *ngIf="(isLoading$ | async)" style="height: 5px;" mode="indeterminate"></mat-progress-bar>
   </div>
 
-  resp here
+  <pre>{{ (response$ | async | json) }}</pre>
 
 </mat-expansion-panel>
-
-
-
-
 
 <mat-card class="margin-10">
 
@@ -32,8 +28,7 @@
   </a>
 
   <div *ngIf="response$ && (response$ | async)" style="margin-top: 8px; margin-left: 10px;">
-    Timing: {{ (response$ | async).time | number }} ms for {{ (response$ | async).grouped.length }} solts with
-    {{ (response$ | async).results.length }} matches
+    Timing: {{ (response$ | async).time | number }} ms
   </div>
 
 </mat-card>

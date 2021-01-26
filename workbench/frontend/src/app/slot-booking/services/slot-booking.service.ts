@@ -5,7 +5,7 @@ import { map, mergeMap } from 'rxjs/operators';
 import { ConfigService } from '../../common/services/config.service';
 import { CLIENT_IDENTIFIER } from '../../common/contants';
 import { GlobalContext, AuthService } from '../../common/services/auth.service';
-import { ResourceQueryService } from '../../common/services/resource-query.service';
+import { QueryService } from '../../common/services/query.service';
 
 export type GroupedSearchResponse = {
   items: SearchResponseItem[],
@@ -96,7 +96,7 @@ export class SlotSearchService {
     private config: ConfigService,
     private auth: AuthService,
     private http: HttpClient,
-    private queryService: ResourceQueryService
+    private queryService: QueryService
   ) {
   }
 
@@ -118,7 +118,7 @@ export class SlotSearchService {
 
             const extendedItem: SearchResponseItemExteded = {
               ...it,
-              resourceVm: this.queryService.resourceFromCache(it.resource)
+              resourceVm: this.queryService.getResourceFromCache(it.resource)
             };
 
             if (theMap.has(hash)) {

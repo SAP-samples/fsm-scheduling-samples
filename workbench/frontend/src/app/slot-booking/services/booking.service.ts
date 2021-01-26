@@ -7,7 +7,7 @@ import { ConfigService } from '../../common/services/config.service';
 import { CLIENT_IDENTIFIER } from '../../common/contants';
 import { AuthService, GlobalContext } from '../../common/services/auth.service';
 import { Job } from './job.service';
-import { ResourceQueryService } from '../../common/services/resource-query.service';
+import { QueryService } from '../../common/services/query.service';
 import { SearchResponseItem } from './slot-booking.service';
 
 export type Progress = {
@@ -26,7 +26,7 @@ export class BookingService {
     private config: ConfigService,
     private auth: AuthService,
     private http: HttpClient,
-    private query: ResourceQueryService
+    private query: QueryService
   ) { }
 
   private getHeaders(ctx: GlobalContext) {
@@ -68,7 +68,7 @@ export class BookingService {
         }
 
 
-        const person = this.query.resourceFromCache(bookable.resource);
+        const person = this.query.getResourceFromCache(bookable.resource);
         op.next({ ...progress, message: `...👷 trying to book ${person.firstName} ${person.lastName} with score [${bookable.score}]` });
 
         return this.book(bookable, job).pipe(take(1))
