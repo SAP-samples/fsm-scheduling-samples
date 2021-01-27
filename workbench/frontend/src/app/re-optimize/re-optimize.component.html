@@ -9,7 +9,36 @@
     <mat-progress-bar *ngIf="(isLoading$ | async)" style="height: 5px;" mode="indeterminate"></mat-progress-bar>
   </div>
 
-  <pre>{{ (response$ | async | json) }}</pre>
+  <div class="margin-10">
+
+    <pre *ngIf="!!(response$ | async) && (response$ | async).isError"
+      class="error-box">{{ (response$ | async).errorMessage }}</pre>
+
+    <div style="display: flex;">
+
+      <div style="width: 40%; margin-right: 10px;">
+        <h2>Request</h2>
+
+        <mat-expansion-panel style="margin: 10px;">
+          <mat-expansion-panel-header>Full JSON Request </mat-expansion-panel-header>
+          <pre *ngIf="requestPayload$">{{ requestPayload$ | async | json }}</pre>
+        </mat-expansion-panel>
+
+      </div>
+
+      <div style="width: 60%;">
+        <h2>Response</h2>
+
+        <mat-expansion-panel style="margin: 10px;">
+          <mat-expansion-panel-header>Full JSON Response </mat-expansion-panel-header>
+          <pre *ngIf="response$ && (response$ | async)">{{ (response$ | async)?.result | json }}</pre>
+        </mat-expansion-panel>
+
+      </div>
+
+    </div>
+
+  </div>
 
 </mat-expansion-panel>
 
@@ -20,6 +49,15 @@
     <mat-icon>model_training</mat-icon> Perform Optimization
   </button>
 
+  <form [formGroup]="requestOptions" style="display: inline;">
+    <mat-form-field appearance="fill" style="width: 100px">
+      <mat-label>mode</mat-label>
+      <mat-select formControlName="mode">
+        <mat-option *ngFor="let x of requestOptionsValues.mode" [value]="x">{{ x }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </form>
+
   using <mat-chip>/api/v1/jobs/actions/re-optimize</mat-chip> Re-Optimization API see
 
   <a target="_blank" style="margin-top: 15px;"
@@ -29,6 +67,15 @@
 
   <div *ngIf="response$ && (response$ | async)" style="margin-top: 8px; margin-left: 10px;">
     Timing: {{ (response$ | async).time | number }} ms
+  </div>
+
+
+  <h4>Options</h4>
+  <div [formGroup]="requestOptions" style="margin-top: 15px;">
+    <mat-slide-toggle formControlName="releaseOnSchedule">release on schedule</mat-slide-toggle>
+    <mat-slide-toggle formControlName="includeReleasedJobsAsBookings">include released jobs as bookings
+    </mat-slide-toggle>
+    <mat-slide-toggle formControlName="includePlannedJobsAsBookings">include planned sobs as bookings</mat-slide-toggle>
   </div>
 
 </mat-card>

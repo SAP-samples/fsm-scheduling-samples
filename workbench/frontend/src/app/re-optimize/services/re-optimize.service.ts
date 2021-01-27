@@ -14,7 +14,6 @@ export type ReOptimizeReponseWrapper = ReOptimizeReponse & {
   isError: boolean,
   errorMessage: string | null,
   time: number,
-  grouped: {}[]
 };
 
 @Injectable({
@@ -46,22 +45,17 @@ export class ReOptimizeService {
   ) {
   }
 
-  public doRequest(body: ReOptimizeRequest): Observable<ReOptimizeReponseWrapper> {
+  public reOptimize(mode: 'sync' | 'async', body: ReOptimizeRequest): Observable<ReOptimizeReponseWrapper> {
     const t0 = performance.now();
     return this.auth.globalContextWithAuth$.pipe(
-      mergeMap(ctx => this.http.post<ReOptimizeReponse>(`${this.config.getApiUri()}/re-optimize/actions/sync`, body, { headers: this.getHeaders(ctx) })),
+      mergeMap(ctx => this.http.post<ReOptimizeReponse>(`${this.config.getApiUri()}/re-optimize/actions/${mode}`, body, { headers: this.getHeaders(ctx) })),
       map(resp => {
-
-        console.log(resp);
-
         return {
           isError: false,
           errorMessage: null,
           time: (performance.now() - t0),
-          grouped: [],
           result: resp.result
         }
-
       })
     );
   }

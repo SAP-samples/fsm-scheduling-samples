@@ -13,21 +13,27 @@ export class ReOptimizeController {
   ) { }
 
   @Post('actions/sync')
-  async create(@Res() res: Response, @Context() ctx: Context, @Body() body: ReOptimizeRequest) {
-
+  async doSync(@Res() res: Response, @Context() ctx: Context, @Body() body: ReOptimizeRequest) {
     try {
-
-      const { data } = await this.dao.reOptimizeSync(ctx, body).toPromise();
+      const { data } = await this.dao.reOptimize('sync', ctx, body).toPromise();
       return res.json(data);
-
     } catch (e) {
-
       let axiosError: AxiosError = e?.error;
       return res
         .status(axiosError?.response?.status || 500)
         .json(axiosError?.response?.data);
-
     }
   }
-
+  @Post('actions/async')
+  async doAsync(@Res() res: Response, @Context() ctx: Context, @Body() body: ReOptimizeRequest) {
+    try {
+      const { data } = await this.dao.reOptimize('async', ctx, body).toPromise();
+      return res.json(data);
+    } catch (e) {
+      let axiosError: AxiosError = e?.error;
+      return res
+        .status(axiosError?.response?.status || 500)
+        .json(axiosError?.response?.data);
+    }
+  }
 }

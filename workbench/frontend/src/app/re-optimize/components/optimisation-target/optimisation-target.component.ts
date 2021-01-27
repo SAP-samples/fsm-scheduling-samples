@@ -23,7 +23,11 @@ export class OptimisationTargetComponent implements OnInit, OnDestroy {
   @Output() change = new EventEmitter<OptimisaionSpan>();
   public form: FormGroup;
   private onDistroy$ = new Subject();
-  public activityList$ = new BehaviorSubject<{ id: string }[]>([]);
+  public activityList$ = new BehaviorSubject<{ id: string, startDateTime: string }[]>([]);
+  public isLoading$ = new BehaviorSubject<boolean>(false);
+  public options = {
+    n: [1, 2, 5, 8, 10, 25, 50, 75, 100, 250, 500]
+  }
 
   constructor(
     private fb: FormBuilder,
@@ -72,7 +76,9 @@ export class OptimisationTargetComponent implements OnInit, OnDestroy {
         return `
         SELECT 
           activity.id as id,  
-          activity.subject as subject 
+          activity.subject as subject,
+          activity.startDateTime as startDateTime,
+          activity.responsibles as responsibles
         FROM 
           Activity activity 
         WHERE 
@@ -84,12 +90,15 @@ export class OptimisationTargetComponent implements OnInit, OnDestroy {
             OR 
             (activity.earliestStartDateTime >= '${startDateTime}' AND activity.dueDateTime <= '${endDateTime}')
           )
+        ORDER BY activity.startDateTime ASC
         LIMIT ${limit}`
       }),
       mergeMap(query => {
+        this.isLoading$.next(true);
         return this.query.queryActivities(query);
       }),
       tap(list => {
+        this.isLoading$.next(false);
         this.activityList$.next(list);
       }),
       takeUntil(this.onDistroy$)

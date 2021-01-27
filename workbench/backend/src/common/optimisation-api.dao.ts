@@ -141,10 +141,10 @@ export class OptimisationAPIDAO {
     });
   }
 
-  public reOptimizeSync(ctx: Context, data: ReOptimizeRequest) {
+  public reOptimize(type: 'sync' | 'async', ctx: Context, data: ReOptimizeRequest) {
     return this.request<SearchResponse>({
       method: 'POST',
-      url: `${this.resolveHost(ctx.cloudHost)}/optimization/api/v1/jobs/actions/re-optimize/sync`,
+      url: `${this.resolveHost(ctx.cloudHost)}/optimization/api/v1/jobs/actions/re-optimize${type === 'sync' ? '/sync' : ''}`,
       headers: this.getHeaders(ctx),
       params: this.getParams(ctx),
       responseType: 'json',

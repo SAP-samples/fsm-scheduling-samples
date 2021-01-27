@@ -6,7 +6,7 @@ import { CLIENT_IDENTIFIER } from '../contants';
 import { GlobalContext, AuthService } from './auth.service';
 
 type PersonObj = { id: string, firstName: string, lastName: string };
-type ActivityObj = { id: string, subject: string };
+type ActivityObj = { id: string, subject: string; startDateTime: string};
 
 type InternalCache = {
   resource: Map<string, PersonObj>;
@@ -55,6 +55,10 @@ export class QueryService {
       list.forEach(item => {
         if (key === 'resource' && item && item.id && !this.getCache(key).has(item.id)) {
           this.getCache(key).set(item.id, { id: item.id, firstName: (item.firstName || ''), lastName: (item.lastName || '') })
+        }
+
+        if (key === 'activity' && item && item.id && !this.getCache(key).has(item.id)) {
+          this.getCache(key).set(item.id, { subject: item.subject, startDateTime: item.startDateTime })
         }
       })
     }
