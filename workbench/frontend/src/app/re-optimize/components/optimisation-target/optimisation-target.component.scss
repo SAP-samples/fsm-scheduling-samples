@@ -1,0 +1,27 @@
+.margin-10 {
+  margin: 10px;
+}
+
+.row {
+  display: flex;
+}
+
+.item {
+  align-items: center;
+  width: 600px;
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
+
+.date-edit {
+  width: 170px; 
+  margin-left: 5px; 
+  margin-right: 5px; 
+  border: 1px solid #595959;
+  padding: 2px;
+}
+
+.inline-btn {
+  height: 50px;
+  margin-left: 10px;
+}

@@ -36,8 +36,26 @@
 <mat-expansion-panel class="margin-10">
   <mat-expansion-panel-header>
     <mat-panel-title>
+      <strong class="panel-title">🕑&nbsp;&nbsp;When / What</strong>
+      <mat-chip class="panel-title-chip">
+        {{ (requestPayload$ | async)?.start | date:'dd.MM' }} - {{ (requestPayload$ | async)?.end | date:'dd.MM' }}
+      </mat-chip>
+
+      <mat-chip class="panel-title-chip">
+        {{ (requestPayload$ | async)?.activityIds.length }} activities
+      </mat-chip>
+    </mat-panel-title>
+    <mat-panel-description></mat-panel-description>
+  </mat-expansion-panel-header>
+  <optimisation-target (change)="onTimeSpan($event)"></optimisation-target>
+</mat-expansion-panel>
+
+
+<mat-expansion-panel class="margin-10">
+  <mat-expansion-panel-header>
+    <mat-panel-title>
       <strong class="panel-title">👷&nbsp;&nbsp;Who / People</strong>
-      <mat-chip class="panel-title-chip">{{ (requestPayload$ | async)?.resources.personIds.length }} Technicians
+      <mat-chip class="panel-title-chip">{{ (requestPayload$ | async)?.resources.personIds.length }} technicians
       </mat-chip>
     </mat-panel-title>
     <mat-panel-description></mat-panel-description>

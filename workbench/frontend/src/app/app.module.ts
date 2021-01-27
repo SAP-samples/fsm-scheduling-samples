@@ -24,10 +24,11 @@ import { MapComponent } from './slot-booking/components/map/map.component';
 import { JobBuilderComponent } from './slot-booking/components/job-builder/job-builder.component';
 
 import { BookingService } from './slot-booking/services/booking.service';
-import { SlotSearchService } from './slot-booking/services/slot-booking.service';
+
 
 import { ReOptimizeComponent } from './re-optimize/re-optimize.component';
 import { ReOptimizeService } from './re-optimize/services/re-optimize.service';
+import { OptimisationTargetComponent } from './re-optimize/components/optimisation-target/optimisation-target.component';
 
 
 import { PluginService } from './common/services/plugin.service';
@@ -36,7 +37,6 @@ import { ResourceQueryComponent } from './common/components/resource-query/resou
 
 import { SaveDialog } from './common/components/plugin-editor/save-dialog/save-dialog.component';
 import { PluginEditorComponent } from './common/components/plugin-editor/plugin-editor.component';
-
 
 
 
@@ -52,7 +52,8 @@ import { PluginEditorComponent } from './common/components/plugin-editor/plugin-
     MapComponent,
     ResourceQueryComponent,
     BookingButtonComponent,
-    ReOptimizeComponent
+    ReOptimizeComponent,
+    OptimisationTargetComponent
   ],
   entryComponents: [SaveDialog],
   imports: [

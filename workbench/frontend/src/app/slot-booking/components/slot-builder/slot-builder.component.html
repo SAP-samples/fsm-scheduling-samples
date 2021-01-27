@@ -1,6 +1,6 @@
 <form [formGroup]="form">
   <ng-container formArrayName="slots">
-    <h2>Slots cout: {{ slotsCtrl.controls.length }}</h2>
+    <h2>slots count: {{ slotsCtrl.controls.length }}</h2>
 
     <div *ngFor="let x of slotsCtrl.controls; index as i" [formGroupName]="i">
 

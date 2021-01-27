@@ -6,10 +6,11 @@ import * as moment from 'moment';
 import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
 import { catchError, delay, filter, map, mergeMap, take, tap } from 'rxjs/operators';
 import { AuthService } from '../common/services/auth.service';
+import { OptimisaionSpan } from './components/optimisation-target/optimisation-target.component';
 import { ReOptimizeReponseWrapper, ReOptimizeService } from './services/re-optimize.service';
 
 export type ReOptimizeRequest = {
-  activityIds?: string[];
+  activityIds: string[];
   optimizationPlugin: string;
   start: string;
   end: string;
@@ -44,6 +45,7 @@ export class ReOptimizeComponent implements OnInit {
   public requestPayload$: Observable<ReOptimizeRequest>;
   public pluginEditor$ = new BehaviorSubject<string | null>(null);
   public personIds$ = new BehaviorSubject<string[]>([]);
+  public optimationsSpan$ = new BehaviorSubject<OptimisaionSpan>(null);
 
   constructor(
     private fb: FormBuilder,
@@ -55,19 +57,21 @@ export class ReOptimizeComponent implements OnInit {
   ngOnInit(): void {
     this.isLoggedIn$ = this.auth.isLoggedIn$;
 
-    const startDate = moment()
-    const endDate = moment().add(7, 'day');
-
-
-    this.requestPayload$ = combineLatest([this.pluginEditor$, this.personIds$])
+    this.requestPayload$ = combineLatest([this.pluginEditor$, this.personIds$, this.optimationsSpan$])
       .pipe(
-        filter(([pluginEditor, personIds]) => !!(pluginEditor && personIds.length)),
-        map(([pluginEditor, personIds]): ReOptimizeRequest => {
+        filter(([pluginEditor, personIds, span]) => !!(pluginEditor
+          && personIds.length
+          && span
+          && span.start
+          && span.end
+          && span.activityIds.length)),
+        map(([pluginEditor, personIds, span]): ReOptimizeRequest => {
+
           return {
-            activityIds: [], // "string"
+            activityIds: span.activityIds,
             optimizationPlugin: pluginEditor,
-            start: startDate.toISOString(),
-            end: endDate.toISOString(),
+            start: span.start,
+            end: span.end,
             releaseOnSchedule: true,
             skipLocking: true,
             // partitioningStrategy: {    skills: ["string"]   },
@@ -98,6 +102,9 @@ export class ReOptimizeComponent implements OnInit {
     this.personIds$.next(ids);
   }
 
+  public onTimeSpan(span: OptimisaionSpan) {
+    this.optimationsSpan$.next(span);
+  }
 
   public doRequest() {
 

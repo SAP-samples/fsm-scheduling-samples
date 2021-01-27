@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { BehaviorSubject, merge, of, Subject } from 'rxjs';
@@ -50,13 +50,12 @@ LIMIT 25
 `
 }
 
-
 @Component({
   selector: 'resource-query',
   templateUrl: './resource-query.component.html',
   styleUrls: ['./resource-query.component.scss']
 })
-export class ResourceQueryComponent implements OnInit {
+export class ResourceQueryComponent implements OnInit, OnDestroy {
 
   private onQuery = new Subject();
   public resources$ = new BehaviorSubject<Partial<{ id: string; firstName: string, lastName: string }>[]>([]);
