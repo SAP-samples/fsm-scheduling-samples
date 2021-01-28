@@ -152,8 +152,6 @@ export class PluginEditorComponent implements OnInit, OnDestroy, AfterContentIni
 
     const { pluginCode, id, name } = this.form.value;
 
-    console.log(JSON.stringify(pluginCode))
-
     const work = id && name && name !== CREATE_NEW
       ? this.service.update({ id, pluginCode, name, description: name } as Partial<PluginDto>)
       : this.dialog.open(SaveDialog, { disableClose: true }).afterClosed().pipe(

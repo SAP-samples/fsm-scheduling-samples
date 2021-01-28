@@ -11,7 +11,7 @@ export class ConfigService {
     }
 
     if (!value) {
-      console.log(`INFO -> ENV var ${key} does not have a value`);
+      console.warn(`INFO -> ENV var ${key} does not have a value`);
     }
 
     return value;

@@ -125,8 +125,7 @@ export class ResourceQueryComponent implements OnInit, OnDestroy {
   }
 
   public onEditor(editor) {
-    //let line = editor.getPosition();
-    // console.log(editor);
+    // let line = editor.getPosition();
   }
 
   public remove(item: { id: string }) {

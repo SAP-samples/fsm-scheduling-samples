@@ -7,7 +7,7 @@
     <mat-chip-list style="margin-bottom: 20px;">
       <mat-chip *ngFor="let resource of (resources$ | async)" [removable]="true" (removed)="remove(resource)">
         <mat-icon matChipRemove>delete</mat-icon>
-        {{ resource.id | slice:0:6 }}... ({{ resource.firstName }} {{ resource.lastName }})
+        [{{ resource.id | slice:0:6 }}] {{ resource.firstName }} {{ resource.lastName }}
       </mat-chip>
     </mat-chip-list>
   </div>

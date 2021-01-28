@@ -94,7 +94,7 @@ export class SlotBookingComponent implements OnInit, OnDestroy {
       filter(it => !!it),
       map(it => it.time),
       pairwise(),
-      tap(r => console.log(r)),
+      tap(r => console.debug(r)),
       takeUntil(this.onDistroy$)
     ).subscribe();
 

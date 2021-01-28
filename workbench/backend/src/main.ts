@@ -14,7 +14,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, config);
   app.use('/app', express.static(path.join(__dirname, '/static/frontend')));
   await app.listen(configService.getPort());
-  console.log(`Application now running on => open http://localhost:${configService.getPort()}`);
+  console.info(`Application now running on => open http://localhost:${configService.getPort()}`);
 }
 
 bootstrap();

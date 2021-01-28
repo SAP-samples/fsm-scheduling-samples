@@ -1,10 +1,12 @@
 import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject, merge, Subject } from 'rxjs';
-import { filter, map, mergeMap, pairwise, take, takeUntil, tap } from 'rxjs/operators';
+import { catchError, filter, map, mergeMap, pairwise, take, takeUntil, tap } from 'rxjs/operators';
 import * as moment from 'moment';
 import { of, combineLatest } from 'rxjs';
 import { QueryService } from 'src/app/common/services/query.service';
+import { HttpErrorResponse } from '@angular/common/http';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 export type OptimisaionSpan = { start: string, end: string, activityIds: string[] };
 
@@ -32,6 +34,7 @@ export class OptimisationTargetComponent implements OnInit, OnDestroy {
   constructor(
     private fb: FormBuilder,
     private query: QueryService,
+    private snackBar: MatSnackBar,
   ) { }
 
   public ngOnDestroy() {
@@ -75,9 +78,12 @@ export class OptimisationTargetComponent implements OnInit, OnDestroy {
       map(({ startDateTime, endDateTime, limit }) => {
         return `
         SELECT 
-          activity.id as id,  
+          activity.id as id,
+          activity.code as code,
           activity.subject as subject,
           activity.startDateTime as startDateTime,
+          activity.earliestStartDateTime as earliestStartDateTime,
+          activity.dueDateTime as dueDateTime,
           activity.responsibles as responsibles
         FROM 
           Activity activity 
@@ -95,7 +101,17 @@ export class OptimisationTargetComponent implements OnInit, OnDestroy {
       }),
       mergeMap(query => {
         this.isLoading$.next(true);
-        return this.query.queryActivities(query);
+        return this.query.queryActivities(query).pipe(
+          catchError((error) => {
+            this.isLoading$.next(false)
+            let errorMessage = error instanceof HttpErrorResponse
+              ? `[❌ ERROR ❌] [${error.status}]\n\n${error.message}`
+              : error;
+            const snackBarRef = this.snackBar.open(errorMessage, 'ok', { duration: 3000 });
+            console.error(error);
+            return []
+          }),
+        )
       }),
       tap(list => {
         this.isLoading$.next(false);
@@ -108,8 +124,8 @@ export class OptimisationTargetComponent implements OnInit, OnDestroy {
     const range = 14;
     // initial form values 
     this.form.patchValue({
-      start: toHTMLDate(moment(new Date()).add(-1, 'years').hour(0).minute(0).second(0)), // set this back to days not years :)
-      end: toHTMLDate(moment(new Date()).add(range + 1, 'years').hour(0).minute(0).second(0))
+      start: toHTMLDate(moment(new Date()).add(0, 'days').hour(0).minute(0).second(0)), // set this back to days not years :)
+      end: toHTMLDate(moment(new Date()).add(range + 1, 'days').hour(0).minute(0).second(0))
     });
 
   }

@@ -6,7 +6,7 @@ import { CLIENT_IDENTIFIER } from '../contants';
 import { GlobalContext, AuthService } from './auth.service';
 
 type PersonObj = { id: string, firstName: string, lastName: string };
-type ActivityObj = { id: string, subject: string; startDateTime: string};
+type ActivityObj = { id: string, subject: string; startDateTime: string, earliestStartDateTime: string, dueDateTime: string, code: string };
 
 type InternalCache = {
   resource: Map<string, PersonObj>;
@@ -54,18 +54,18 @@ export class QueryService {
     if (Array.isArray(list)) {
       list.forEach(item => {
         if (key === 'resource' && item && item.id && !this.getCache(key).has(item.id)) {
-          this.getCache(key).set(item.id, { id: item.id, firstName: (item.firstName || ''), lastName: (item.lastName || '') })
+          this.getCache(key).set(item.id, { ...item, firstName: (item.firstName || ''), lastName: (item.lastName || '') })
         }
 
         if (key === 'activity' && item && item.id && !this.getCache(key).has(item.id)) {
-          this.getCache(key).set(item.id, { subject: item.subject, startDateTime: item.startDateTime })
+          this.getCache(key).set(item.id, { ...item })
         }
       })
     }
   }
 
   private _query<T_LIST extends T_ITEM[], T_ITEM extends {}>(key: keyof InternalCache, query: string) {
-    console.log(query);
+    // console.debug(query);
     return this.auth.globalContextWithAuth$.pipe(
       mergeMap(ctx => this.http.post<T_LIST>(`${this.config.getApiUri()}/query`, { query }, { headers: this.getHeaders(ctx) })),
       tap((list) => this.addToCache(key, list))

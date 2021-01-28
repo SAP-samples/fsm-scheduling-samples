@@ -27,9 +27,11 @@
 
   <div style="padding: 20px;">
     <mat-chip-list style="margin-bottom: 20px;">
-      <mat-chip *ngFor="let item of (activityList$ | async)" [removable]="true" (removed)="remove(item)" [title]="('id:' + item.id)">
+      <mat-chip *ngFor="let item of (activityList$ | async)" [removable]="true" (removed)="remove(item)"
+        [title]="('id:' + item.id)">
         <mat-icon matChipRemove>delete</mat-icon>
-        {{ item.startDateTime | date:'short' }} ({{ item.subject | slice:0:6 }})...
+        [{{ item.code }}] {{ item.subject | slice:0:8 }}... , {{ item.earliestStartDateTime | date:'dd.MM.yy hh:mm' }} -
+        {{ item.dueDateTime | date:'dd.MM.yy hh:mm' }}&nbsp;
       </mat-chip>
     </mat-chip-list>
   </div>

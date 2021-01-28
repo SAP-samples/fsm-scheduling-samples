@@ -69,13 +69,30 @@
     Timing: {{ (response$ | async).time | number }} ms
   </div>
 
-
   <h4>Options</h4>
   <div [formGroup]="requestOptions" style="margin-top: 15px;">
-    <mat-slide-toggle formControlName="releaseOnSchedule">release on schedule</mat-slide-toggle>
-    <mat-slide-toggle formControlName="includeReleasedJobsAsBookings">include released jobs as bookings
-    </mat-slide-toggle>
-    <mat-slide-toggle formControlName="includePlannedJobsAsBookings">include planned sobs as bookings</mat-slide-toggle>
+    <div>
+      <mat-slide-toggle formControlName="releaseOnSchedule">release on schedule</mat-slide-toggle>
+    </div>
+    <div>
+      <mat-slide-toggle formControlName="skipLocking">skip locking</mat-slide-toggle>
+    </div>
+    <h5>additional data options</h5>
+    <div>
+      <mat-slide-toggle formControlName="useBlacklist">use black list</mat-slide-toggle>
+    </div>
+    <div>
+      <mat-slide-toggle formControlName="includePlannedJobsAsBookings">include planned sobs as bookings
+      </mat-slide-toggle>
+    </div>
+    <div>
+      <mat-slide-toggle formControlName="includeReleasedJobsAsBookings">include released jobs as bookings
+      </mat-slide-toggle>
+    </div>
+    <div>
+      <mat-slide-toggle formControlName="enableRealTimeLocation">enable realtime location
+      </mat-slide-toggle>
+    </div>
   </div>
 
 </mat-card>

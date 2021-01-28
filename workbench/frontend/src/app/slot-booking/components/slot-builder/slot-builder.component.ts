@@ -133,8 +133,6 @@ export class SlotBuilderComponent implements OnInit, OnDestroy {
 
           if (timeIterator.isBefore(workDayEnd)) {
 
-            // console.log(slotStart.format('YYYY-MM-DD HH:mm'), '-', slotEnd.format('YYYY-MM-DD HH:mm'))
-
             const slot = this.fb.group({
               start: [slotStart.format(HTML_INPUT_DATE_FORMAT), Validators.required],
               end: [slotEnd.format(HTML_INPUT_DATE_FORMAT), Validators.required]
