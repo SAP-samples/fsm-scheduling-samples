@@ -1,0 +1,140 @@
+<mat-expansion-panel #request_response class="margin-10">
+  <mat-expansion-panel-header>
+    <mat-panel-title>
+      Slot Search Request / Response
+    </mat-panel-title>
+  </mat-expansion-panel-header>
+
+  <div style="height: 5px;">
+    <mat-progress-bar *ngIf="(isLoading$ | async)" style="height: 5px;" mode="indeterminate"></mat-progress-bar>
+  </div>
+
+  <div class="margin-10">
+
+    <pre *ngIf="!!(response$ | async) && (response$ | async).isError"
+      class="error-box">{{ (response$ | async).errorMessage }}</pre>
+
+    <div style="display: flex;">
+
+      <div style="width: 40%; margin-right: 10px;">
+        <h2>Request</h2>
+
+        <mat-expansion-panel style="margin: 10px;">
+          <mat-expansion-panel-header>Full JSON Request </mat-expansion-panel-header>
+          <pre *ngIf="requestPayload$">{{ requestPayload$ | async | json }}</pre>
+        </mat-expansion-panel>
+
+      </div>
+
+      <div style="width: 60%;">
+        <h2>Response</h2>
+
+        <mat-expansion-panel style="margin: 10px;">
+          <mat-expansion-panel-header>Full JSON Response </mat-expansion-panel-header>
+          <pre *ngIf="response$ && (response$ | async)">{{ (response$ | async)?.result | json }}</pre>
+        </mat-expansion-panel>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</mat-expansion-panel>
+
+<mat-card class="margin-10">
+
+  <button mat-raised-button [disabled]="!(isLoggedIn$ | async) || (isLoading$ | async)"
+    (click)="request_response.open(); doRequest();" color="primary" class="margin-10">
+    <mat-icon>model_training</mat-icon> Perform Optimization
+  </button>
+
+  <form [formGroup]="requestOptions" style="display: inline;">
+    <mat-form-field appearance="fill" style="width: 100px">
+      <mat-label>mode</mat-label>
+      <mat-select formControlName="mode">
+        <mat-option *ngFor="let x of requestOptionsValues.mode" [value]="x">{{ x }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </form>
+
+  using <mat-chip>/api/v1/jobs/actions/re-optimize</mat-chip> Re-Optimization API see
+
+  <a target="_blank" style="margin-top: 15px;"
+    href="https://eu.coresystems.net/optimization/api/v1/swagger-ui/#/Re-Optimization/post_api_v1_jobs_actions_re_optimize">
+    documentation
+  </a>
+
+  <div *ngIf="response$ && (response$ | async)" style="margin-top: 8px; margin-left: 10px;">
+    Timing: {{ (response$ | async).time | number }} ms
+  </div>
+
+  <h4>Options</h4>
+  <div [formGroup]="requestOptions" style="margin-top: 15px;">
+    <div>
+      <mat-slide-toggle formControlName="releaseOnSchedule">release on schedule</mat-slide-toggle>
+    </div>
+    <div>
+      <mat-slide-toggle formControlName="skipLocking">skip locking</mat-slide-toggle>
+    </div>
+    <h5>additional data options</h5>
+    <div>
+      <mat-slide-toggle formControlName="useBlacklist">use black list</mat-slide-toggle>
+    </div>
+    <div>
+      <mat-slide-toggle formControlName="includePlannedJobsAsBookings">include planned sobs as bookings
+      </mat-slide-toggle>
+    </div>
+    <div>
+      <mat-slide-toggle formControlName="includeReleasedJobsAsBookings">include released jobs as bookings
+      </mat-slide-toggle>
+    </div>
+    <div>
+      <mat-slide-toggle formControlName="enableRealTimeLocation">enable realtime location
+      </mat-slide-toggle>
+    </div>
+  </div>
+
+</mat-card>
+
+<mat-expansion-panel class="margin-10">
+  <mat-expansion-panel-header>
+    <mat-panel-title>
+      <strong class="panel-title">🕑&nbsp;&nbsp;When / What</strong>
+      <mat-chip class="panel-title-chip">
+        {{ (requestPayload$ | async)?.start | date:'dd.MM' }} - {{ (requestPayload$ | async)?.end | date:'dd.MM' }}
+      </mat-chip>
+
+      <mat-chip class="panel-title-chip">
+        {{ (requestPayload$ | async)?.activityIds.length }} activities
+      </mat-chip>
+    </mat-panel-title>
+    <mat-panel-description></mat-panel-description>
+  </mat-expansion-panel-header>
+  <optimisation-target (change)="onTimeSpan($event)"></optimisation-target>
+</mat-expansion-panel>
+
+
+<mat-expansion-panel class="margin-10">
+  <mat-expansion-panel-header>
+    <mat-panel-title>
+      <strong class="panel-title">👷&nbsp;&nbsp;Who / People</strong>
+      <mat-chip class="panel-title-chip">{{ (requestPayload$ | async)?.resources.personIds.length }} technicians
+      </mat-chip>
+    </mat-panel-title>
+    <mat-panel-description></mat-panel-description>
+  </mat-expansion-panel-header>
+  <resource-query (change)="onChangePersonIds($event)"></resource-query>
+</mat-expansion-panel>
+
+
+<mat-expansion-panel class="margin-10">
+  <mat-expansion-panel-header>
+    <mat-panel-title>
+      <strong class="panel-title">🤖&nbsp;&nbsp;How / AI-Plugin</strong>
+      <mat-chip class="panel-title-chip">{{ (requestPayload$ | async)?.optimizationPlugin }}</mat-chip>
+    </mat-panel-title>
+    <mat-panel-description></mat-panel-description>
+  </mat-expansion-panel-header>
+  <plugin-editor (change)="onChangePluginEditor($event)"></plugin-editor>
+</mat-expansion-panel>

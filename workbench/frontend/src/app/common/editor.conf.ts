@@ -105,9 +105,9 @@ export function onMonacoLoad() {
         endColumn: word.endColumn
       };
 
-      // console.log(textUntilPosition);
-      // console.log(word);
-      // console.log(range);
+      // textUntilPosition
+      // word
+      // range
 
       const key = ['SELECT', 'FROM', 'LIMIT'];
       const ops = ['AND', 'BETWEEN', 'IN', 'LIKE', 'NOT', 'OR', 'IS', 'NULL', 'INTERSECT', 'UNION', 'INNER', 'JOIN', 'LEFT', 'OUTER', 'RIGHT'];

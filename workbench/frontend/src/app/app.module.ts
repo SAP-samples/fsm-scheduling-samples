@@ -8,30 +8,42 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
-import { LoginDialogComponent } from './common/login-dialog/login-dialog.component';
-import { AuthService } from './common/login-dialog/auth.service';
+import { LoginDialogComponent } from './common/components/login-dialog/login-dialog.component';
+import { AuthService } from './common/services/auth.service';
 import { MatModules } from './common/material.modules';
-import { ConfigService } from './common/config.service';
+import { ConfigService } from './common/services/config.service';
 import { ngxMonacoEditorConfig } from './common/editor.conf';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { SlotSearchComponent } from './slot-search/slot-search.component';
-import { SlotBuilderComponent } from './slot-builder/slot-builder.component';
-import { PluginEditorComponent } from './plugin-editor/plugin-editor.component';
-import { PluginService } from './plugin-editor/plugin.service';
-import { SaveDialog } from './plugin-editor/dialogs/save-dialog.component';
-import { JobBuilderComponent } from './job-builder/job-builder.component';
-import { MapComponent } from './map/map.component';
-import { OptimizationService } from './slot-search/optimization.service';
-import { ResourceQueryComponent } from './resource-query/resource-query.component';
-import { QueryService } from './resource-query/qurey.service';
-import { BookingButtonComponent } from './booking-button/booking-button.component';
-import { BookingService } from './booking-button/booking.service';
+
+import { SlotBookingComponent } from './slot-booking/slot-booking.component';
+
+import { SlotBuilderComponent } from './slot-booking/components/slot-builder/slot-builder.component';
+import { BookingButtonComponent } from './slot-booking/components/booking-button/booking-button.component';
+import { MapComponent } from './slot-booking/components/map/map.component';
+import { JobBuilderComponent } from './slot-booking/components/job-builder/job-builder.component';
+
+import { BookingService } from './slot-booking/services/booking.service';
+
+
+import { ReOptimizeComponent } from './re-optimize/re-optimize.component';
+import { ReOptimizeService } from './re-optimize/services/re-optimize.service';
+import { OptimisationTargetComponent } from './re-optimize/components/optimisation-target/optimisation-target.component';
+
+
+import { PluginService } from './common/services/plugin.service';
+import { QueryService } from './common/services/query.service';
+import { ResourceQueryComponent } from './common/components/resource-query/resource-query.component';
+
+import { SaveDialog } from './common/components/plugin-editor/save-dialog/save-dialog.component';
+import { PluginEditorComponent } from './common/components/plugin-editor/plugin-editor.component';
+
+
 
 @NgModule({
   declarations: [
     AppComponent,
-    SlotSearchComponent,
+    SlotBookingComponent,
     LoginDialogComponent,
     SlotBuilderComponent,
     PluginEditorComponent,
@@ -39,7 +51,9 @@ import { BookingService } from './booking-button/booking.service';
     JobBuilderComponent,
     MapComponent,
     ResourceQueryComponent,
-    BookingButtonComponent
+    BookingButtonComponent,
+    ReOptimizeComponent,
+    OptimisationTargetComponent
   ],
   entryComponents: [SaveDialog],
   imports: [
@@ -56,9 +70,10 @@ import { BookingService } from './booking-button/booking.service';
     ConfigService,
     AuthService,
     PluginService,
-    OptimizationService,
+    BookingService,
     QueryService,
     BookingService,
+    ReOptimizeService,
     { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { floatLabel: 'always' } },
     { provide: MAT_DATE_LOCALE, useValue: 'de-de' },
     { provide: MAT_MOMENT_DATE_ADAPTER_OPTIONS, useValue: { useUtc: true } },

@@ -1,0 +1,39 @@
+<form [formGroup]="form">
+
+  <h2>Time span</h2>
+  <div class="row item" style="margin-left: 30px;">
+    <mat-icon style="font-size: 19px;">calendar_today</mat-icon>
+    <input matInput type="datetime-local" formControlName="start" placeholder="start date" class="date-edit">
+    <span>to </span>
+    <input matInput type="datetime-local" formControlName="end" placeholder="end date" class="date-edit">
+    <span style="margin-left: 5px; width: 300px;"> that is {{ getDuration(form.value) }}</span>
+  </div>
+
+  <mat-error *ngIf="form.errors"> ERROR -> {{ form.errors | json }}
+  </mat-error>
+
+  <h2>Found {{ (activityList$ | async).length }} matching activities</h2>
+
+  <mat-form-field appearance="fill" style="width: 100px">
+    <mat-label>limit</mat-label>
+    <mat-select formControlName="limit">
+      <mat-option *ngFor="let x of options.n" [value]="x">{{ x }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <div style="height: 5px;">
+    <mat-progress-bar *ngIf="(isLoading$ | async)" style="height: 5px;" mode="indeterminate"></mat-progress-bar>
+  </div>
+
+  <div style="padding: 20px;">
+    <mat-chip-list style="margin-bottom: 20px;">
+      <mat-chip *ngFor="let item of (activityList$ | async)" [removable]="true" (removed)="remove(item)"
+        [title]="('id:' + item.id)">
+        <mat-icon matChipRemove>delete</mat-icon>
+        [{{ item.code }}] {{ item.subject | slice:0:8 }}... , {{ item.earliestStartDateTime | date:'dd.MM.yy hh:mm' }} -
+        {{ item.dueDateTime | date:'dd.MM.yy hh:mm' }}&nbsp;
+      </mat-chip>
+    </mat-chip-list>
+  </div>
+
+</form>

@@ -1,0 +1,174 @@
+<mat-expansion-panel #request_response class="margin-10">
+  <mat-expansion-panel-header>
+    <mat-panel-title>
+      Slot Search Request / Response
+    </mat-panel-title>
+  </mat-expansion-panel-header>
+
+  <div style="height: 5px;">
+    <mat-progress-bar *ngIf="(isLoading$ | async)" style="height: 5px;" mode="indeterminate"></mat-progress-bar>
+  </div>
+
+  <div class="margin-10">
+
+    <pre *ngIf="!!(response$ | async) && (response$ | async).isError"
+      class="error-box">{{ (response$ | async).errorMessage }}</pre>
+
+    <div *ngIf="response$ && (response$ | async) && (response$ | async).grouped">
+
+      <mat-expansion-panel *ngFor="let group of (response$ | async).grouped; index as i" class="margin-10"
+        [expanded]="i === 0 && false">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+
+            <booking-button (isLoading)="bookingLoading($event)" [group]="group" [disabled$]="isLoading$"
+              [job]="jobBuilder$ | async">
+            </booking-button>
+
+          </mat-panel-title>
+          <mat-panel-description></mat-panel-description>
+        </mat-expansion-panel-header>
+
+        <div style=" display: flex;">
+          <div *ngFor="let item of group.items; index as j" class="matching-tech">
+
+            <div style="margin: 0 auto; width: 100px; text-align: center;">
+              <mat-spinner style="margin: 0 auto;" mode="determinate" [diameter]="50"
+                [value]="(100 / (group.maxScore * 1000) ) * (item.score * 1000)">
+              </mat-spinner>
+            </div>
+
+            <mat-list>
+              <mat-list-item>
+                <p matLine>score: {{ item.score }}</p>
+              </mat-list-item>
+
+              <mat-list-item>
+                <mat-icon>access_time</mat-icon>
+                <p matLine>{{ item.start | date:'HH:mm' }} - {{ item.end | date:'HH:mm' }}</p>
+              </mat-list-item>
+              <mat-list-item>
+                <mat-icon>directions_car</mat-icon>
+                <p matLine> {{ item.trip.durationInMinutes }} min</p>
+              </mat-list-item>
+              <mat-list-item>
+                <mat-icon>directions_car</mat-icon>
+                <p matLine> {{ (item.trip.distanceInMeters / 1000 ) }} km</p>
+              </mat-list-item>
+              <mat-list-item>
+                <mat-chip [aria-label]="item.resource" [title]="item.resource" style="margin: 0 auto;">
+                  {{ item.resourceVm?.firstName }} {{ item.resourceVm?.lastName }}
+                </mat-chip>
+              </mat-list-item>
+            </mat-list>
+
+          </div>
+        </div>
+
+      </mat-expansion-panel>
+
+    </div>
+
+    <div style="display: flex;">
+
+      <div style="width: 40%; margin-right: 10px;">
+        <h2>Request</h2>
+
+        <mat-expansion-panel style="margin: 10px;">
+          <mat-expansion-panel-header>Full JSON Request </mat-expansion-panel-header>
+          <pre *ngIf="requestPayload$">{{ requestPayload$ | async | json }}</pre>
+        </mat-expansion-panel>
+
+      </div>
+
+      <div style="width: 60%;">
+        <h2>Response</h2>
+
+        <mat-expansion-panel style="margin: 10px;">
+          <mat-expansion-panel-header>Full JSON Response </mat-expansion-panel-header>
+          <pre *ngIf="response$ && (response$ | async)">{{ (response$ | async)?.results | json }}</pre>
+        </mat-expansion-panel>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</mat-expansion-panel>
+
+
+<mat-card class="margin-10">
+
+  <button mat-raised-button [disabled]="!(isLoggedIn$ | async) || (isLoading$ | async)"
+    (click)="request_response.open(); doRequest();" color="primary" class="margin-10">
+    <mat-icon>search</mat-icon> Search for slots
+  </button>
+
+  using <mat-chip>/api/v2/job-slots/actions/search</mat-chip> Search Job Slot API see
+
+  <a target="_blank" style="margin-top: 15px;"
+    href="https://eu.coresystems.net/optimization/api/v1/swagger-ui/#/Search%20Job%20Slot/post_api_v2_job_slots_actions_search">
+    documentation
+  </a>
+
+  <div [formGroup]="requestOptions" style="margin-top: 15px; display: none;">
+    <mat-slide-toggle formControlName="refresh">auto refresh</mat-slide-toggle>
+  </div>
+
+  <div *ngIf="response$ && (response$ | async)" style="margin-top: 8px; margin-left: 10px;">
+    Timing: {{ (response$ | async).time | number }} ms for {{ (response$ | async).grouped.length }} solts with
+    {{ (response$ | async).results.length }} matches
+  </div>
+
+</mat-card>
+
+<h2 class="margin-10">Slot Search Options:</h2>
+
+<mat-expansion-panel class="margin-10">
+  <mat-expansion-panel-header>
+    <mat-panel-title>
+      <strong class="panel-title">🕑&nbsp;&nbsp;When / Timeing </strong>
+      <mat-chip class="panel-title-chip"> {{ (requestPayload$ | async)?.slots.length }} slots </mat-chip>
+    </mat-panel-title>
+    <mat-panel-description></mat-panel-description>
+  </mat-expansion-panel-header>
+  <slot-builder (change)="onChangeSlots($event)"></slot-builder>
+</mat-expansion-panel>
+
+<mat-expansion-panel class="margin-10">
+  <mat-expansion-panel-header>
+    <mat-panel-title>
+      <strong class="panel-title">📍&nbsp;&nbsp;Where / Job</strong>
+      <mat-chip class="panel-title-chip">
+        {{ (requestPayload$ | async)?.job?.location?.latitude }},{{ (requestPayload$ | async)?.job?.location?.longitude
+        }}
+      </mat-chip>
+    </mat-panel-title>
+    <mat-panel-description></mat-panel-description>
+  </mat-expansion-panel-header>
+  <job-builder (change)="onChangeJobBuilder($event)"></job-builder>
+</mat-expansion-panel>
+
+<mat-expansion-panel class="margin-10">
+  <mat-expansion-panel-header>
+    <mat-panel-title>
+      <strong class="panel-title">👷&nbsp;&nbsp;Who / People</strong>
+      <mat-chip class="panel-title-chip">{{ (requestPayload$ | async)?.resources.personIds.length }} technicians
+      </mat-chip>
+    </mat-panel-title>
+    <mat-panel-description></mat-panel-description>
+  </mat-expansion-panel-header>
+  <resource-query (change)="onChangePersonIds($event)"></resource-query>
+</mat-expansion-panel>
+
+<mat-expansion-panel class="margin-10">
+  <mat-expansion-panel-header>
+    <mat-panel-title>
+      <strong class="panel-title">🤖&nbsp;&nbsp;How / AI-Plugin</strong>
+      <mat-chip class="panel-title-chip">{{ (requestPayload$ | async)?.optimizationPlugin }}</mat-chip>
+    </mat-panel-title>
+    <mat-panel-description></mat-panel-description>
+  </mat-expansion-panel-header>
+  <plugin-editor (change)="onChangePluginEditor($event)"></plugin-editor>
+</mat-expansion-panel>

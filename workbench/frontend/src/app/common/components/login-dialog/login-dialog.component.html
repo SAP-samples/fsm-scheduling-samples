@@ -1,0 +1,43 @@
+<mat-dialog-content class="mat-typography" style="padding: 20px;">
+
+  <h3>Login</h3>
+
+  <form [formGroup]="loginForm">
+
+    <div style="height: 5px;">
+      <mat-progress-bar *ngIf="(isLoading$ | async)" style="height: 5px;" mode="indeterminate"></mat-progress-bar>
+    </div>
+
+    <mat-form-field class="login-field">
+      <mat-label>fsm-cloud-host</mat-label>
+      <mat-select matInput id="cloudHost" formControlName="cloudHost">
+        <mat-option *ngFor="let it of cloudHosts" [value]="it.value"> {{ it.text }} </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field class="login-field">
+      <input matInput formControlName="account" placeholder="fsm-account" />
+    </mat-form-field>
+
+    <mat-form-field class="login-field">
+      <input matInput formControlName="user" autocomplete="username" placeholder="fsm-user" />
+    </mat-form-field>
+
+    <mat-form-field class="login-field">
+      <input matInput type="password" formControlName="password" autocomplete="current-password"
+        placeholder="fsm-password" />
+    </mat-form-field>
+
+    <mat-checkbox formControlName="save">
+      remember me <br />
+      <span style="font-size: 9px;">save to session-storage, until browser is closed</span>
+    </mat-checkbox>
+
+  </form>
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-raised-button (click)="cancel()">Continue without</button>
+  <button mat-raised-button color="primary" (click)="login()">Login</button>
+</mat-dialog-actions>
