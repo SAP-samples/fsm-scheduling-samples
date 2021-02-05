@@ -71,7 +71,9 @@ build_container() {
 }
 
 deploy (){
-  
+  # How to deploy:
+  # https://blogs.sap.com/2020/07/07/deploy-application-using-docker-container-on-sap-cloud-foundry-2020/
+  # Login to https://account.hana.ondemand.com/#/home/welcome
   CF_CLI=cf
   CF_APP_ANME=$APP_NAME
   CF_API="https://api.cf.eu10.hana.ondemand.com"
@@ -114,8 +116,9 @@ deploy (){
 pring_usage () {
   echo "[HELP]:";
   echo "";
-  echo "r -> run latest container";
   echo "b -> build container";
+  echo "r -> run latest container";
+  echo "p -> push latest container";
   echo "d -> deploy";
   #TODO echo "bd -> build & deploy <env>";
   echo "";
@@ -129,6 +132,9 @@ while true; do
   case $action in
       b)
           build_container;
+          ;;
+      p)
+          docker push $IMAGE_LATEST
           ;;
       r)
           run_container;
