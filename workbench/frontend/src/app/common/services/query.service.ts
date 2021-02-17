@@ -1,12 +1,15 @@
 import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { mergeMap, tap } from 'rxjs/operators';
+import { map, mergeMap, tap, withLatestFrom } from 'rxjs/operators';
 import { ConfigService } from './config.service';
 import { CLIENT_IDENTIFIER } from '../contants';
 import { GlobalContext, AuthService } from './auth.service';
+import { combineLatest } from 'rxjs';
 
-type PersonObj = { id: string, firstName: string, lastName: string };
+type PersonObj = { id: string, firstName: string, lastName: string, skills: { name: string, start: string, end: string }[] };
 type ActivityObj = { id: string, subject: string; startDateTime: string, earliestStartDateTime: string, dueDateTime: string, code: string };
+type TagObj = { id: string, name: string };
+type SkillObj = { id: string, tag: string, person: string, endDate: string, startDate: string };
 
 type InternalCache = {
   resource: Map<string, PersonObj>;
@@ -64,26 +67,54 @@ export class QueryService {
     }
   }
 
-  private _query<T_LIST extends T_ITEM[], T_ITEM extends {}>(key: keyof InternalCache, query: string) {
+  private _query<T_LIST extends T_ITEM[], T_ITEM extends {}>(query: string) {
     // console.debug(query);
     return this.auth.globalContextWithAuth$.pipe(
       mergeMap(ctx => this.http.post<T_LIST>(`${this.config.getApiUri()}/query`, { query }, { headers: this.getHeaders(ctx) })),
-      tap((list) => this.addToCache(key, list))
+
     );
   }
 
   public queryActivities<list extends item[], item extends ActivityObj>(query: string) {
-    return this._query<list, item>('activity', query);
+    return this._query<list, item>(query).pipe(
+      tap((list) => this.addToCache('activity', list))
+    )
   }
 
-  public queryResource<list extends item[], item extends PersonObj>(query: string) {
-    return this._query<list, item>('resource', query);
+
+  public queryResource<list extends item[], item extends { id: string, firstName: string, lastName: string }>(query: string) {
+    return combineLatest([
+      this._query<list, item>(query),
+      this._query<TagObj[], TagObj>(`SELECT tag.id as id, tag.name as name FROM Tag tag WHERE tag.inactive = false`),
+      this._query<SkillObj[], SkillObj>(`SELECT skill.id as id, skill.tag as tag, skill.person as person, skill.startDate as startDate, skill.endDate as endDate FROM Skill skill WHERE skill.inactive = false`)
+    ])
+      .pipe(
+        map(([resources, tags, skills]) => {
+          const tagMap = tags.reduce((m, { id, name }) => m.set(id, name), new Map<string, string>())
+          const skillMap = skills.reduce((m, skill) => {
+            const item = {
+              name: (tagMap.get(skill.tag) || skill.tag),
+              start: skill.startDate === "null" ? null : skill.startDate,
+              end: skill.endDate === "null" ? null : skill.endDate,
+            };
+            if (m.has(skill.person)) {
+              m.get(skill.person)?.push(item)
+            } else {
+              m.set(skill.person, [item])
+            }
+            return m;
+          }, new Map<string, { name: string, start: string, end: string }[]>())
+
+          return resources.map(it => ({ ...it, skills: skillMap.has(it.id) ? skillMap.get(it.id) : [] }))
+        }),
+        tap((list) => this.addToCache('resource', list))
+      );
   }
 
   public getResourceFromCache(id: string): PersonObj {
     return this.getCache('resource').has(id)
       ? this.getCache('resource').get(id)
-      : { id, firstName: 'N/A', lastName: 'N/A' };
+      : { id, firstName: 'N/A', lastName: 'N/A', skills: [] };
   }
 
   public static toLastChangedDateStringFormat = (lastChanged: number): string => {

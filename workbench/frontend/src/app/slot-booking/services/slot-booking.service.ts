@@ -25,7 +25,9 @@ export type SearchResponseWrapper = SearchResponse & {
   grouped: GroupedSearchResponse[]
 };
 
-type SearchResponseItemExteded = SearchResponseItem & { resourceVm: { id: string, firstName: string, lastName: string } | undefined | null }
+type SearchResponseItemExteded = SearchResponseItem & {
+  resourceVm: { id: string, firstName: string, lastName: string } | undefined | null
+}
 
 export type SearchResponseItem = {
   slot: { start: string; end: string; },
