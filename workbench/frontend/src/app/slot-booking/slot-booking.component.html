@@ -61,8 +61,13 @@
                 </mat-chip>
               </mat-list-item>
               <mat-list-item *ngIf="item.resourceVm">
-                <mat-chip *ngFor="let skill of item.resourceVm.skills; index as j"
-                  [title]="skill.start + ' '+ skill.end">{{ skill.name }}</mat-chip>
+
+                <mat-expansion-panel>
+                  <mat-expansion-panel-header>skills</mat-expansion-panel-header>
+                  <div *ngFor="let skill of item.resourceVm.skills; index as j" [title]="skill.start + ' '+ skill.end">
+                    {{ skill.name }}</div>
+                </mat-expansion-panel>
+
               </mat-list-item>
             </mat-list>
 

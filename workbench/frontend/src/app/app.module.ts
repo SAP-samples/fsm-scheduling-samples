@@ -8,7 +8,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
-import { LoginDialogComponent } from './common/components/login-dialog/login-dialog.component';
+import { LoginDialogComponent, SelectableSheet } from './common/components/login-dialog/login-dialog.component';
 import { AuthService } from './common/services/auth.service';
 import { MatModules } from './common/material.modules';
 import { ConfigService } from './common/services/config.service';
@@ -53,9 +53,10 @@ import { PluginEditorComponent } from './common/components/plugin-editor/plugin-
     ResourceQueryComponent,
     BookingButtonComponent,
     ReOptimizeComponent,
-    OptimisationTargetComponent
+    OptimisationTargetComponent,
+    SelectableSheet
   ],
-  entryComponents: [SaveDialog],
+  entryComponents: [SaveDialog, SelectableSheet],
   imports: [
     HttpClientModule,
     BrowserModule,

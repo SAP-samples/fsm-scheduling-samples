@@ -105,7 +105,7 @@ export class QueryService {
             return m;
           }, new Map<string, { name: string, start: string, end: string }[]>())
 
-          return resources.map(it => ({ ...it, skills: skillMap.has(it.id) ? skillMap.get(it.id) : [] }))
+          return resources.map(it => ({ ...it, skills: skillMap.has(it.id) ? skillMap.get(it.id).sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0)) : [] }))
         }),
         tap((list) => this.addToCache('resource', list))
       );

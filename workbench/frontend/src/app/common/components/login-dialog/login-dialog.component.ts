@@ -1,12 +1,42 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 import { CLIENT_IDENTIFIER, CLIENT_SECRET } from '../../contants';
 import { GlobalContext } from '../../services/auth.service';
+import { MatBottomSheet, MatBottomSheetRef, MAT_BOTTOM_SHEET_DATA } from '@angular/material/bottom-sheet';
 
+type Selectable = { name: string; id: number; }
+
+@Component({
+  selector: 'select-company-dialog',
+  template: `
+  <h2>{{ data.headline }}</h2>
+  <mat-nav-list>
+    <mat-list-item *ngFor="let item of (list$ | async); index as j" (click)="select(item)" style="cursor: pointer;">
+      <span mat-line> {{ item.name }} ({{ item.id }}) </span>
+    </mat-list-item>
+  </mat-nav-list>`,
+  styleUrls: []
+})
+export class SelectableSheet implements OnInit {
+  list$ = new BehaviorSubject<Selectable[]>([]);
+  constructor(
+    public ref: MatBottomSheetRef<SelectableSheet>,
+    @Inject(MAT_BOTTOM_SHEET_DATA) public data: { list: Selectable[], headline: string },
+  ) { }
+
+  ngOnInit() {
+    this.list$.next(this.data.list);
+  }
+
+  select(it: Selectable) {
+    this.ref.dismiss(it);
+  }
+}
 
 export type OauthTokenResponse = {
   access_token: string;
@@ -62,6 +92,7 @@ export class LoginDialogComponent implements OnInit {
     private http: HttpClient,
     private fb: FormBuilder,
     public dialogRef: MatDialogRef<LoginDialogComponent>,
+    public sheet: MatBottomSheet,
     private snackBar: MatSnackBar,
   ) { }
 
@@ -73,6 +104,13 @@ export class LoginDialogComponent implements OnInit {
       cloudHost: [this.cloudHosts[0].value, Validators.required],
       save: [true],
     });
+
+    // todo remove this
+    this.loginForm.patchValue({
+      user: 'manager',
+      password: 'vista7',
+      account: 'core-gasi-ie'
+    });
   }
 
   private infoMessage(msg: string) {
@@ -82,6 +120,18 @@ export class LoginDialogComponent implements OnInit {
 
   public cancel() {
     this.dialogRef.close(null);
+  }
+
+  private selectCompany(list: Selectable[]): Observable<Selectable> {
+    if (!list.length)
+      throw new Error('No companies forun')
+
+    if (list.length === 1) {
+      return of(list[0]);
+    }
+
+    return this.sheet.open(SelectableSheet, { data: { list, headline: 'Select Company' }, disableClose: true, hasBackdrop: true, autoFocus: true }).afterDismissed()
+      .pipe(map((company: Selectable) => company));
   }
 
   public login() {
@@ -111,14 +161,11 @@ export class LoginDialogComponent implements OnInit {
         'X-Request-ID': Date.now().toString()
       }
     })
-      .subscribe(
-        response => {
+      .pipe(
+        switchMap(response => this.selectCompany(response.companies).pipe(map(selectedCompany => {
 
-          this.isLoading$.next(false);
+          debugger
 
-          const selectedCompany: { name: string; id: number } = response.companies.length
-            ? response.companies.map(({ id, name }) => ({ name, id }))[0]
-            : { name: NOT_SET, id: -1 };
 
           const ctx: GlobalContext = {
             authToken: `${response.token_type} ${response.access_token}`,
@@ -132,10 +179,19 @@ export class LoginDialogComponent implements OnInit {
             userId: response.user_id
           }
 
+          return ctx;
+
+
+        }))),
+      )
+      .subscribe(
+        ctx => {
+          this.isLoading$.next(false);
           this.dialogRef.close({ ctx, save });
         },
         e => {
           this.isLoading$.next(false);
+          console.error(e);
           const msg =
             e && e.error && e.error.error_description && e.error.error
               ? e.error.error + '/' + e.error.error_description

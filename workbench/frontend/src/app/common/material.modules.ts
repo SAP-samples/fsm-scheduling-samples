@@ -22,6 +22,7 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import {MatBottomSheetModule} from '@angular/material/bottom-sheet';
 
 export const MatModules = [
   MatToolbarModule,
@@ -46,5 +47,6 @@ export const MatModules = [
   MatTabsModule,
   MatGridListModule,
   MatChipsModule,
-  MatAutocompleteModule
+  MatAutocompleteModule,
+  MatBottomSheetModule
 ];
