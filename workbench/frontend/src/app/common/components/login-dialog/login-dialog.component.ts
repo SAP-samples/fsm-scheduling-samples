@@ -104,13 +104,6 @@ export class LoginDialogComponent implements OnInit {
       cloudHost: [this.cloudHosts[0].value, Validators.required],
       save: [true],
     });
-
-    // todo remove this
-    this.loginForm.patchValue({
-      user: 'manager',
-      password: 'vista7',
-      account: 'core-gasi-ie'
-    });
   }
 
   private infoMessage(msg: string) {
@@ -163,10 +156,6 @@ export class LoginDialogComponent implements OnInit {
     })
       .pipe(
         switchMap(response => this.selectCompany(response.companies).pipe(map(selectedCompany => {
-
-          debugger
-
-
           const ctx: GlobalContext = {
             authToken: `${response.token_type} ${response.access_token}`,
             cloudHost: response.cluster_url.replace('https://', '') || cloudHost,
@@ -177,11 +166,8 @@ export class LoginDialogComponent implements OnInit {
             selectedLocale: 'en-us',
             user: response.user,
             userId: response.user_id
-          }
-
+          };
           return ctx;
-
-
         }))),
       )
       .subscribe(
