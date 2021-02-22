@@ -2,10 +2,12 @@ import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angu
 import { MatSnackBar } from '@angular/material/snack-bar';
 import * as moment from 'moment';
 import { BehaviorSubject, of, Subject } from 'rxjs';
-import { catchError, filter, takeUntil, tap } from 'rxjs/operators';
+import { catchError, filter, map, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { GroupedSearchResponse } from '../../services/slot-booking.service';
 import { BookingService, Progress } from '../../services/booking.service';
 import { Job } from '../../services/job.service';
+import { MatBottomSheet } from '@angular/material/bottom-sheet';
+import { Selectable, SelectSheet } from 'src/app/common/components/select-sheet/select-sheet.component';
 
 
 @Component({
@@ -17,7 +19,9 @@ export class BookingButtonComponent implements OnInit, OnDestroy {
 
   constructor(
     private bookingSerivce: BookingService,
-    private snackBar: MatSnackBar,) { }
+    private snackBar: MatSnackBar,
+    public sheet: MatBottomSheet,
+  ) { }
 
   @Output() isLoading = new EventEmitter<boolean>();
   @Input() group: GroupedSearchResponse;
@@ -45,14 +49,24 @@ export class BookingButtonComponent implements OnInit, OnDestroy {
   book() {
     this.isLoading$.next(true);
     this.progress$.next(null);
-    this.bookingSerivce.tryBookAll(this.group.items, this.job)
+
+
+    this.sheet.open(SelectSheet, { data: { list: [{ name: 'yes' }, { name: 'no' }] as Selectable[], headline: 'Are you sure?' }, disableClose: true, hasBackdrop: true, autoFocus: true }).afterDismissed()
       .pipe(
-        tap(progress => this.progress$.next(progress)),
-        filter(progress => progress.success),
-        tap(() => {
+        map((selected: Selectable) => selected.name == 'yes'),
+        switchMap(ok => {
+          return !ok
+            ? of(null)
+            : this.bookingSerivce.tryBookAll(this.group.items, this.job)
+              .pipe(
+                tap(progress => this.progress$.next(progress)),
+                filter(progress => progress.success)
+              );
+        }),
+        tap((progress) => {
           this.isLoading$.next(false);
-          this.canNotBeBooked$.next(true);
-          this.snackBar.open(`[✅ DONE ✅] slot booked!`, 'ok', { duration: 3000 });
+          this.canNotBeBooked$.next(progress && progress.success);
+          this.snackBar.open(`[✅ DONE ✅] done!`, 'ok', { duration: 3000 });
         }),
         catchError((error: Error | Progress) => {
           this.isLoading$.next(false);
@@ -60,8 +74,8 @@ export class BookingButtonComponent implements OnInit, OnDestroy {
           this.snackBar.open(`[❌ ERROR ❌] Failed to book Slot ${moment(this.group.slot.start).format('HH:mm')} - ${moment(this.group.slot.end).format('HH:mm')}`, 'ok', { duration: 3000 });
           return of(null);
         })
-      )
-      .subscribe();
+
+      ).subscribe();
   }
 
 }

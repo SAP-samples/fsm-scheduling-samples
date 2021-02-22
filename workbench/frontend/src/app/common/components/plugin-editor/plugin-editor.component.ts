@@ -2,13 +2,13 @@ import { AfterContentInit, Component, EventEmitter, OnDestroy, OnInit, Output, V
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { EditorComponent } from 'ngx-monaco-editor';
-
 import { BehaviorSubject, merge, Observable, Subject } from 'rxjs';
 import { of } from 'rxjs';
 import { takeUntil, tap, map, mergeMap, switchMap, take, catchError, filter } from 'rxjs/operators';
 import { SaveDialog } from './save-dialog/save-dialog.component';
 import { pluginTemplate } from './plugin-template';
 import { PluginDto, PluginService } from '../../services/plugin.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 export interface PluginEditorData {
   id: string,
@@ -19,7 +19,7 @@ export interface PluginEditorData {
 
 const CREATE_NEW = 'create new (unsaved)';
 const BUILD_IN = ['Quickest', 'Best', 'SkillsAndDistance', 'Nearest'];
-const DEFAULT = { id: null, name: null, description: null, pluginCode: null };
+const DEFAULT: PluginEditorData = { id: null, name: null, description: null, pluginCode: null };
 const DEFAULT_BUILD_IN = 'SkillsAndDistance';
 @Component({
   selector: 'plugin-editor',
@@ -49,12 +49,42 @@ export class PluginEditorComponent implements OnInit, OnDestroy, AfterContentIni
   constructor(
     private fb: FormBuilder,
     private service: PluginService,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private snackBar: MatSnackBar,
   ) { }
 
-  public onEditor(editor) { }
+  private infoMessage(msg: string) {
+    const snackBarRef = this.snackBar.open(msg, 'ok', { duration: 3000 });
+    return snackBarRef;
+  }
+
+  public onEditorInit(editor) {
+    // how to key bind 
+    // https://microsoft.github.io/monaco-editor/playground.html#interacting-with-the-editor-adding-an-action-to-an-editor-instance
+    editor.addAction({
+      id: 'cmd+s-to-save',
+      label: 'Save (cmd+s)',
+      keybindings: [
+        monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_S,
+      ],
+      precondition: null,
+      keybindingContext: null,
+      contextMenuGroupId: 'navigation',
+      contextMenuOrder: 1.5,
+      run: _ed => {
+        // console.log(_ed.getPosition());
+        if (this.form.invalid) {
+          return null;
+        }
+        this.save();
+        return null;
+      }
+    });
+  }
 
   public ngAfterContentInit() {
+    console.log(this.editorInstance);
+
     this.disableEditor$.pipe(
       filter((value) => this.editorInstance && value === true),
       tap((value) => this.editorInstance.options = { ...this.editorInstance.options, readOnly: true }),
@@ -66,9 +96,10 @@ export class PluginEditorComponent implements OnInit, OnDestroy, AfterContentIni
 
     const pluginList$ = this.refresh.pipe(
       mergeMap(() => this.service.fetchAll()),
-      catchError((e) => {
+      catchError((error) => {
         // if fetch all fails lets disable editor
-        console.error('could not read plugins, disabled editor');
+        console.error(error);
+        this.infoMessage(`[❌ ERROR ❌] 'could not read plugins, disabled editor'`);
         this.disableEditor$.next(true);
         return of([] as PluginDto[])
       })
@@ -120,7 +151,7 @@ export class PluginEditorComponent implements OnInit, OnDestroy, AfterContentIni
           return of(undefined);
         }
 
-        this.isLoading$.next(true)
+        this.isLoading$.next(true);
         return this.service.fetchByName(name).pipe(
           take(1),
           map(plugin => this.form.patchValue(plugin)),
@@ -135,43 +166,68 @@ export class PluginEditorComponent implements OnInit, OnDestroy, AfterContentIni
     this.refresh.next(true);
   }
 
-  public async delete() {
-    if (this.form.invalid || !this.form.value.id) return;
-
-    const id = this.form.value.id;
-    this.selectedPlugin.patchValue(CREATE_NEW);
-    this.service.delete(id)
-      .pipe(take(1)).subscribe(() => {
-        this.refresh.next(true);
-      });
-
-  }
-
-  public async save() {
-    if (this.form.invalid) return;
-
-    const { pluginCode, id, name } = this.form.value;
-
-    const work = id && name && name !== CREATE_NEW
-      ? this.service.update({ id, pluginCode, name, description: name } as Partial<PluginDto>)
-      : this.dialog.open(SaveDialog, { disableClose: true }).afterClosed().pipe(
-        switchMap((newName: string) => {
-          return this.service.create({ pluginCode, name: newName, description: newName } as Partial<PluginDto>)
-        })
-      );
-
-    work.pipe(take(1)).subscribe(plugin => {
-      this.refresh.next(true);
-      this.form.patchValue(plugin);
-      this.selectedPlugin.patchValue(plugin.name);
-    });
-  }
-
   public ngOnDestroy() {
     this.onDistroy$.next();
   }
 
-  public newFromTemplate() {
+  public async delete() {
+    if (this.form.invalid || !this.form.value.id) return;
+
+    if (BUILD_IN.includes(this.form.value.name)) {
+      this.infoMessage(`Can not edit ${this.form.value.name} - its a build plugin`);
+      return;
+    }
+
+
+    const id = this.form.value.id;
+    this.selectedPlugin.patchValue(CREATE_NEW);
+    this.service.delete(id).pipe(take(1)).subscribe(
+      () => {
+        this.refresh.next(true);
+      },
+      error => {
+        this.isLoading$.next(false);
+        console.error(error);
+        this.infoMessage(`[❌ ERROR ❌] ${error.message}`);
+      }
+    );
+  }
+
+  public async save() {
+    if (this.form.invalid) return;
+    const { pluginCode, id, name, description } = this.form.value;
+
+    if (BUILD_IN.includes(name)) {
+      this.infoMessage(`Can not edit ${name} - its a build plugin`);
+      return;
+    }
+
+    this.isLoading$.next(true);
+
+    const work = id && name && name !== CREATE_NEW
+      ? this.service.update({ id, pluginCode, name, description } as Partial<PluginDto>)
+      : this.dialog.open(SaveDialog, { disableClose: true }).afterClosed().pipe(
+        switchMap((newName: string) => {
+          return this.service.create({ pluginCode, name: newName, description: '1.0.0' } as Partial<PluginDto>)
+        })
+      );
+
+    work.pipe(take(1)).subscribe(
+      plugin => {
+        this.isLoading$.next(false);
+        this.refresh.next(true);
+        this.form.patchValue(plugin);
+        this.selectedPlugin.patchValue(plugin.name);
+      },
+      error => {
+        this.isLoading$.next(false);
+        console.error(error);
+        this.infoMessage(`[❌ ERROR ❌] ${error.message}`);
+      }
+    );
+  }
+
+  public createNewFromTemplate() {
     this.form.get('pluginCode').patchValue(pluginTemplate);
   }
 

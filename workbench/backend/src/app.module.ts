@@ -1,5 +1,5 @@
 import { HttpModule, Module } from '@nestjs/common';
-import { APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { AppController } from './app.controller';
 import { FsmAPIClientFactory } from './common/fsm-api-client.factory';
 import { BookingController } from './app/booking/booking.controller';
@@ -11,6 +11,7 @@ import { OptimisationAPIDAO } from './common/optimisation-api.dao';
 import { ServiceManagementAPIDAO } from './app/booking/service-management-api.dao';
 import { TimeoutInterceptor } from './common/timeout.interceptor';
 import { ReOptimizeController } from './app/re-optimize/re-optimize.controller';
+import { ErrorFilter } from './common/error.filter';
 
 @Module({
   imports: [HttpModule],
@@ -27,7 +28,8 @@ import { ReOptimizeController } from './app/re-optimize/re-optimize.controller';
     OptimisationAPIDAO,
     ServiceManagementAPIDAO,
     FsmAPIClientFactory,
-    { provide: APP_INTERCEPTOR, useClass: TimeoutInterceptor }
+    { provide: APP_INTERCEPTOR, useClass: TimeoutInterceptor },
+    { provide: APP_FILTER, useClass: ErrorFilter }
   ],
 })
 export class AppModule { }
