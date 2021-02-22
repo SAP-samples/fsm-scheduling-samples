@@ -8,7 +8,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
-import { LoginDialogComponent, SelectableSheet } from './common/components/login-dialog/login-dialog.component';
+import { LoginDialogComponent } from './common/components/login-dialog/login-dialog.component';
 import { AuthService } from './common/services/auth.service';
 import { MatModules } from './common/material.modules';
 import { ConfigService } from './common/services/config.service';
@@ -36,8 +36,8 @@ import { QueryService } from './common/services/query.service';
 import { ResourceQueryComponent } from './common/components/resource-query/resource-query.component';
 
 import { SaveDialog } from './common/components/plugin-editor/save-dialog/save-dialog.component';
+import { SelectSheet } from './common/components/select-sheet/select-sheet.component';
 import { PluginEditorComponent } from './common/components/plugin-editor/plugin-editor.component';
-
 
 
 @NgModule({
@@ -54,9 +54,9 @@ import { PluginEditorComponent } from './common/components/plugin-editor/plugin-
     BookingButtonComponent,
     ReOptimizeComponent,
     OptimisationTargetComponent,
-    SelectableSheet
+    SelectSheet
   ],
-  entryComponents: [SaveDialog, SelectableSheet],
+  entryComponents: [SaveDialog, SelectSheet],
   imports: [
     HttpClientModule,
     BrowserModule,

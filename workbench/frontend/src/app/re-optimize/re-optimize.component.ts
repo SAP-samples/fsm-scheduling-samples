@@ -115,7 +115,6 @@ export class ReOptimizeComponent implements OnInit, OnDestroy {
           };
         }),
         tap(requestPayload => {
-          console.log('skipLocking', requestPayload.skipLocking)
           this.requestPayload$.next(requestPayload)
         }),
         takeUntil(this.onDistroy$)

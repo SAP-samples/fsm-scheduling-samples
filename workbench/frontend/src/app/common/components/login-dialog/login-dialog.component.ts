@@ -7,36 +7,8 @@ import { BehaviorSubject, Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { CLIENT_IDENTIFIER, CLIENT_SECRET } from '../../contants';
 import { GlobalContext } from '../../services/auth.service';
-import { MatBottomSheet, MatBottomSheetRef, MAT_BOTTOM_SHEET_DATA } from '@angular/material/bottom-sheet';
-
-type Selectable = { name: string; id: number; }
-
-@Component({
-  selector: 'select-company-dialog',
-  template: `
-  <h2>{{ data.headline }}</h2>
-  <mat-nav-list>
-    <mat-list-item *ngFor="let item of (list$ | async); index as j" (click)="select(item)" style="cursor: pointer;">
-      <span mat-line> {{ item.name }} ({{ item.id }}) </span>
-    </mat-list-item>
-  </mat-nav-list>`,
-  styleUrls: []
-})
-export class SelectableSheet implements OnInit {
-  list$ = new BehaviorSubject<Selectable[]>([]);
-  constructor(
-    public ref: MatBottomSheetRef<SelectableSheet>,
-    @Inject(MAT_BOTTOM_SHEET_DATA) public data: { list: Selectable[], headline: string },
-  ) { }
-
-  ngOnInit() {
-    this.list$.next(this.data.list);
-  }
-
-  select(it: Selectable) {
-    this.ref.dismiss(it);
-  }
-}
+import { MatBottomSheet } from '@angular/material/bottom-sheet';
+import { Selectable, SelectSheet } from '../select-sheet/select-sheet.component';
 
 export type OauthTokenResponse = {
   access_token: string;
@@ -59,7 +31,6 @@ export type OauthTokenResponse = {
 }
 
 const NOT_SET = 'NOT_SET';
-
 
 @Component({
   selector: 'login',
@@ -123,7 +94,7 @@ export class LoginDialogComponent implements OnInit {
       return of(list[0]);
     }
 
-    return this.sheet.open(SelectableSheet, { data: { list, headline: 'Select Company' }, disableClose: true, hasBackdrop: true, autoFocus: true }).afterDismissed()
+    return this.sheet.open(SelectSheet, { data: { list, headline: 'Select Company' }, disableClose: true, hasBackdrop: true, autoFocus: true }).afterDismissed()
       .pipe(map((company: Selectable) => company));
   }
 
@@ -162,7 +133,7 @@ export class LoginDialogComponent implements OnInit {
             account: response.account,
             accountId: response.account_id,
             company: selectedCompany.name,
-            companyId: selectedCompany.id,
+            companyId: selectedCompany.id as number,
             selectedLocale: 'en-us',
             user: response.user,
             userId: response.user_id
