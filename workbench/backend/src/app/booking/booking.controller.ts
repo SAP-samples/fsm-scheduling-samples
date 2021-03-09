@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Res } from '@nestjs/common';
+import { Body, Controller, NotFoundException, Param, Post, Res, UnprocessableEntityException } from '@nestjs/common';
 import { Context } from '../../ctx.decorator';
 import { AxiosError } from 'axios';
 import { Response } from 'express';
@@ -43,30 +43,57 @@ export class BookingController {
     private factory: FsmAPIClientFactory
   ) { }
 
-  @Post('actions/book')
-  async create(@Res() res: Response, @Context() ctx: Context, @Body() bookingRequest: BookingRequest) {
+  @Post('actions/book/:activityId')
+  async create(@Res() res: Response, @Param('activityId') _activityId: string | 'create-activity', @Context() ctx: Context, @Body() bookingRequest: BookingRequest) {
 
     try {
 
       const client = this.factory.fromContext(ctx);
       const builder = BookingDTOsBuilder.from(bookingRequest);
 
-      // create necessary FSM objects
-      const related = builder.buildPlanningRelatedObjects();
-      const [[{ businessPartner }], [{ address }], [{ serviceCall }], [{ activity }]] = await client.batch([
-        new CreateAction('BusinessPartner', related.businessPartner),
-        new CreateAction('Address', related.address),
-        new CreateAction('ServiceCall', related.serviceCall),
-        new CreateAction('Activity', related.activity),
-      ]).then(resp => resp.map(wrapper => wrapper.body.data));
+      let activityId = _activityId !== 'create-activity'
+        ? _activityId
+        : undefined;
 
-      // book -> plan & release
-      const planResult = await this.dao.plan(ctx, activity.id, builder.buildPlanningRequest()).toPromise().then(x => x.data);
-      const releaseResult = await this.dao.release(ctx, activity.id).toPromise().then(x => x.data);
+      if (_activityId === 'create-activity') {
 
-      return res.json({ planResult, releaseResult, related: { activity, serviceCall, businessPartner, address } });
+        // create necessary FSM objects
+        const related = builder.buildPlanningRelatedObjects();
+        const [[{ businessPartner }], [{ address }], [{ serviceCall }], [{ activity }]] = await client.batch([
+          new CreateAction('BusinessPartner', related.businessPartner),
+          new CreateAction('Address', related.address),
+          new CreateAction('ServiceCall', related.serviceCall),
+          new CreateAction('Activity', related.activity),
+        ]).then(resp => resp.map(wrapper => wrapper.body.data));
+
+        activityId = activity.id;
+
+      }
+
+      if (!activityId || activityId === 'create-activity') {
+        throw new NotFoundException('?');
+      }
+
+      try {
+        // book -> plan & release
+        const _planResult = await this.dao.plan(ctx, activityId, builder.buildPlanningRequest()).toPromise().then(x => x.data);
+        const _releaseResult = await this.dao.release(ctx, activityId).toPromise().then(x => x.data);
+
+        return res.json({ activityId });
+
+      } catch (error) {
+        throw activityId
+          ? new UnprocessableEntityException(activityId)
+          : error;
+      }
 
     } catch (e) {
+
+      if (e instanceof UnprocessableEntityException) {
+        return res
+          .status(e.getStatus())
+          .json({ activityId: e.message });
+      }
 
       let axiosError: AxiosError = e?.error;
       return res

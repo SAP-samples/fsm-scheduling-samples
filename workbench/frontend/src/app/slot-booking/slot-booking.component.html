@@ -18,6 +18,7 @@
 
       <mat-expansion-panel *ngFor="let group of (response$ | async).grouped; index as i" class="margin-10"
         [expanded]="i === 0 && false">
+
         <mat-expansion-panel-header>
           <mat-panel-title>
 
@@ -29,49 +30,45 @@
           <mat-panel-description></mat-panel-description>
         </mat-expansion-panel-header>
 
-        <div style=" display: flex;">
-          <div *ngFor="let item of group.items; index as j" class="matching-tech">
+        <div *ngFor="let item of group.items; index as j" class="matching-tech">
 
-            <div style="margin: 0 auto; width: 100px; text-align: center;">
+          <div style="display: flex;">
+            <div>
               <mat-spinner style="margin: 0 auto;" mode="determinate" [diameter]="50"
                 [value]="(100 / (group.maxScore * 1000) ) * (item.score * 1000)">
               </mat-spinner>
             </div>
-
-            <mat-list>
-              <mat-list-item>
-                <p matLine>score: {{ item.score }}</p>
-              </mat-list-item>
-
-              <mat-list-item>
+            <div style="padding-left: 20px;">
+            
+              <div class="tech-info">
+                <mat-icon>tag</mat-icon>
+                <span>{{ item.score }}</span>
+              </div>
+              
+              <div class="tech-info">
                 <mat-icon>access_time</mat-icon>
-                <p matLine>{{ item.start | date:'HH:mm' }} - {{ item.end | date:'HH:mm' }}</p>
-              </mat-list-item>
-              <mat-list-item>
+                <span>{{ item.start | date:'HH:mm' }} - {{ item.end | date:'HH:mm' }}</span>
+              </div>
+
+              <div class="tech-info">
                 <mat-icon>directions_car</mat-icon>
-                <p matLine> {{ item.trip.durationInMinutes }} min</p>
-              </mat-list-item>
-              <mat-list-item>
-                <mat-icon>directions_car</mat-icon>
-                <p matLine> {{ (item.trip.distanceInMeters / 1000 ) }} km</p>
-              </mat-list-item>
-              <mat-list-item>
-                <mat-chip [aria-label]="item.resource" [title]="item.resource" style="margin: 0 auto;">
-                  {{ item.resourceVm?.firstName }} {{ item.resourceVm?.lastName }}
-                </mat-chip>
-              </mat-list-item>
-              <mat-list-item *ngIf="item.resourceVm">
-
-                <mat-expansion-panel>
-                  <mat-expansion-panel-header>skills</mat-expansion-panel-header>
-                  <div *ngFor="let skill of item.resourceVm.skills; index as j" [title]="skill.start + ' '+ skill.end">
-                    {{ skill.name }}</div>
-                </mat-expansion-panel>
-
-              </mat-list-item>
-            </mat-list>
-
+                <span>{{ item.trip.durationInMinutes }} min ({{ (item.trip.distanceInMeters / 1000 ) }} km)</span>
+              </div>
+            
+            </div>
           </div>
+
+          <mat-chip [aria-label]="item.resource" [title]="item.resource" style="margin: 20px auto;">
+            {{ item.resourceVm?.firstName }} {{ item.resourceVm?.lastName }}
+          </mat-chip>
+
+
+          <div class="tech-skill-list" *ngIf="item.resourceVm">
+            <span class="tech-skill" *ngFor="let skill of item.resourceVm.skills; index as j"
+              [title]="skill.start + ' '+ skill.end">
+              {{ skill.name }}</span>
+          </div>
+
         </div>
 
       </mat-expansion-panel>

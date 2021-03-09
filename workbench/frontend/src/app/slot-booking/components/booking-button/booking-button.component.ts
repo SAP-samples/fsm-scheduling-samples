@@ -49,11 +49,16 @@ export class BookingButtonComponent implements OnInit, OnDestroy {
   book() {
     this.isLoading$.next(true);
     this.progress$.next(null);
-
-
-    this.sheet.open(SelectSheet, { data: { list: [{ name: 'yes' }, { name: 'no' }] as Selectable[], headline: 'Are you sure?' }, disableClose: true, hasBackdrop: true, autoFocus: true }).afterDismissed()
+    this.sheet.open(SelectSheet, {
+      data: {
+        list: [
+          { name: 'Yes' },
+          { name: 'No' }
+        ] as Selectable[], headline: `Book ${moment(this.group.slot.start).format('HH:mm')}-${moment(this.group.slot.end).format('HH:mm')} - are you sure?`
+      }, disableClose: true, hasBackdrop: true, autoFocus: true
+    }).afterDismissed()
       .pipe(
-        map((selected: Selectable) => selected.name == 'yes'),
+        map((selected: Selectable) => selected.name !== 'No'),
         switchMap(ok => {
           return !ok
             ? of(null)

@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import * as moment from 'moment';
 import { Observable } from 'rxjs';
@@ -16,7 +16,8 @@ export type Progress = {
   success: boolean,
   result: {} | null,
   total: number,
-  current: number
+  current: number,
+  activityId: string;
 };
 
 @Injectable()
@@ -46,9 +47,9 @@ export class BookingService {
     })
   }
 
-  private book(bookable: SearchResponseItem, job: Job) {
+  private book(bookable: SearchResponseItem, job: Job, activityId: string = 'create-activity') {
     return this.auth.globalContextWithAuth$.pipe(
-      mergeMap(ctx => this.http.post<{}>(`${this.config.getApiUri()}/booking/actions/book`, { job, bookable }, { headers: this.getHeaders(ctx) }))
+      mergeMap(ctx => this.http.post<{}>(`${this.config.getApiUri()}/booking/actions/book/${activityId}`, { job, bookable }, { headers: this.getHeaders(ctx) }))
     );
   }
 
@@ -57,21 +58,23 @@ export class BookingService {
 
     return new Observable<Progress>((op) => {
 
-      const tryBook = (idx: number, bookable: SearchResponseItem, blockedList: string[]): Promise<Progress> => {
+      const tryBook = (idx: number, bookable: SearchResponseItem, blockedList: string[], activityId: string): Promise<Progress> => {
+
         const progress = {
           success: false,
           message: '',
           blockedList: [...blockedList, bookable.resource],
           total: list.length,
           current: (idx + 1),
-          result: null
+          result: null,
+          activityId,
         }
 
 
         const person = this.query.getResourceFromCache(bookable.resource);
         op.next({ ...progress, message: `...👷 trying to book ${person.firstName} ${person.lastName} with score [${bookable.score}]` });
 
-        return this.book(bookable, job).pipe(take(1))
+        return this.book(bookable, job, activityId).pipe(take(1))
           .toPromise()
           .then(result => {
             // exit loop
@@ -82,13 +85,21 @@ export class BookingService {
               result
             })
           })
-          .catch(error => { throw progress; });
+          .catch(errorRep => {
+            let activityId: string;
+            // if the backend returns a 422 - creation of temp data was okay but booking failed.
+            // use [activityId] for next try to not recreate data 
+            if (errorRep instanceof HttpErrorResponse && errorRep.status === 422 && errorRep.error) {
+              activityId = errorRep.error.activityId || ''
+            }
+
+            throw { ...progress, activityId: activityId ? activityId : '' };
+          });
       }
 
       // setup chain 
       const work = list.reduce(
-        (promise, it, idx) => promise.catch(
-          (progress) => tryBook(idx, it, progress.blockedList)),
+        (promise, it, idx) => promise.catch((progress: Progress) => tryBook(idx, it, progress.blockedList, progress.activityId)),
         Promise.reject({ message: `init`, blockedList: [], success: false, total: list.length, current: -1 })
       )
 

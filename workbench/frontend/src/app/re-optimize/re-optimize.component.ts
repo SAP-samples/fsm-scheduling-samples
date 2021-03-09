@@ -69,7 +69,7 @@ export class ReOptimizeComponent implements OnInit, OnDestroy {
     this.isLoggedIn$ = this.auth.isLoggedIn$;
 
     this.requestOptions = this.fb.group({
-      mode: [this.requestOptionsValues.mode[0], Validators.required],
+      mode: [this.requestOptionsValues.mode[1], Validators.required],
       skipLocking: [this.requestOptionsValues.releaseOnSchedule[0], Validators.required],
       releaseOnSchedule: [this.requestOptionsValues.releaseOnSchedule[0], Validators.required],
       includeReleasedJobsAsBookings: [this.requestOptionsValues.includeReleasedJobsAsBookings[0], Validators.required],
