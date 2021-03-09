@@ -91,6 +91,7 @@ export class OptimisationTargetComponent implements OnInit, OnDestroy {
           activity.executionStage != 'CANCELLED' 
           AND activity.status != 'CLOSED' 
           AND activity.address IS NOT NULL 
+          AND activity.responsibles IS NOT NULL
           AND (
             (activity.startDateTime >= '${startDateTime}' AND activity.endDateTime <= '${endDateTime}')
             OR 

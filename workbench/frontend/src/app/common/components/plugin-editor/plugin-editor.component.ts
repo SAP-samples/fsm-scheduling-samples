@@ -173,12 +173,6 @@ export class PluginEditorComponent implements OnInit, OnDestroy, AfterContentIni
   public async delete() {
     if (this.form.invalid || !this.form.value.id) return;
 
-    if (BUILD_IN.includes(this.form.value.name)) {
-      this.infoMessage(`Can not edit ${this.form.value.name} - its a build plugin`);
-      return;
-    }
-
-
     const id = this.form.value.id;
     this.selectedPlugin.patchValue(CREATE_NEW);
     this.service.delete(id).pipe(take(1)).subscribe(
@@ -197,10 +191,6 @@ export class PluginEditorComponent implements OnInit, OnDestroy, AfterContentIni
     if (this.form.invalid) return;
     const { pluginCode, id, name, description } = this.form.value;
 
-    if (BUILD_IN.includes(name)) {
-      this.infoMessage(`Can not edit ${name} - its a build plugin`);
-      return;
-    }
 
     this.isLoading$.next(true);
 
