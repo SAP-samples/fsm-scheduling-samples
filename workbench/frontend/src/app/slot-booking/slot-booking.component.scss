@@ -36,15 +36,23 @@
   }
 
 }
+.tech-udf-list {
+  margin-top: 5px; 
+  margin-bottom: 5px;
+}
+
+.tech-udf {
+  font-size: 13px;
+}
 
 .tech-skill-list {
   min-width: 250px;
   min-height: 100px;
+  text-align: left;
 }
 
 .tech-skill {
   padding: 3px;
-  border: 1px solid gray;
   border-radius: 5px;
   margin-right: 3px;
   margin-left: 3px;

@@ -18,6 +18,7 @@ export class SlotBookingComponent implements OnInit, OnDestroy {
 
   public slotBuilder$ = new BehaviorSubject<Slot[]>([]);
   public pluginEditor$ = new BehaviorSubject<string | null>(null);
+  public maxResultsPerSlot$ = new BehaviorSubject<number>(8);
   public jobBuilder$ = new BehaviorSubject<Job | null>(null);
   public personIds$ = new BehaviorSubject<string[]>([]);
   public isLoading$ = new BehaviorSubject<boolean>(false);
@@ -56,10 +57,10 @@ export class SlotBookingComponent implements OnInit, OnDestroy {
 
 
     this.isLoggedIn$ = this.auth.isLoggedIn$;
-    this.requestPayload$ = combineLatest([this.pluginEditor$, this.slotBuilder$, this.jobBuilder$, this.personIds$])
+    this.requestPayload$ = combineLatest([this.pluginEditor$, this.slotBuilder$, this.jobBuilder$, this.personIds$, this.maxResultsPerSlot$])
       .pipe(
-        filter(([pluginEditor, slots, job, personIds]) => !!(pluginEditor && slots && job && personIds.length)),
-        map(([pluginEditor, slots, job, personIds]): SearchRequest => {
+        filter(([pluginEditor, slots, job, personIds, maxResultsPerSlot]) => !!(pluginEditor && slots && job && personIds.length)),
+        map(([pluginEditor, slots, job, personIds, maxResultsPerSlot]): SearchRequest => {
           return {
 
             job: {
@@ -76,7 +77,7 @@ export class SlotBookingComponent implements OnInit, OnDestroy {
             },
 
             options: {
-              maxResultsPerSlot: 8
+              maxResultsPerSlot
             },
 
             optimizationPlugin: pluginEditor,
@@ -85,10 +86,15 @@ export class SlotBookingComponent implements OnInit, OnDestroy {
         })
       );
 
-
     this.requestOptions = this.fb.group({
-      refresh: [false]
+      refresh: [false],
+      maxResultsPerSlot: 8,
     });
+
+    this.requestOptions.valueChanges.pipe(
+      tap(({ maxResultsPerSlot }) => this.maxResultsPerSlot$.next(maxResultsPerSlot)),
+      takeUntil(this.onDistroy$)
+    ).subscribe();
 
     this.response$.pipe(
       filter(it => !!it),

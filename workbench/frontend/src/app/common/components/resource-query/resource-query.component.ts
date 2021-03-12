@@ -9,9 +9,7 @@ import { QueryService } from '../../services/query.service';
 const TEMPLATES = {
   default: `
 SELECT 
-  resource.id as id,
-  resource.firstName as firstName,
-  resource.lastName as lastName
+  resource
 FROM 
   UnifiedPerson resource 
 WHERE 
@@ -21,9 +19,7 @@ LIMIT 25
 `,
   skill: `
 SELECT 
-  resource.id as id,
-  resource.firstName as firstName,
-  resource.lastName as lastName
+  resource
 FROM 
   Tag tag 
   LEFT JOIN Skill skill ON skill.tag = tag.id
@@ -36,9 +32,7 @@ LIMIT 25
 `,
   region: `
 SELECT
-  resource.id as id,
-  resource.firstName as firstName,
-  resource.lastName as lastName
+  resource
 FROM 
   UnifiedPerson resource 
   LEFT JOIN Region region ON region.name = '<insert-region-here>'

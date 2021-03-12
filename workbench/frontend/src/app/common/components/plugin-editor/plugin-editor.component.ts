@@ -72,7 +72,6 @@ export class PluginEditorComponent implements OnInit, OnDestroy, AfterContentIni
       contextMenuGroupId: 'navigation',
       contextMenuOrder: 1.5,
       run: _ed => {
-        // console.log(_ed.getPosition());
         if (this.form.invalid) {
           return null;
         }
@@ -97,7 +96,7 @@ export class PluginEditorComponent implements OnInit, OnDestroy, AfterContentIni
     const pluginList$ = this.refresh.pipe(
       mergeMap(() => this.service.fetchAll()),
       catchError((error) => {
-        // if fetch all fails lets disable editor
+        // if fetch all fails let's disable editor
         console.error(error);
         this.infoMessage(`[❌ ERROR ❌] 'could not read plugins, disabled editor'`);
         this.disableEditor$.next(true);
@@ -107,8 +106,10 @@ export class PluginEditorComponent implements OnInit, OnDestroy, AfterContentIni
 
     this.selectList$ = pluginList$.pipe(
       map((list) => {
+
         const defaultPlugin = list.find(x => x.name === DEFAULT_BUILD_IN) || list.find(x => !!x.defaultPlugin);
-        if (defaultPlugin) {
+
+        if (defaultPlugin && CREATE_NEW === this.selectedPlugin.value) {
           // select first [real] plugin 
           setTimeout(() => this.selectedPlugin.patchValue(defaultPlugin.name), 500)
         }

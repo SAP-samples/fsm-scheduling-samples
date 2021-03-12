@@ -4,9 +4,9 @@ import { map, mergeMap, tap, withLatestFrom } from 'rxjs/operators';
 import { ConfigService } from './config.service';
 import { CLIENT_IDENTIFIER } from '../contants';
 import { GlobalContext, AuthService } from './auth.service';
-import { combineLatest } from 'rxjs';
+import { combineLatest, of } from 'rxjs';
 
-type PersonObj = { id: string, firstName: string, lastName: string, skills: { name: string, start: string, end: string }[] };
+type PersonObj = { id: string, firstName: string, lastName: string, skills: { name: string, start: string, end: string }[]; udfValues: { meta: string, value: string; name: string }[] };
 type ActivityObj = { id: string, subject: string; startDateTime: string, earliestStartDateTime: string, dueDateTime: string, code: string };
 type TagObj = { id: string, name: string };
 type SkillObj = { id: string, tag: string, person: string, endDate: string, startDate: string };
@@ -14,6 +14,7 @@ type SkillObj = { id: string, tag: string, person: string, endDate: string, star
 type InternalCache = {
   resource: Map<string, PersonObj>;
   activity: Map<string, ActivityObj>;
+  udfMetaMap: Map<string, string>;
 }
 
 @Injectable({
@@ -23,7 +24,8 @@ export class QueryService {
 
   private __cache: InternalCache = {
     resource: new Map<string, PersonObj>(),
-    activity: new Map<string, ActivityObj>()
+    activity: new Map<string, ActivityObj>(),
+    udfMetaMap: null
   }
 
   private getCache<T extends Map<string, any>>(key: keyof InternalCache) {
@@ -53,26 +55,37 @@ export class QueryService {
     private http: HttpClient,
   ) { }
 
-  private addToCache(key: keyof InternalCache, list: Partial<PersonObj>[] | Partial<ActivityObj>[]) {
+  private addToCache(key: keyof InternalCache, list: Partial<PersonObj>[] | Partial<ActivityObj>[] | Map<string, string>) {
     if (Array.isArray(list)) {
       list.forEach(item => {
         if (key === 'resource' && item && item.id && !this.getCache(key).has(item.id)) {
-          this.getCache(key).set(item.id, { ...item, firstName: (item.firstName || ''), lastName: (item.lastName || '') })
+          this.getCache(key).set(item.id, { ...item, firstName: (item.firstName || ''), lastName: (item.lastName || '') });
         }
 
         if (key === 'activity' && item && item.id && !this.getCache(key).has(item.id)) {
-          this.getCache(key).set(item.id, { ...item })
+          this.getCache(key).set(item.id, { ...item });
         }
-      })
+
+        if (key === 'udfMetaMap') {
+          this.getCache(key).set(item.id, { ...item });
+        }
+      });
     }
   }
 
   private _query<T_LIST extends T_ITEM[], T_ITEM extends {}>(query: string) {
-    // console.debug(query);
     return this.auth.globalContextWithAuth$.pipe(
       mergeMap(ctx => this.http.post<T_LIST>(`${this.config.getApiUri()}/query`, { query }, { headers: this.getHeaders(ctx) })),
-
     );
+  }
+
+  private getUdfMetaMap<list extends item[], item extends { udfMeta: { id: string, name: string } }>() {
+    return this.__cache.udfMetaMap == null
+      ? this._query<list, item>(`SELECT udfMeta FROM UdfMeta udfMeta ORDER BY udfMeta.name ASC`).pipe(
+        map(r => r.map(it => it.udfMeta).reduce((m, { id, name }) => m.set(id, name), new Map<string, string>())),
+        tap((theMap) => this.addToCache('udfMetaMap', theMap))
+      )
+      : of(this.__cache.udfMetaMap)
   }
 
   public queryActivities<list extends item[], item extends ActivityObj>(query: string) {
@@ -82,14 +95,15 @@ export class QueryService {
   }
 
 
-  public queryResource<list extends item[], item extends { id: string, firstName: string, lastName: string }>(query: string) {
+  public queryResource<list extends item[], item extends { resource: { id: string, firstName: string, lastName: string, udfValues: { meta: string, value: string }[] } }>(query: string) {
     return combineLatest([
       this._query<list, item>(query),
       this._query<TagObj[], TagObj>(`SELECT tag.id as id, tag.name as name FROM Tag tag WHERE tag.inactive = false`),
-      this._query<SkillObj[], SkillObj>(`SELECT skill.id as id, skill.tag as tag, skill.person as person, skill.startDate as startDate, skill.endDate as endDate FROM Skill skill WHERE skill.inactive = false`)
+      this._query<SkillObj[], SkillObj>(`SELECT skill.id as id, skill.tag as tag, skill.person as person, skill.startDate as startDate, skill.endDate as endDate FROM Skill skill WHERE skill.inactive = false`),
+      this.getUdfMetaMap()
     ])
       .pipe(
-        map(([resources, tags, skills]) => {
+        map(([resp, tags, skills, udfMap]) => {
           const tagMap = tags.reduce((m, { id, name }) => m.set(id, name), new Map<string, string>())
           const skillMap = skills.reduce((m, skill) => {
             const item = {
@@ -105,7 +119,11 @@ export class QueryService {
             return m;
           }, new Map<string, { name: string, start: string, end: string }[]>())
 
-          return resources.map(it => ({ ...it, skills: skillMap.has(it.id) ? skillMap.get(it.id).sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0)) : [] }))
+          return resp.map(it => it.resource).map(it => ({
+            ...it,
+            udfValues: (it.udfValues || []).map(it => ({ ...it, name: udfMap.get(it.meta) })).sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0)),
+            skills: skillMap.has(it.id) ? skillMap.get(it.id).sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0)) : []
+          }))
         }),
         tap((list) => this.addToCache('resource', list))
       );

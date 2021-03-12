@@ -2,6 +2,56 @@
 
   <mat-card>
 
+    <div style="margin-bottom: 25px; width: 800px;">
+
+      <div>
+        <mat-form-field appearance="fill" style="width: 400px">
+          <mat-label>latitude</mat-label>
+          <input matInput type="number" formControlName="location_latitude">
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" style="width: 400px">
+          <mat-label>longitude</mat-label>
+          <input matInput type="number" formControlName="location_longitude">
+        </mat-form-field>
+      </div>
+
+      <div>
+        <button style="margin: 5px;" mat-stroked-button color="primary" [disabled]="(isPicking$ | async)"
+          class="inline-btn" (click)="pickFromMap()">
+          <mat-icon>room</mat-icon>
+          <span *ngIf="(isPicking$ | async) !== true">pick from map</span>
+          <span *ngIf="(isPicking$ | async) === true">picking ... </span>
+        </button>
+
+        <button style="margin: 5px;" mat-stroked-button color="accent" class="inline-btn" (click)="locationClear()">
+          <mat-icon>clear</mat-icon>
+        </button>
+
+        <map [drawToMap$]="drawToMap$" (select)="mapSelect($event)"></map>
+
+      </div>
+
+      <div style="margin-top: 25px;">
+        <mat-form-field appearance="fill" style="width: 800px">
+          <mat-label>Pick FSM address</mat-label>
+          <mat-select [formControl]="selectedAddress">
+            <mat-option *ngFor="let it of (allAddress$ | async)" [value]="it">{{ it.text }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+    </div>
+
+    <div style="margin-top: 10px;">
+      <mat-form-field appearance="fill" style="width: 500px">
+        <mat-label>duration (minutes)</mat-label>
+        <mat-select formControlName="durationMinutes">
+          <mat-option *ngFor="let x of durationList" [value]="x">{{ x }} minutes - ({{ (x/60) }} hrs)</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
     <div style="margin-top: 50px;">
 
       <mat-form-field style="width: 500px">
@@ -28,55 +78,6 @@
         </mat-autocomplete>
 
       </mat-form-field>
-    </div>
-
-    <div style="margin-top: 10px;">
-      <mat-form-field appearance="fill" style="width: 500px">
-        <mat-label>duration (minutes)</mat-label>
-        <mat-select formControlName="durationMinutes">
-          <mat-option *ngFor="let x of durationList" [value]="x">{{ x }} minutes - ({{ (x/60) }} hrs)</mat-option>
-        </mat-select>
-      </mat-form-field>
-    </div>
-
-    <div style="margin-top: 10px; width: 500px;">
-
-      <div>
-        <mat-form-field appearance="fill" style="width: 250px">
-          <mat-label>latitude</mat-label>
-          <input matInput type="number" formControlName="location_latitude">
-        </mat-form-field>
-
-        <mat-form-field appearance="fill" style="width: 250px">
-          <mat-label>longitude</mat-label>
-          <input matInput type="number" formControlName="location_longitude">
-        </mat-form-field>
-      </div>
-
-      <div>
-        <map [drawToMap$]="drawToMap$" (select)="mapSelect($event)"></map>
-
-        <button mat-stroked-button color="accent" class="inline-btn" (click)="locationClear()">
-          <mat-icon>clear</mat-icon> clear
-        </button>
-
-
-        <button mat-stroked-button color="accent" [disabled]="(isPicking$ | async)" class="inline-btn"
-          (click)="pickFromMap()">
-          <span *ngIf="(isPicking$ | async) !== true">pick from map</span>
-          <span *ngIf="(isPicking$ | async) === true">picking ... </span>
-        </button>
-      </div>
-
-      <div>
-        <mat-form-field appearance="fill" style="width: 500px">
-          <mat-label>Pick FSM address</mat-label>
-          <mat-select [formControl]="selectedAddress">
-            <mat-option *ngFor="let it of (allAddress$ | async)" [value]="it">{{ it.text }}</mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
-
     </div>
 
   </mat-card>

@@ -39,12 +39,12 @@
               </mat-spinner>
             </div>
             <div style="padding-left: 20px;">
-            
+
               <div class="tech-info">
                 <mat-icon>tag</mat-icon>
                 <span>{{ item.score }}</span>
               </div>
-              
+
               <div class="tech-info">
                 <mat-icon>access_time</mat-icon>
                 <span>{{ item.start | date:'HH:mm' }} - {{ item.end | date:'HH:mm' }}</span>
@@ -54,7 +54,7 @@
                 <mat-icon>directions_car</mat-icon>
                 <span>{{ item.trip.durationInMinutes }} min ({{ (item.trip.distanceInMeters / 1000 ) }} km)</span>
               </div>
-            
+
             </div>
           </div>
 
@@ -62,11 +62,15 @@
             {{ item.resourceVm?.firstName }} {{ item.resourceVm?.lastName }}
           </mat-chip>
 
-
           <div class="tech-skill-list" *ngIf="item.resourceVm">
             <span class="tech-skill" *ngFor="let skill of item.resourceVm.skills; index as j"
               [title]="skill.start + ' '+ skill.end">
               {{ skill.name }}</span>
+          </div>
+
+          <div *ngIf="item.resourceVm" class="tech-udf-list">
+            <div class="tech-udf" *ngFor="let udf of item.resourceVm.udfValues; index as j" style="text-align: left;">{{
+              udf.name }} : {{ udf.value }}</div>
           </div>
 
         </div>
@@ -104,12 +108,20 @@
 </mat-expansion-panel>
 
 
-<mat-card class="margin-10">
+<mat-card class="margin-10" [formGroup]="requestOptions">
 
   <button mat-raised-button [disabled]="!(isLoggedIn$ | async) || (isLoading$ | async)"
     (click)="request_response.open(); doRequest();" color="primary" class="margin-10">
     <mat-icon>search</mat-icon> Search for slots
   </button>
+
+  <mat-form-field appearance="fill" style="width: 50px;">
+    <mat-label>take</mat-label>
+    <mat-select formControlName="maxResultsPerSlot">
+      <mat-option *ngFor="let x of [1,2,3,4,5,6,7,8,9,10,15,20,25,50]" [value]="x">{{ x }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
 
   using <mat-chip>/api/v2/job-slots/actions/search</mat-chip> Search Job Slot API see
 
@@ -118,9 +130,7 @@
     documentation
   </a>
 
-  <div [formGroup]="requestOptions" style="margin-top: 15px; display: none;">
-    <mat-slide-toggle formControlName="refresh">auto refresh</mat-slide-toggle>
-  </div>
+  <mat-slide-toggle formControlName="refresh" style="display: none;">auto refresh</mat-slide-toggle>
 
   <div *ngIf="response$ && (response$ | async)" style="margin-top: 8px; margin-left: 10px;">
     Timing: {{ (response$ | async).time | number }} ms for {{ (response$ | async).grouped.length }} solts with

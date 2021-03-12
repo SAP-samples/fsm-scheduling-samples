@@ -41,7 +41,7 @@ build_container() {
   fi
 
 
-  if promptyn "[ACTION] delete cached doccker images for $APP_NAME for 'clean' build? (y/n) "; then 
+  if promptyn "[ACTION] delete cached docker images for $APP_NAME for 'clean' build? (y/n) "; then 
      echo "DOCKER-CLEAN-UP==================================";
      
      ((docker images -a | grep $APP_NAME | awk '{print $3}' | xargs docker rmi -f) || :) && echo done;

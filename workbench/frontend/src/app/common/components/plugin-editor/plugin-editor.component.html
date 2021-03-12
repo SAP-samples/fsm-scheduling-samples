@@ -38,14 +38,10 @@
     <mat-progress-bar *ngIf="!!(isLoading$ | async)" style="height: 5px;" mode="indeterminate"></mat-progress-bar>
   </div>
 
-  <input type="text" formControlName="description" style="border:0" />
+  Version/Description: <input type="text" formControlName="description" style="border:0; width: 300px;" />
 
   <ngx-monaco-editor #editorInstance class="monaco-editor" [options]="editorOptions" (onInit)="onEditorInit($event)"
     formControlName="pluginCode" style="min-height: 700px;">
   </ngx-monaco-editor>
 
 </form>
-
-<!-- 
-  <pre>{{ form.value | json }}</pre>
--->
