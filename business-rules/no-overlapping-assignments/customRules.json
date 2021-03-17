@@ -28,7 +28,7 @@
   "variables" : [ {
     "name" : "overlapping_sa",
     "dtoVersions" : "ServiceAssignment.28",
-    "query" : "SELECT overlap.id FROM ServiceAssignment overlap WHERE overlap.id != ${serviceAssignment.id} AND overlap.released = true AND overlap.inactive = false AND overlap.technician = ${serviceAssignment.technician} AND ((overlap.startDateTime >= ${serviceAssignment.startDateTime} AND overlap.endDateTime <= ${serviceAssignment.endDateTime}) OR (overlap.startDateTime < ${serviceAssignment.startDateTime} AND overlap.endDateTime > ${serviceAssignment.startDateTime}) OR (overlap.startDateTime < ${serviceAssignment.endDateTime} AND overlap.endDateTime > ${serviceAssignment.endDateTime})) limit 20"
+    "query" : "SELECT overlap.id FROM ServiceAssignment overlap WHERE overlap.id != ${serviceAssignment.id} AND overlap.released = true AND overlap.state != 'MODIFIED' AND overlap.inactive = false AND overlap.technician = ${serviceAssignment.technician} AND ((overlap.startDateTime >= ${serviceAssignment.startDateTime} AND overlap.endDateTime <= ${serviceAssignment.endDateTime}) OR (overlap.startDateTime < ${serviceAssignment.startDateTime} AND overlap.endDateTime > ${serviceAssignment.startDateTime}) OR (overlap.startDateTime < ${serviceAssignment.endDateTime} AND overlap.endDateTime > ${serviceAssignment.endDateTime})) limit 20"
   }, {
     "name" : "activity",
     "type" : "Activity",
