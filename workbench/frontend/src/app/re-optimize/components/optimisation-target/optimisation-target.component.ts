@@ -1,5 +1,5 @@
 import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject, merge, Subject } from 'rxjs';
 import { catchError, filter, map, mergeMap, pairwise, take, takeUntil, tap } from 'rxjs/operators';
 import * as moment from 'moment';
@@ -27,6 +27,7 @@ export class OptimisationTargetComponent implements OnInit, OnDestroy {
   private onDistroy$ = new Subject();
   public activityList$ = new BehaviorSubject<{ id: string, startDateTime: string }[]>([]);
   public isLoading$ = new BehaviorSubject<boolean>(false);
+  public addByIdCtrl: FormControl;
   public options = {
     n: [1, 2, 5, 8, 10, 25, 50, 75, 100, 250, 500]
   }
@@ -40,12 +41,15 @@ export class OptimisationTargetComponent implements OnInit, OnDestroy {
   public ngOnDestroy() {
     this.onDistroy$.next();
   }
-  ngOnInit(): void {
+
+  public ngOnInit(): void {
     this.form = this.fb.group({
       start: [undefined, Validators.required],
       end: [undefined, Validators.required],
       limit: [50, Validators.required],
     });
+
+    this.addByIdCtrl = this.fb.control("", Validators.required);
 
     // sync changes outside
     combineLatest([this.form.valueChanges, this.activityList$]).pipe(
@@ -129,6 +133,40 @@ export class OptimisationTargetComponent implements OnInit, OnDestroy {
       end: toHTMLDate(moment(new Date()).add(range + 1, 'days').hour(0).minute(0).second(0))
     });
 
+  }
+
+  public addById() {
+    const id = this.addByIdCtrl.value.toLowerCase();
+    if (this.activityList$.value.some(it => it.id.toLowerCase() === id)) {
+      return;
+    }
+
+    this.isLoading$.next(true);
+    this.query.queryActivities(`
+    SELECT 
+      activity.id as id,
+      activity.code as code,
+      activity.subject as subject,
+      activity.startDateTime as startDateTime,
+      activity.earliestStartDateTime as earliestStartDateTime,
+      activity.dueDateTime as dueDateTime,
+      activity.responsibles as responsibles
+    FROM 
+      Activity activity 
+    WHERE 
+      activity.id = '${id}'
+      OR activity.code ilike '${id}'
+      OR activity.externalId = '${id}'
+    LIMIT 1`).pipe(
+      catchError((error) => []),
+      tap(list => {
+        this.isLoading$.next(false);
+        this.addByIdCtrl.patchValue('');
+        if (list && Array.isArray(list) && list[0]) {
+          this.activityList$.next([list[0], ...this.activityList$.value]);
+        }
+      })
+    ).subscribe();
   }
 
   public getDuration(it: { start: string, end: string }) {

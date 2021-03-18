@@ -30,10 +30,21 @@
       <mat-chip *ngFor="let item of (activityList$ | async)" [removable]="true" (removed)="remove(item)"
         [title]="('id:' + item.id)">
         <mat-icon matChipRemove>delete</mat-icon>
-        [{{ item.code }}] {{ item.subject | slice:0:8 }}... , {{ item.earliestStartDateTime | date:'hh:mm' }} -
-        {{ item.dueDateTime | date:'dd.MM hh:mm' }}&nbsp;
+        <span *ngIf="!!item.code"> [{{ item.code }}] , {{ item.earliestStartDateTime |
+          date:'hh:mm' }} -
+          {{ item.dueDateTime | date:'dd.MM hh:mm' }}&nbsp;</span>
+        <span>{{ item.id }}</span>
       </mat-chip>
     </mat-chip-list>
   </div>
 
 </form>
+
+
+<mat-form-field appearance="fill">
+  <mat-label>FSM Activity ID</mat-label>
+  <input matInput [formControl]="addByIdCtrl">
+</mat-form-field>
+<button mat-raised-button [disabled]="addByIdCtrl.invalid" (click)="addById();" color="primary" class="margin-10">
+  <mat-icon>add</mat-icon>
+</button>
