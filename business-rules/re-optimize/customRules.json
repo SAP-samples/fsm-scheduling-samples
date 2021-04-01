@@ -1,0 +1,119 @@
+[
+  {
+    "actions": [
+      {
+        "executionCount": "1",
+        "name": "HttpRequest",
+        "parameters": {
+          "url": "https://qt.coresystems.net/api/oauth2/v1/token",
+          "body": "grant_type=password&username=${account.name}/${auth_user_name}&password=${auth_user_password}",
+          "method": "POST",
+          "headers": [
+            {
+              "name": "Authorization",
+              "value": "<insert-basic-auth-here>"
+            },
+            {
+              "name": "Host",
+              "value": "qt.dev.coresuite.com"
+            }
+          ],
+          "contentType": "application/x-www-form-urlencoded",
+          "responseVariable": "accessToken"
+        }
+      },
+      {
+        "executionCount": "1",
+        "name": "HttpRequest",
+        "parameters": {
+          "url": "https://qt.coresystems.net/dispatchservice/api/autoscheduler/v1/actions/re-optimize",
+          "body": "{\r\n\t\"activityIds\": [\"${var x=[]; activities.forEach(function(a) { x.push(a.id); }); x.join('\\\",\\\"')}\"],\r\n\t\"optimizationPlugin\": \"Nearest\",\r\n\t\"start\": \"${moment().add(1, 'hour').toISOString()}\",\r\n\t\"end\":  \"${moment().add(144, 'hour').toISOString()}\"\r\n}",
+          "method": "POST",
+          "headers": [
+            {
+              "name": "authorization",
+              "value": "bearer ${JSON.parse(accessToken).access_token}"
+            },
+            {
+              "name": "x-account-id",
+              "value": "${account.id}"
+            },
+            {
+              "name": "x-account-name",
+              "value": "${account.name}"
+            },
+            {
+              "name": "x-company-id",
+              "value": "${company.id}"
+            },
+            {
+              "name": "x-company-name",
+              "value": "${company.name}"
+            },
+            {
+              "name": "accept",
+              "value": "application/json"
+            },
+            {
+              "name": "x-request-id",
+              "value": "business_rule_reoptimize"
+            },
+            {
+              "name": "x-client-id",
+              "value": "ai-services-demo"
+            },
+            {
+              "name": "x-client-version",
+              "value": "0.0.0"
+            },
+            {
+              "name": "x-user-name",
+              "value": "admin"
+            }
+          ],
+          "contentType": "application/json",
+          "responseVariable": "reOptimizeResponse"
+        }
+      },
+      {
+        "executionCount": "1",
+        "name": "Notification",
+        "parameters": {
+          "to": null,
+          "text": "${reOptimizeResponse}",
+          "title": "RE_OPTIMIZE"
+        }
+      }
+    ],
+    "code": "RE_OPTIMIZE",
+    "conditions": [],
+    "cronExpression": "0,15,30,45 * * * *",
+    "description": "<h4>Goal:</h4><br>\r\n<p>\r\nTo keep the calendar for next day always optimized using autoscheduler.\r\n</p>\r\n<h4>Steps:</h4>\r\n<ul>\r\n<li> 1) fetch all activities in Dispatching mode, from the next 10 days </li>\r\n<li> 2) get an authentication token using the oauth API</li>\r\n<li> 3) re-optimizes all the activities for the next 72 hours (3 days)</li>\r\n</ul>\r\n<h4>What do I need to change to adapt this business rule?</h4>\r\n<ul>\r\n<li>change the query on which activities to include in the re-oprimization. It can be filtered by extra field such as priority, etc..  </li>\r\n<li> change the date we want to optimize for</li>\r\n<li> in the oAuth2 and re-otimize webhooks, change all the account, company and user-related fields</li>\r\n</ul>",
+    "embedded": false,
+    "enabled": true,
+    "eventType": "SCHEDULE",
+    "lastChanged": 1616501526501,
+    "name": "RE_OPTIMIZE",
+    "objectType": "",
+    "permissionsType": "MAXIMUM",
+    "responsible": "s.gausmann@sap.com",
+    "type": "TWO",
+    "variables": [
+      {
+        "name": "activities",
+        "dtoVersions": "Activity.28",
+        "query": "SELECT it FROM Activity it where it.status != 'CLOSED' LIMIT 500"
+      },
+      {
+        "name": "auth_user_name",
+        "value": "<put-user-name-here>",
+        "variableType": "VALUE"
+      },
+      {
+        "name": "auth_user_password",
+        "value": "<put-user-pw-here>",
+        "variableType": "VALUE"
+      }
+    ]
+  }
+]

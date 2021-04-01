@@ -66,8 +66,9 @@ d -> deploy
 ## Related documentation 
 
 - [SAP Field Service Management - Product Website](https://www.sap.com/germany/products/field-service-management.html)
-- [SAP Field Service Management - AI-based Scheduling](https://help.sap.com/viewer/fsm_ai/Cloud/en-US/ai-based-scheduling-overview.html) 
-- [Sample Business Rules for Optimization](https://help.sap.com/viewer/fsm_ai/Cloud/en-US/optimization-business-rules.htm)
+- [AI-based Scheduling](https://help.sap.com/viewer/fsm_ai/Cloud/en-US/ai-based-scheduling-overview.html) 
+  - [Best Matching Technician](https://help.sap.com/viewer/fsm_ai/Cloud/en-US/best-matching-technician-two-versions.html)
+  - [Sample Business Rules for Optimization](https://help.sap.com/viewer/fsm_ai/Cloud/en-US/optimization-business-rules.htm)
 - [Optimization API](https://eu.coresystems.net/optimization/api/v1/swagger-ui/#/)
 - [Service Management API](https://help.sap.com/viewer/fsm_service_api/Cloud/en-US/service-api-overview.html) [Spec](https://app.swaggerhub.com/apis/coresystemsFSM/ServiceManagementAPI) 
 
