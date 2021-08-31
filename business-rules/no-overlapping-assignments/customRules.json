@@ -23,7 +23,7 @@
   "name" : "SAMPLE - Validation - Do not allow overlapping assignment",
   "objectType" : "SERVICEASSIGNMENT",
   "permissionsType" : "USER",
-  "responsible" : "s.gausmann@sap.com",
+  "responsible" : "<enter-email-id-here>",
   "type" : "TWO",
   "variables" : [ {
     "name" : "overlapping_sa",
