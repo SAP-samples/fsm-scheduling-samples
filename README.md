@@ -53,6 +53,9 @@ d -> deploy
 # Known Issues
 - There are no known issues for the moment.
 
+# Supplements
+On top of the workbench application, you can also configure Business Rules to trigger reoptimization and avoid scenarios like overlapping jobs for a Technician. Refer to [business-rules](/business-rules) folder.
+
 # How to obtain support
 
 ## Product support
@@ -68,7 +71,7 @@ d -> deploy
 - [SAP Field Service Management - Product Website](https://www.sap.com/germany/products/field-service-management.html)
 - [AI-based Scheduling](https://help.sap.com/viewer/fsm_ai/Cloud/en-US/ai-based-scheduling-overview.html) 
   - [Best Matching Technician](https://help.sap.com/viewer/fsm_ai/Cloud/en-US/best-matching-technician-two-versions.html)
-  - [Sample Business Rules for Optimization](https://help.sap.com/viewer/fsm_ai/Cloud/en-US/optimization-business-rules.htm)
+  - [Sample Business Rules for Optimization](https://help.sap.com/viewer/fsm_ai/Cloud/en-US/optimization-business-rules.html)
 - [Optimization API](https://eu.coresystems.net/optimization/api/v1/swagger-ui/#/)
 - [Service Management API](https://help.sap.com/viewer/fsm_service_api/Cloud/en-US/service-api-overview.html) [Spec](https://app.swaggerhub.com/apis/coresystemsFSM/ServiceManagementAPI) 
 

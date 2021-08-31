@@ -96,7 +96,7 @@
     "name": "RE_OPTIMIZE",
     "objectType": "",
     "permissionsType": "MAXIMUM",
-    "responsible": "s.gausmann@sap.com",
+    "responsible" : "<enter-email-id-here>",
     "type": "TWO",
     "variables": [
       {
