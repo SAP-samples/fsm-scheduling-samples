@@ -18,6 +18,7 @@ class Job {
     public readonly durationMinutes: number,
     public readonly location: Readonly<{ latitude: number; longitude: number; }>,
     public readonly mandatorySkills: string[],
+    public readonly optionalSkills: string[],
     public readonly udfValues: Readonly<{ [key: string]: string }>,
   ) { }
 }

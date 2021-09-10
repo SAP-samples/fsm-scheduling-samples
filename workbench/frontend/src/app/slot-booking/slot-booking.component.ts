@@ -66,6 +66,7 @@ export class SlotBookingComponent implements OnInit, OnDestroy {
               durationMinutes: job.durationMinutes,
               location: job.location,
               mandatorySkills: job.mandatorySkills,
+              optionalSkills: job.optionalSkills,
               udfValues: {}
             },
 
@@ -128,7 +129,7 @@ export class SlotBookingComponent implements OnInit, OnDestroy {
       take(1),
       mergeMap(payload => {
 
-        // options here  
+        // options here
 
         return this.service.doRequest(payload).pipe(
           catchError((error) => {

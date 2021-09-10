@@ -31,4 +31,6 @@ COPY --from=frontend app/frontend/dist/frontend ./frontend
 RUN ls -a -l /app/backend/dist/**
 
 WORKDIR /app/backend
-CMD [ "src/scripts/start.sh" ]
+
+RUN apt-get update && apt-get install -y dos2unix && dos2unix start.sh
+CMD [ "./start.sh" ]

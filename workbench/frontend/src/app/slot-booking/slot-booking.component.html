@@ -39,12 +39,12 @@
               </mat-spinner>
             </div>
             <div style="padding-left: 20px;">
-            
+
               <div class="tech-info">
                 <mat-icon>tag</mat-icon>
                 <span>{{ item.score }}</span>
               </div>
-              
+
               <div class="tech-info">
                 <mat-icon>access_time</mat-icon>
                 <span>{{ item.start | date:'HH:mm' }} - {{ item.end | date:'HH:mm' }}</span>
@@ -54,7 +54,7 @@
                 <mat-icon>directions_car</mat-icon>
                 <span>{{ item.trip.durationInMinutes }} min ({{ (item.trip.distanceInMeters / 1000 ) }} km)</span>
               </div>
-            
+
             </div>
           </div>
 
@@ -134,7 +134,7 @@
 <mat-expansion-panel class="margin-10">
   <mat-expansion-panel-header>
     <mat-panel-title>
-      <strong class="panel-title">🕑&nbsp;&nbsp;When / Timeing </strong>
+      <strong class="panel-title">🕑&nbsp;&nbsp;When / Timing </strong>
       <mat-chip class="panel-title-chip"> {{ (requestPayload$ | async)?.slots.length }} slots </mat-chip>
     </mat-panel-title>
     <mat-panel-description></mat-panel-description>
