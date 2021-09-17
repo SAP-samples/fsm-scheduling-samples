@@ -12,6 +12,7 @@ export type Job = {
     longitude: number
   } | null,
   mandatorySkills: string[],
+  optionalSkills: string[]
 }
 
 export type TagDTO = {

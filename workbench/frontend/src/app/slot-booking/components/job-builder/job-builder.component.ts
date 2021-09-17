@@ -16,18 +16,21 @@ import { filter, map, take, takeUntil, tap } from 'rxjs/operators';
 export class JobBuilderComponent implements OnInit, OnDestroy, AfterContentInit {
 
   public separatorKeysCodes: number[] = [ENTER, COMMA];
-  public tagsCtrl = new FormControl();
+  public mandatorySkillsCtrl = new FormControl();
+  public optionalSkillsCtrl = new FormControl();
   public filteredTags$: Observable<TagDTO[]>;
   public matchingResourceCount$: Observable<number>;
   public matchingResources$: Observable<string[]>;
-  public selectTags$ = new BehaviorSubject<string[]>([]);
+  public selectedMandatorySkills$ = new BehaviorSubject<string[]>([]);
+  public selectedOptionalSkills$ = new BehaviorSubject<string[]>([]);
   public allAddress$: Observable<{ text: string, location: { latitude: number, longitude: number } }[]>;
   public removable = true;
   public durationList = [.5, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 16, 24, 36, 48, 78].map(n => (n * 60));
   public drawToMap$: Observable<{ latitude: number; longitude: number; }>;
   public isPicking$ = new BehaviorSubject(false);
 
-  @ViewChild('tagInput') tagInput: ElementRef<HTMLInputElement>;
+  @ViewChild('mandatorySkillsInput') mandatorySkillsInput: ElementRef<HTMLInputElement>;
+  @ViewChild('optionalSkillsInput') optionalSkillsInput: ElementRef<HTMLInputElement>;
   @Output() change = new EventEmitter<Job>();
   form: FormGroup;
   selectedAddress: FormControl;
@@ -77,14 +80,14 @@ export class JobBuilderComponent implements OnInit, OnDestroy, AfterContentInit 
         setTimeout(() => {
           const [first] = all.sort((a, b) => b.persons.length - a.persons.length);
           if (first) {
-            // select skill
-            // this.selectTags$.next([first.name]);
+            // select mandatory skill
+            // this.selectedMandatorySkills$.next([first.name]);
           }
         }, 100)
       })
     ).subscribe()
 
-    this.matchingResources$ = combineLatest([this.selectTags$, alltags]).pipe(
+    this.matchingResources$ = combineLatest([this.selectedMandatorySkills$, alltags]).pipe(
       map(([selected, all]) => selected.map(tagName => all.find(x => x.name === tagName))
         .filter(it => !!it)
         .reduce((theSet, it) => {
@@ -98,7 +101,7 @@ export class JobBuilderComponent implements OnInit, OnDestroy, AfterContentInit 
       map(list => list.length === 0 ? Infinity : list.length)
     );
 
-    this.filteredTags$ = combineLatest([this.selectTags$, alltags]).pipe(
+    this.filteredTags$ = combineLatest([this.selectedMandatorySkills$, alltags]).pipe(
       map(([selected, all]) => all.filter(tag => !selected.some(x => x === tag.name)))
     );
 
@@ -106,11 +109,17 @@ export class JobBuilderComponent implements OnInit, OnDestroy, AfterContentInit 
       durationMinutes: [(4 * 60), Validators.required],
       location_latitude: [52.5158595, Validators.required],
       location_longitude: [13.3175292, Validators.required],
-      mandatorySkills: [[], Validators.required]
+      mandatorySkills: [[], Validators.required],
+      optionalSkills: [[], Validators.nullValidator]
     });
 
-    this.selectTags$.pipe(
+    this.selectedMandatorySkills$.pipe(
       tap((list) => this.form.patchValue({ mandatorySkills: list })),
+      takeUntil(this.onDistroy$)
+    ).subscribe();
+
+    this.selectedOptionalSkills$.pipe(
+      tap((list) => this.form.patchValue({ optionalSkills: list })),
       takeUntil(this.onDistroy$)
     ).subscribe();
 
@@ -121,10 +130,11 @@ export class JobBuilderComponent implements OnInit, OnDestroy, AfterContentInit 
 
     form$.pipe(
       tap(value => {
-        const { durationMinutes, mandatorySkills, location_latitude, location_longitude } = value;
+        const { durationMinutes, mandatorySkills, optionalSkills, location_latitude, location_longitude } = value;
         const job: Job = {
           durationMinutes,
           mandatorySkills,
+          optionalSkills,
           location: location_latitude && location_longitude
             ? { latitude: location_latitude, longitude: location_longitude }
             : null
@@ -139,25 +149,46 @@ export class JobBuilderComponent implements OnInit, OnDestroy, AfterContentInit 
     this.onDistroy$.next();
   }
 
-  public selected(event: MatAutocompleteSelectedEvent) {
-    this.selectTags$.next([...this.selectTags$.value, event.option.value]);
-    this.tagInput.nativeElement.value = '';
-    this.tagsCtrl.setValue(null);
+  public mandatorySkillsSelectionChanged(event: MatAutocompleteSelectedEvent) {
+    this.selectedMandatorySkills$.next([...this.selectedMandatorySkills$.value, event.option.value]);
+    this.mandatorySkillsInput.nativeElement.value = '';
+    this.mandatorySkillsCtrl.setValue(null);
   }
 
-  public addNew(event: MatChipInputEvent) {
+  public addMandatorySkill(event: MatChipInputEvent) {
     const input = event.input;
     const value = event.value;
     if (!value) return;
 
-    this.selectTags$.next([...this.selectTags$.value, value.trim()]);
+    this.selectedMandatorySkills$.next([...this.selectedMandatorySkills$.value, value.trim()]);
     if (input) {
       input.value = '';
     }
   }
 
-  public remove(tagName: string) {
-    this.selectTags$.next(this.selectTags$.value.filter(it => (it !== tagName)));
+  public removeMandatorySkill(tagName: string) {
+    this.selectedMandatorySkills$.next(this.selectedMandatorySkills$.value.filter(it => (it !== tagName)));
+  }
+
+  public optionalSkillsSelectionChanged(event: MatAutocompleteSelectedEvent) {
+    this.selectedOptionalSkills$.next([...this.selectedOptionalSkills$.value, event.option.value]);
+    this.optionalSkillsInput.nativeElement.value = '';
+    this.optionalSkillsCtrl.setValue(null);
+  }
+
+  public addOptionalSkill(event: MatChipInputEvent) {
+    const input = event.input;
+    const value = event.value;
+    if (!value) return;
+
+    this.selectedOptionalSkills$.next([...this.selectedOptionalSkills$.value, value.trim()]);
+    if (input) {
+      input.value = '';
+    }
+  }
+
+  public removeOptionalSkill(tagName: string) {
+    this.selectedOptionalSkills$.next(this.selectedOptionalSkills$.value.filter(it => (it !== tagName)));
   }
 
   public locationClear() {

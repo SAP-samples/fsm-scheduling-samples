@@ -8,27 +8,59 @@
         <div>
           <p>matching :{{ matchingResourceCount$ | async }} </p>
         </div>
-        <mat-chip-list #tagList>
+        <mat-chip-list #mandatorySkillsList>
 
-          <mat-chip *ngFor="let tagName of (selectTags$ | async)" [removable]="removable" (removed)="remove(tagName)">
+          <mat-chip *ngFor="let tagName of (selectedMandatorySkills$ | async)" [removable]="removable" (removed)="removeMandatorySkill(tagName)">
             {{ tagName }}
             <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
           </mat-chip>
 
-          <input placeholder="add mandatory skills ..." #tagInput [formControl]="tagsCtrl" [matAutocomplete]="auto"
-            [matChipInputFor]="tagList" [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-            (matChipInputTokenEnd)="addNew($event)">
-
         </mat-chip-list>
 
-        <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
+
+        <mat-autocomplete #autoMandatorySkill="matAutocomplete" (optionSelected)="mandatorySkillsSelectionChanged($event)">
           <mat-option *ngFor="let tag of (filteredTags$ | async)" [value]="tag.name">
             {{ tag.name }} ({{ tag.persons.length }})
           </mat-option>
         </mat-autocomplete>
 
+        <input placeholder="add mandatory skills ..." #mandatorySkillsInput [formControl]="mandatorySkillsCtrl" [matAutocomplete]="autoMandatorySkill"
+               [matChipInputFor]="mandatorySkillsList" [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+               (matChipInputTokenEnd)="addMandatorySkill($event)">
+
       </mat-form-field>
+
     </div>
+
+
+
+    <div style="margin-top: 10px;">
+      <mat-form-field style="width: 500px">
+        <mat-chip-list #optionalSkillsList>
+
+          <mat-chip *ngFor="let tagName of (selectedOptionalSkills$ | async)" [removable]="removable" (removed)="removeOptionalSkill(tagName)">
+            {{ tagName }}
+            <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+          </mat-chip>
+
+        </mat-chip-list>
+
+
+        <mat-autocomplete #autoOptionalSkill="matAutocomplete" (optionSelected)="optionalSkillsSelectionChanged($event)">
+          <mat-option *ngFor="let tag of (filteredTags$ | async)" [value]="tag.name">
+            {{ tag.name }} ({{ tag.persons.length }})
+          </mat-option>
+        </mat-autocomplete>
+
+
+        <input placeholder="add optional skills ..." #optionalSkillsInput [formControl]="optionalSkillsCtrl" [matAutocomplete]="autoOptionalSkill"
+               [matChipInputFor]="optionalSkillsList" [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+               (matChipInputTokenEnd)="addOptionalSkill($event)">
+
+      </mat-form-field>
+
+    </div>
+
 
     <div style="margin-top: 10px;">
       <mat-form-field appearance="fill" style="width: 500px">

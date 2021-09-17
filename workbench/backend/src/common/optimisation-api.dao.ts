@@ -11,6 +11,7 @@ export type SearchRequest = Readonly<{
     durationMinutes: number;
     location: Readonly<ILocation>;
     mandatorySkills: string[];
+    optionalSkills?: string[];
     udfValues: {
       [key: string]: string;
     }
