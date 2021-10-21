@@ -54,7 +54,7 @@ export class OptimisationTargetComponent implements OnInit, OnDestroy {
     // sync changes outside
     combineLatest([this.form.valueChanges, this.activityList$]).pipe(
       tap(([{ start, end }, activityList]) => {
-        if (start && end && !!activityList.length) {
+        if (start && end ) {
           const result: OptimisaionSpan = {
             start: fromHTMLDate(start),
             end: fromHTMLDate(end),

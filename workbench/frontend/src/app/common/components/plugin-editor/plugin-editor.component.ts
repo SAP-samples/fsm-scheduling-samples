@@ -72,7 +72,6 @@ export class PluginEditorComponent implements OnInit, OnDestroy, AfterContentIni
       contextMenuGroupId: 'navigation',
       contextMenuOrder: 1.5,
       run: _ed => {
-        // console.log(_ed.getPosition());
         if (this.form.invalid) {
           return null;
         }
@@ -83,8 +82,6 @@ export class PluginEditorComponent implements OnInit, OnDestroy, AfterContentIni
   }
 
   public ngAfterContentInit() {
-    console.log(this.editorInstance);
-
     this.disableEditor$.pipe(
       filter((value) => this.editorInstance && value === true),
       tap((value) => this.editorInstance.options = { ...this.editorInstance.options, readOnly: true }),

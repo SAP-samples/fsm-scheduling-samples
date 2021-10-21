@@ -86,7 +86,7 @@ export class ReOptimizeComponent implements OnInit, OnDestroy {
           && span
           && span.start
           && span.end
-          && span.activityIds.length)),
+          )),
         map(([
           optimizationPlugin,
           personIds,
