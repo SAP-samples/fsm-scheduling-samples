@@ -1,5 +1,5 @@
 ######### BUILD FRONTEND #########
-FROM node:10 AS frontend
+FROM node:12 AS frontend
 
 RUN mkdir -p /app
 
@@ -10,7 +10,7 @@ RUN npm install
 RUN npm run build
 
 ######### BUILD BACKEND ##########
-FROM node:10 AS builder_backend
+FROM node:12 AS builder_backend
 RUN mkdir -p /app
 
 ARG APP_VERSION
@@ -32,5 +32,4 @@ RUN ls -a -l /app/backend/dist/**
 
 WORKDIR /app/backend
 
-RUN apt-get update && apt-get install -y dos2unix && dos2unix start.sh
-CMD [ "./start.sh" ]
+CMD [ "src/scripts/start.sh" ]
