@@ -73,7 +73,7 @@ export class AiDataAPIDAO {
   getAll(ctx: Context) {
     return this.request<PluginDto[]>({
       method: 'GET',
-      url: `${this.resolveHost(ctx.cloudHost)}/cloud-ai-data-service/api/autoscheduler/v1/optimization-plugins`,
+      url: `${this.resolveHost(ctx.cloudHost)}/cloud-ai-policy-designer/api/optimization/v1/policies`,
       headers: this.getHeaders(ctx),
       params: this.getParams(ctx),
       responseType: 'json',
@@ -93,7 +93,7 @@ export class AiDataAPIDAO {
   getByName(ctx: Context, name: string) {
     return this.request<PluginDto[]>({
       method: 'GET',
-      url: `${this.resolveHost(ctx.cloudHost)}/cloud-ai-data-service/api/autoscheduler/v1/optimization-plugins/by-name/${name}`,
+      url: `${this.resolveHost(ctx.cloudHost)}/cloud-ai-policy-designer/api/optimization/v1/policies/by-name/${name}`,
       headers: this.getHeaders(ctx),
       params: this.getParams(ctx),
       responseType: 'json',
