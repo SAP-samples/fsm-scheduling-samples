@@ -2,13 +2,12 @@ import { AfterContentInit, Component, EventEmitter, OnDestroy, OnInit, Output, V
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { EditorComponent } from 'ngx-monaco-editor';
-import { BehaviorSubject, merge, Observable, Subject } from 'rxjs';
-import { of } from 'rxjs';
-import { takeUntil, tap, map, mergeMap, switchMap, take, catchError, filter } from 'rxjs/operators';
+import { BehaviorSubject, merge, Observable, of, Subject } from 'rxjs';
+import { catchError, filter, map, mergeMap, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 import { SaveDialog } from './save-dialog/save-dialog.component';
 import { pluginTemplate } from './plugin-template';
 import { PluginDto, PluginService } from '../../services/plugin.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatSnackBar, MatSnackBarRef, TextOnlySnackBar } from '@angular/material/snack-bar';
 
 export interface PluginEditorData {
   id: string;
@@ -19,7 +18,7 @@ export interface PluginEditorData {
 
 // const CREATE_NEW = 'Select a plugin';
 const BUILD_IN = ['Quickest', 'Best', 'SkillsAndDistance', 'Nearest'];
-const DEFAULT: PluginEditorData = { id: null, name: null, description: null, pluginCode: null };
+// const DEFAULT: PluginEditorData = { id: null, name: null, description: null, pluginCode: null };
 const DEFAULT_BUILD_IN = 'SkillsAndDistance';
 @Component({
   selector: 'plugin-editor',
@@ -35,7 +34,7 @@ export class PluginEditorComponent implements OnInit, OnDestroy, AfterContentIni
   public form: FormGroup;
   public selectedPlugin: FormControl;
   public disableEditor$ = new BehaviorSubject<boolean>(false);
-  private onDistroy$ = new Subject();
+  private onDestroy$ = new Subject();
   private refresh = new BehaviorSubject<boolean>(false);
 
   public editorOptions = {
@@ -43,7 +42,7 @@ export class PluginEditorComponent implements OnInit, OnDestroy, AfterContentIni
     language: 'java'
   };
 
-  @Output() change = new EventEmitter<string>();
+  @Output() changePlugin = new EventEmitter<string>();
   @ViewChild('editorInstance') editorInstance: EditorComponent;
 
   constructor(
@@ -53,19 +52,18 @@ export class PluginEditorComponent implements OnInit, OnDestroy, AfterContentIni
     private snackBar: MatSnackBar,
   ) { }
 
-  private infoMessage(msg: string) {
-    const snackBarRef = this.snackBar.open(msg, 'ok', { duration: 3000 });
-    return snackBarRef;
+  private infoMessage(msg: string): MatSnackBarRef<TextOnlySnackBar> {
+    return this.snackBar.open(msg, 'ok', { duration: 3000 });
   }
 
-  public onEditorInit(editor) {
+  public onEditorInit(editor): void {
     // how to key bind
     // https://microsoft.github.io/monaco-editor/playground.html#interacting-with-the-editor-adding-an-action-to-an-editor-instance
     editor.addAction({
       id: 'cmd+s-to-save',
       label: 'Save (cmd+s)',
       keybindings: [
-        monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_S,
+        monaco.KeyMod.CtrlCmd || monaco.KeyCode.KEY_S,
       ],
       precondition: null,
       keybindingContext: null,
@@ -81,11 +79,11 @@ export class PluginEditorComponent implements OnInit, OnDestroy, AfterContentIni
     });
   }
 
-  public ngAfterContentInit() {
+  public ngAfterContentInit(): void {
     this.disableEditor$.pipe(
       filter((value) => this.editorInstance && value === true),
       tap((value) => this.editorInstance.options = { ...this.editorInstance.options, readOnly: true }),
-      takeUntil(this.onDistroy$)
+      takeUntil(this.onDestroy$)
     ).subscribe();
   }
 
@@ -135,8 +133,8 @@ export class PluginEditorComponent implements OnInit, OnDestroy, AfterContentIni
     // sync to parent
     form$
       .pipe(
-        tap(value => this.change.emit(value.name || DEFAULT_BUILD_IN)),
-        takeUntil(this.onDistroy$)
+        tap(value => this.changePlugin.emit(value.name || DEFAULT_BUILD_IN)),
+        takeUntil(this.onDestroy$)
       ).subscribe();
 
     // fetchPluginCode
@@ -156,22 +154,22 @@ export class PluginEditorComponent implements OnInit, OnDestroy, AfterContentIni
         );
 
       }),
-      takeUntil(this.onDistroy$)
+      takeUntil(this.onDestroy$)
     ).subscribe();
 
 
     this.refresh.next(true);
   }
 
-  public ngOnDestroy() {
-    this.onDistroy$.next();
+  public ngOnDestroy(): void {
+    this.onDestroy$.next();
   }
 
-  public async delete() {
-    if (this.form.invalid || !this.form.value.id) return;
+  public async delete(): Promise<void> {
+    if (this.form.invalid || !this.form.value.id) { return; }
 
     const id = this.form.value.id;
-    //this.selectedPlugin.patchValue(CREATE_NEW);
+    // this.selectedPlugin.patchValue(CREATE_NEW);
     this.service.delete(id).pipe(take(1)).subscribe(
       () => {
         this.refresh.next(true);
@@ -184,8 +182,8 @@ export class PluginEditorComponent implements OnInit, OnDestroy, AfterContentIni
     );
   }
 
-  public async save() {
-    if (this.form.invalid) return;
+  public async save(): Promise<void> {
+    if (this.form.invalid) { return; }
     const { pluginCode, id, name, description } = this.form.value;
 
 
@@ -214,7 +212,7 @@ export class PluginEditorComponent implements OnInit, OnDestroy, AfterContentIni
     );
   }
 
-  public createNewFromTemplate() {
+  public createNewFromTemplate(): void {
     this.form.get('pluginCode').patchValue(pluginTemplate);
   }
 
