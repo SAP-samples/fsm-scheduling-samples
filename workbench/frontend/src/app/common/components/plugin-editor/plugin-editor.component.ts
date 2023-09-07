@@ -11,13 +11,13 @@ import { PluginDto, PluginService } from '../../services/plugin.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 export interface PluginEditorData {
-  id: string,
+  id: string;
   name: string;
   description: string;
   pluginCode: string;
 }
 
-const CREATE_NEW = 'create new (unsaved)';
+// const CREATE_NEW = 'Select a plugin';
 const BUILD_IN = ['Quickest', 'Best', 'SkillsAndDistance', 'Nearest'];
 const DEFAULT: PluginEditorData = { id: null, name: null, description: null, pluginCode: null };
 const DEFAULT_BUILD_IN = 'SkillsAndDistance';
@@ -59,7 +59,7 @@ export class PluginEditorComponent implements OnInit, OnDestroy, AfterContentIni
   }
 
   public onEditorInit(editor) {
-    // how to key bind 
+    // how to key bind
     // https://microsoft.github.io/monaco-editor/playground.html#interacting-with-the-editor-adding-an-action-to-an-editor-instance
     editor.addAction({
       id: 'cmd+s-to-save',
@@ -98,7 +98,7 @@ export class PluginEditorComponent implements OnInit, OnDestroy, AfterContentIni
         console.error(error);
         this.infoMessage(`[❌ ERROR ❌] 'could not read plugins, disabled editor'`);
         this.disableEditor$.next(true);
-        return of([] as PluginDto[])
+        return of([] as PluginDto[]);
       })
     );
 
@@ -106,20 +106,20 @@ export class PluginEditorComponent implements OnInit, OnDestroy, AfterContentIni
       map((list) => {
         const defaultPlugin = list.find(x => x.name === DEFAULT_BUILD_IN) || list.find(x => !!x.defaultPlugin);
         if (defaultPlugin) {
-          // select first [real] plugin 
-          setTimeout(() => this.selectedPlugin.patchValue(defaultPlugin.name), 500)
+          // select first [real] plugin
+          setTimeout(() => this.selectedPlugin.patchValue(defaultPlugin.name), 500);
         }
 
-        return [{ text: CREATE_NEW, value: CREATE_NEW }]
+        return [/*{ text: CREATE_NEW, value: CREATE_NEW }*/]
           .concat(
             list
               .map(it => ({ text: it.name, value: it.name }))
               .sort((a, b) => a.value > b.value ? 0 : 1)
-          )
+          );
       })
-    )
+    );
 
-    this.selectedPlugin = this.fb.control(CREATE_NEW, Validators.required);
+    this.selectedPlugin = this.fb.control('' /*CREATE_NEW*/, Validators.required);
 
     this.form = this.fb.group({
       id: [],
@@ -143,10 +143,10 @@ export class PluginEditorComponent implements OnInit, OnDestroy, AfterContentIni
     this.selectedPlugin.valueChanges.pipe(
       switchMap((name) => {
 
-        if (name === CREATE_NEW) {
+        /*if (name === CREATE_NEW) {
           this.form.patchValue(DEFAULT);
           return of(undefined);
-        }
+        }*/
 
         this.isLoading$.next(true);
         return this.service.fetchByName(name).pipe(
@@ -171,7 +171,7 @@ export class PluginEditorComponent implements OnInit, OnDestroy, AfterContentIni
     if (this.form.invalid || !this.form.value.id) return;
 
     const id = this.form.value.id;
-    this.selectedPlugin.patchValue(CREATE_NEW);
+    //this.selectedPlugin.patchValue(CREATE_NEW);
     this.service.delete(id).pipe(take(1)).subscribe(
       () => {
         this.refresh.next(true);
@@ -191,11 +191,11 @@ export class PluginEditorComponent implements OnInit, OnDestroy, AfterContentIni
 
     this.isLoading$.next(true);
 
-    const work = id && name && name !== CREATE_NEW
+    const work = id && name /*&& name !== CREATE_NEW*/
       ? this.service.update({ id, pluginCode, name, description } as Partial<PluginDto>)
       : this.dialog.open(SaveDialog, { disableClose: true }).afterClosed().pipe(
         switchMap((newName: string) => {
-          return this.service.create({ pluginCode, name: newName, description: '1.0.0' } as Partial<PluginDto>)
+          return this.service.create({ pluginCode, name: newName, description: '1.0.0' } as Partial<PluginDto>);
         })
       );
 
