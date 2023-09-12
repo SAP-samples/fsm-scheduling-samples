@@ -10,10 +10,17 @@ section {
 .action-row {
   display: table-cell;
   width: 100%;
-  
+
   .inline-btn {
     height: 50px;
     margin-left: 10px;
   }
 
+}
+
+.parameters {
+  margin-top: 20px;
+  border-collapse: separate;
+  border-spacing: 10px;
+  width: 100%;
 }

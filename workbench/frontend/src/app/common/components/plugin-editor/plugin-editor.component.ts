@@ -6,13 +6,14 @@ import { BehaviorSubject, merge, Observable, of, Subject } from 'rxjs';
 import { catchError, filter, map, mergeMap, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 import { SaveDialog } from './save-dialog/save-dialog.component';
 import { pluginTemplate } from './plugin-template';
-import { PluginDto, PluginService } from '../../services/plugin.service';
+import { PluginDto, PluginService, PolicyObjectiveDto } from '../../services/plugin.service';
 import { MatSnackBar, MatSnackBarRef, TextOnlySnackBar } from '@angular/material/snack-bar';
 
 export interface PluginEditorData {
   id: string;
   name: string;
   description: string;
+  objective: PolicyObjectiveDto;
   pluginCode: string;
 }
 
@@ -123,6 +124,7 @@ export class PluginEditorComponent implements OnInit, OnDestroy, AfterContentIni
       id: [],
       name: [],
       description: [],
+      objective: [],
       pluginCode: [null, Validators.required],
     });
 
@@ -137,6 +139,7 @@ export class PluginEditorComponent implements OnInit, OnDestroy, AfterContentIni
         takeUntil(this.onDestroy$)
       ).subscribe();
 
+
     // fetchPluginCode
     this.selectedPlugin.valueChanges.pipe(
       switchMap((name) => {
@@ -150,12 +153,11 @@ export class PluginEditorComponent implements OnInit, OnDestroy, AfterContentIni
         return this.service.fetchByName(name).pipe(
           take(1),
           map(plugin => this.form.patchValue(plugin)),
-          tap(() => this.isLoading$.next(false))
+          tap(() => this.isLoading$.next(false)),
+          tap(() =>     console.log(this.form.value))
         );
-
       }),
-      takeUntil(this.onDestroy$)
-    ).subscribe();
+      takeUntil(this.onDestroy$)).subscribe();
 
 
     this.refresh.next(true);

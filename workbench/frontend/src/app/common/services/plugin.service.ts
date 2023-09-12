@@ -1,19 +1,37 @@
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { of, throwError } from 'rxjs';
-import { catchError, mergeMap, } from 'rxjs/operators';
+import { catchError, map, mergeMap } from 'rxjs/operators';
 import { ConfigService } from './config.service';
 import { CLIENT_IDENTIFIER } from '../contants';
 import { AuthService, GlobalContext } from './auth.service';
 
 export type PluginDto = {
-  id: string,
+  id: string;
   name: string;
   description: string;
   defaultPlugin: boolean;
   pluginCode?: string;
   scheduleConfigId?: string;
-}
+  objective: PolicyObjectiveDto;
+};
+
+export type PolicyObjectiveDto = {
+  description: string;
+  id: string;
+  isObjectiveParent: true,
+  isRuleParent: true,
+  objectType: string;
+  origin: string,
+  parameters: [
+    {
+      description: string;
+      name: string;
+      value: {}
+    }
+  ],
+  type: string;
+};
 
 
 @Injectable({
@@ -34,18 +52,25 @@ export class PluginService {
       'x-user-id': `${ctx.userId}`,
       'x-client-id': CLIENT_IDENTIFIER,
       'x-client-version': '0.0.0',
-      'x-request-id': `${Date.now()}`,
-    })
+      'x-request-id': `${Date.now()}`
+    });
   }
 
   constructor(
     private config: ConfigService,
     private auth: AuthService,
-    private http: HttpClient,
+    private http: HttpClient
   ) {
 
   }
 
+  private parsePluginDto(data: any): PluginDto {
+    data.objective = JSON.parse(data.objective);
+    return data as PluginDto;
+  }
+
+
+  // tslint:disable-next-line:typedef
   fetchAll() {
     return this.auth.globalContextWithAuth$.pipe(
       mergeMap(ctx => this.http.get<PluginDto[]>(`${this.config.getApiUri()}/plugin`, { headers: this.getHeaders(ctx) })),
@@ -58,9 +83,11 @@ export class PluginService {
     );
   }
 
+  // tslint:disable-next-line:typedef
   fetchByName(name: string) {
     return this.auth.globalContextWithAuth$.pipe(
-      mergeMap(ctx => this.http.get<PluginDto>(`${this.config.getApiUri()}/plugin/by-name/${name}`, { headers: this.getHeaders(ctx) }))
+      mergeMap(ctx => this.http.get<any>(`${this.config.getApiUri()}/plugin/by-name/${name}`, { headers: this.getHeaders(ctx) })),
+      map(data => this.parsePluginDto(data))
     );
   }
 
@@ -74,7 +101,7 @@ export class PluginService {
           return of(plugin);
         }
 
-        return throwError({ error: e })
+        return throwError({ error: e });
       })
     );
   }
