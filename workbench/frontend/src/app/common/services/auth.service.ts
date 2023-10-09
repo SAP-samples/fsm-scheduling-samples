@@ -27,7 +27,7 @@ const DEFAULT_CTX = {
   selectedLocale: 'en-us',
   user: '<user>',
   userId: 0
-}
+};
 
 @Injectable({
   providedIn: 'root'
@@ -42,14 +42,14 @@ export class AuthService {
 
   public globalContext$ = new BehaviorSubject<GlobalContext>(DEFAULT_CTX);
   public globalContextWithAuth$ = this.globalContext$.pipe(filter((it) => it !== DEFAULT_CTX));
-  public isLoggedIn$ = this.globalContext$.pipe(map(it => it !== DEFAULT_CTX))
+  public isLoggedIn$ = this.globalContext$.pipe(map(it => it !== DEFAULT_CTX));
 
-  public logout() {
+  public logout(): void {
     this.clearContext();
     this.onContextReady(DEFAULT_CTX);
   }
 
-  public openLoginDialog() {
+  public openLoginDialog(): void {
     const dialogRef = this.dialog.open(LoginDialogComponent,
       LoginDialogComponent.CONFIG
     );
@@ -66,14 +66,14 @@ export class AuthService {
     });
   }
 
-  public tryRestoreSession() {
+  public tryRestoreSession(): void {
     const ctx = this.restoreContext();
     if (ctx) {
       this.infoMessage(
         '[✅ INFO ✅] session loaded from sessionStorage',
         'logout', () => this.logout()
       );
-      setTimeout(() => this.onContextReady(ctx), 1)
+      setTimeout(() => this.onContextReady(ctx), 1);
     } else {
       this.infoMessage(
         '[❌ WARN ❌ ] no session found',
@@ -83,18 +83,18 @@ export class AuthService {
     }
   }
 
-  private onContextReady(ctx: GlobalContext) {
+  private onContextReady(ctx: GlobalContext): void {
     this.globalContext$.next(ctx);
   }
 
-  private clearContext() {
+  private clearContext(): void {
     this.infoMessage('[✅ INFO ✅] session cleared from sessionStorage', 'login', () => this.openLoginDialog());
     sessionStorage.removeItem(this.AUTH_KEY);
   }
 
-  private storeContext(ctx: GlobalContext) {
+  private storeContext(ctx: GlobalContext): void {
     this.infoMessage('[✅ INFO ✅] session stored in sessionStorage');
-    sessionStorage.setItem(this.AUTH_KEY, JSON.stringify(ctx))
+    sessionStorage.setItem(this.AUTH_KEY, JSON.stringify(ctx));
   }
 
   private restoreContext(): GlobalContext | null {
@@ -104,7 +104,7 @@ export class AuthService {
       : null;
   }
 
-  private infoMessage(msg: string, btnText = 'ok', action: () => void | null = null) {
+  private infoMessage(msg: string, btnText = 'ok', action: () => void | null = null): void {
     const snackBarRef = this.snackBar.open(msg, btnText, { duration: 5000 });
     if (action) {
       snackBarRef.onAction().subscribe(() => {

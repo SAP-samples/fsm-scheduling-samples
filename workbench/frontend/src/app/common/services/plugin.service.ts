@@ -1,6 +1,6 @@
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { of, throwError } from 'rxjs';
+import { Observable, ObservedValueOf, of, throwError } from 'rxjs';
 import { catchError, map, mergeMap } from 'rxjs/operators';
 import { ConfigService } from './config.service';
 import { CLIENT_IDENTIFIER } from '../contants';
@@ -39,10 +39,10 @@ export type PolicyObjectiveDto = {
 })
 export class PluginService {
 
-  private getHeaders(ctx: GlobalContext) {
+  private getHeaders(ctx: GlobalContext): HttpHeaders {
     return new HttpHeaders({
       'Content-Type': 'application/json',
-      'Authorization': `${ctx.authToken}`,
+      Authorization: `${ctx.authToken}`,
       'x-cloud-host': `${ctx.cloudHost}`,
       'x-account-name': `${ctx.account}`,
       'x-account-id': `${ctx.accountId}`,
@@ -70,14 +70,13 @@ export class PluginService {
   }
 
 
-  // tslint:disable-next-line:typedef
-  fetchAll() {
+  fetchAll(): Observable<PluginDto[]> {
     return this.auth.globalContextWithAuth$.pipe(
       mergeMap(ctx => this.http.get<PluginDto[]>(`${this.config.getApiUri()}/plugin`, { headers: this.getHeaders(ctx) })),
     );
   }
 
-  fetchById(id: string) {
+  fetchById(id: string): Observable<ObservedValueOf<Observable<PluginDto>>> {
     return this.auth.globalContextWithAuth$.pipe(
       mergeMap(ctx => this.http.get<PluginDto>(`${this.config.getApiUri()}/plugin/by-id/${id}`, { headers: this.getHeaders(ctx) }))
     );
@@ -91,6 +90,7 @@ export class PluginService {
     );
   }
 
+  // tslint:disable-next-line:typedef
   create(plugin: Partial<PluginDto>) {
     return this.auth.globalContextWithAuth$.pipe(
       mergeMap(ctx => this.http.post<PluginDto>(`${this.config.getApiUri()}/plugin`, plugin, { headers: this.getHeaders(ctx) })),
@@ -106,13 +106,13 @@ export class PluginService {
     );
   }
 
-  update(plugin: Partial<PluginDto>) {
+  update(plugin: Partial<PluginDto>): Observable<ObservedValueOf<Observable<PluginDto>>> {
     return this.auth.globalContextWithAuth$.pipe(
       mergeMap(ctx => this.http.put<PluginDto>(`${this.config.getApiUri()}/plugin/${plugin.id}`, plugin, { headers: this.getHeaders(ctx) }))
     );
   }
 
-  delete(pluginId: string) {
+  delete(pluginId: string): Observable<ObservedValueOf<Observable<PluginDto>>> {
     return this.auth.globalContextWithAuth$.pipe(
       mergeMap(ctx => this.http.delete<PluginDto>(`${this.config.getApiUri()}/plugin/${pluginId}`, { headers: this.getHeaders(ctx) }))
     );

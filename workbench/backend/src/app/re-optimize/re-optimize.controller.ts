@@ -18,7 +18,7 @@ export class ReOptimizeController {
       const { data } = await this.dao.reOptimize('sync', ctx, body).toPromise();
       return res.json(data);
     } catch (e) {
-      let axiosError: AxiosError = e?.error;
+      const axiosError: AxiosError = e?.error;
       return res
         .status(axiosError?.response?.status || 500)
         .json(axiosError?.response?.data);
@@ -30,7 +30,7 @@ export class ReOptimizeController {
       const { data } = await this.dao.reOptimize('async', ctx, body).toPromise();
       return res.json(data);
     } catch (e) {
-      let axiosError: AxiosError = e?.error;
+      const axiosError: AxiosError = e?.error;
       return res
         .status(axiosError?.response?.status || 500)
         .json(axiosError?.response?.data);
