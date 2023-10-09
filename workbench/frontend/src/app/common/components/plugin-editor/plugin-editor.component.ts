@@ -20,7 +20,7 @@ export interface PluginEditorData {
 // const CREATE_NEW = 'Select a plugin';
 const BUILD_IN = ['Quickest', 'Best', 'SkillsAndDistance', 'Nearest'];
 // const DEFAULT: PluginEditorData = { id: null, name: null, description: null, pluginCode: null };
-const DEFAULT_BUILD_IN = 'SkillsAndDistance';
+const DEFAULT_BUILD_IN = 'DistanceAndSkills';
 @Component({
   selector: 'plugin-editor',
   templateUrl: './plugin-editor.component.html',
