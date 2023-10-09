@@ -17,9 +17,7 @@ export interface PluginEditorData {
   pluginCode: string;
 }
 
-// const CREATE_NEW = 'Select a plugin';
 const BUILD_IN = ['Quickest', 'Best', 'SkillsAndDistance', 'Nearest'];
-// const DEFAULT: PluginEditorData = { id: null, name: null, description: null, pluginCode: null };
 const DEFAULT_BUILD_IN = 'DistanceAndSkills';
 @Component({
   selector: 'plugin-editor',
@@ -109,7 +107,7 @@ export class PluginEditorComponent implements OnInit, OnDestroy, AfterContentIni
           setTimeout(() => this.selectedPlugin.patchValue(defaultPlugin.name), 500);
         }
 
-        return [/*{ text: CREATE_NEW, value: CREATE_NEW }*/]
+        return []
           .concat(
             list
               .map(it => ({ text: it.name, value: it.name }))
@@ -118,7 +116,7 @@ export class PluginEditorComponent implements OnInit, OnDestroy, AfterContentIni
       })
     );
 
-    this.selectedPlugin = this.fb.control('' /*CREATE_NEW*/, Validators.required);
+    this.selectedPlugin = this.fb.control('', Validators.required);
 
     this.form = this.fb.group({
       id: [],
@@ -144,11 +142,6 @@ export class PluginEditorComponent implements OnInit, OnDestroy, AfterContentIni
     this.selectedPlugin.valueChanges.pipe(
       switchMap((name) => {
 
-        /*if (name === CREATE_NEW) {
-          this.form.patchValue(DEFAULT);
-          return of(undefined);
-        }*/
-
         this.isLoading$.next(true);
         return this.service.fetchByName(name).pipe(
           take(1),
@@ -171,7 +164,6 @@ export class PluginEditorComponent implements OnInit, OnDestroy, AfterContentIni
     if (this.form.invalid || !this.form.value.id) { return; }
 
     const id = this.form.value.id;
-    // this.selectedPlugin.patchValue(CREATE_NEW);
     this.service.delete(id).pipe(take(1)).subscribe(
       () => {
         this.refresh.next(true);
@@ -191,7 +183,7 @@ export class PluginEditorComponent implements OnInit, OnDestroy, AfterContentIni
 
     this.isLoading$.next(true);
 
-    const work = id && name /*&& name !== CREATE_NEW*/
+    const work = id && name
       ? this.service.update({ id, pluginCode, name, description } as Partial<PluginDto>)
       : this.dialog.open(SaveDialog, { disableClose: true }).afterClosed().pipe(
         switchMap((newName: string) => {
