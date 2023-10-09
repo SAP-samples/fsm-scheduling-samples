@@ -39,7 +39,6 @@ export class QueryController {
       return this.query(ctx, { query: `SELECT it.tag, it.person FROM Skill it WHERE it.tag = '${tag.id}' LIMIT 500` })
         .then((resp: QueryResponse<{ it: { person: string } }>) => ({ ...tag, persons: resp.data.map(({ it }) => it.person) }))
         .catch(error => {
-          console.log(error);
         return { ...tag, persons: [] };
         });
     });
