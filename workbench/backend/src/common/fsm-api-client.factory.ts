@@ -6,16 +6,22 @@ import { Context } from '../ctx.decorator';
 @Injectable()
 export class FsmAPIClientFactory {
 
+  public ALL_DTO_VERSIONS: { [name: string]: number } = ALL_DTO_VERSIONS;
+
   public fromContext(ctx: Context) {
-    return new CoreAPIClient({
+    const result = new CoreAPIClient({
       debug: configService.useVerboseLogs(),
       clientIdentifier: ctx.clientId,
       clientVersion: ctx.clientVersion,
-      clientSecret: 'none',
+      clientSecret: ctx.authToken,
       authAccountName: ctx.account,
       authCompany: ctx.company,
-      authUserName: ctx.user
-    }).setToken({
+      authUserName: ctx.user,
+      authGrantType: 'client_credentials',
+      //oauthEndpoint: 'https://qt.coresuite.com/api/oauth2/v1',
+    });
+    result.setToken({
+      // eslint-disable-next-line @typescript-eslint/camelcase
       access_token: ctx.authToken.split(' ')[1],
       token_type: ctx.authToken.split(' ')[0],
       expires_in: 9999,
@@ -28,8 +34,12 @@ export class FsmAPIClientFactory {
       companies: [{ name: ctx.company, id: parseInt(ctx.companyId), strictEncryptionPolicy: false, description: '' }],
       authorities: [],
       cluster_url: `https://${ctx.cloudHost}`
-    })
+    });
+
+    const token = result.getToken();
+
+    return result;
   }
 
-  public ALL_DTO_VERSIONS: { [name: string]: number } = ALL_DTO_VERSIONS;
+
 }

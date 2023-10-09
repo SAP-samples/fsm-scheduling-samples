@@ -22,7 +22,9 @@ export class ErrorFilter implements ExceptionFilter {
     let message = 'Error';
     let inner: {} = {};
 
-    const _inner = (error as any).error as undefined | AxiosError;
+
+
+    const _inner = (error as any).error as undefined | Record<any, any>;
 
     if (!!_inner) {
       inner = typeof _inner.toJSON === 'function' ? _inner.toJSON() : {};

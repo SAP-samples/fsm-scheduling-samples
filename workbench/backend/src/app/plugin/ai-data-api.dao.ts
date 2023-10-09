@@ -53,20 +53,20 @@ export class AiDataAPIDAO {
   private request<T>(config: AxiosRequestConfig) {
     const requestStart: Date = new Date();
     return this.http.request<T>(config).pipe(
-      tap(response => {
-        try {
-          const elapsedMilliseconds: number = new Date().getTime() - requestStart.getTime();
-          console.debug(
-            `[AiDataAPIDAO:${config.method}] url: [${config.url}] response: [${JSON.stringify(response ? response.status : null)}], time: [${elapsedMilliseconds}]`,
-          );
-        } catch {
-          console.debug(`[AiDataAPIDAO:${config.method}] url: [${config.url}] response[UNPROCESSIBLE]`);
-        }
-      }),
-      catchError((error: AxiosError) => {
-        console.error('AiDataAPIDAO', error);
-        return throwError({ error });
-      })
+        tap(response => {
+          try {
+            const elapsedMilliseconds: number = new Date().getTime() - requestStart.getTime();
+            console.debug(
+                `[AiDataAPIDAO:${config.method}] url: [${config.url}] response: [${JSON.stringify(response ? response.status : null)}], time: [${elapsedMilliseconds}]`,
+            );
+          } catch {
+            console.debug(`[AiDataAPIDAO:${config.method}] url: [${config.url}] response[UNPROCESSIBLE]`);
+          }
+        }),
+        catchError((error: AxiosError) => {
+          console.error('AiDataAPIDAO', error);
+          return throwError({ error });
+        })
     );
   }
 
