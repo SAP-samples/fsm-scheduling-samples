@@ -18,7 +18,6 @@ export class FsmAPIClientFactory {
       authCompany: ctx.company,
       authUserName: ctx.user,
       authGrantType: 'client_credentials',
-      //oauthEndpoint: 'https://qt.coresuite.com/api/oauth2/v1',
     });
     result.setToken({
       // eslint-disable-next-line @typescript-eslint/camelcase
@@ -35,8 +34,6 @@ export class FsmAPIClientFactory {
       authorities: [],
       cluster_url: `https://${ctx.cloudHost}`
     });
-
-    const token = result.getToken();
 
     return result;
   }
