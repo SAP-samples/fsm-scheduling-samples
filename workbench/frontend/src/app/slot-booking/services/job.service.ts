@@ -4,6 +4,7 @@ import { mergeMap } from 'rxjs/operators';
 import { ConfigService } from '../../common/services/config.service';
 import { CLIENT_IDENTIFIER } from '../../common/contants';
 import { GlobalContext, AuthService } from '../../common/services/auth.service';
+import { Observable } from 'rxjs';
 
 export type Job = {
   durationMinutes: number,
@@ -13,7 +14,7 @@ export type Job = {
   } | null,
   mandatorySkills: string[],
   optionalSkills: string[]
-}
+};
 
 export type TagDTO = {
   branches: null
@@ -33,7 +34,7 @@ export type TagDTO = {
   syncStatus: 'IN_CLOUD'
   udfMetaGroups: null
   udfValues: null
-}
+};
 
 export type AddressDTO = {
   block: null
@@ -69,16 +70,16 @@ export type AddressDTO = {
   udfMetaGroups: null
   udfValues: null
   zipCode: string
-}
+};
 @Injectable({
   providedIn: 'root'
 })
 export class JobService {
 
-  private getHeaders(ctx: GlobalContext) {
+  private getHeaders(ctx: GlobalContext): HttpHeaders {
     return new HttpHeaders({
       'Content-Type': 'application/json',
-      'Authorization': `${ctx.authToken}`,
+      Authorization: `${ctx.authToken}`,
       'x-cloud-host': `${ctx.cloudHost}`,
       'x-account-name': `${ctx.account}`,
       'x-account-id': `${ctx.accountId}`,
@@ -98,21 +99,24 @@ export class JobService {
     private http: HttpClient,
   ) { }
 
-  fetchAllTags() {
+  fetchAllTags(): Observable<Array<TagDTO & { persons: string[] }>> {
     return this.auth.globalContextWithAuth$.pipe(
-      mergeMap(ctx => this.http.get<Array<TagDTO & { persons: string[] }>>(`${this.config.getApiUri()}/query/tags`, { headers: this.getHeaders(ctx) }))
+      mergeMap(ctx => this.http.get<Array<TagDTO & { persons: string[] }>>(`${this.config.getApiUri()}/query/tags`,
+        { headers: this.getHeaders(ctx) }))
     );
   }
 
-  fetchAllAddress() {
+  fetchAllAddress(): Observable<AddressDTO[]> {
     return this.auth.globalContextWithAuth$.pipe(
-      mergeMap(ctx => this.http.get<AddressDTO[]>(`${this.config.getApiUri()}/query/address`, { headers: this.getHeaders(ctx) })),
+      mergeMap(ctx => this.http.get<AddressDTO[]>(`${this.config.getApiUri()}/query/address`,
+        { headers: this.getHeaders(ctx) })),
     );
   }
 
-  personByTag(tagId: string) {
+  personByTag(tagId: string): Observable<{ person: string; tag: string }[]> {
     return this.auth.globalContextWithAuth$.pipe(
-      mergeMap(ctx => this.http.get<{ person: string, tag: string }[]>(`${this.config.getApiUri()}/query/person/by-tag/${tagId}`, { headers: this.getHeaders(ctx) })),
+      mergeMap(ctx => this.http.get<{ person: string, tag: string }[]>(`${this.config.getApiUri()}/query/person/by-tag/${tagId}`,
+        { headers: this.getHeaders(ctx) })),
     );
   }
 }

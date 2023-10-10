@@ -16,7 +16,7 @@ export class JobSlotsController {
       return res.json(data);
     } catch ({ error }) {
 
-      let axiosError: AxiosError = error;
+      const axiosError: AxiosError = error;
       return res
         .status(parseInt(axiosError?.code || '500'))
         .json(axiosError?.response?.data);

@@ -16,7 +16,7 @@ export type GroupedSearchResponse = {
   hash: string,
   maxScore: number,
   sumScore: number
-}
+};
 
 export type SearchResponseWrapper = SearchResponse & {
   isError: boolean,
@@ -25,9 +25,9 @@ export type SearchResponseWrapper = SearchResponse & {
   grouped: GroupedSearchResponse[]
 };
 
-type SearchResponseItemExteded = SearchResponseItem & {
+type SearchResponseItemExtended = SearchResponseItem & {
   resourceVm: { id: string, firstName: string, lastName: string } | undefined | null
-}
+};
 
 export type SearchResponseItem = {
   slot: { start: string; end: string; },
@@ -39,10 +39,10 @@ export type SearchResponseItem = {
     distanceInMeters: number;
   }
   score: number
-}
+};
 type SearchResponse = {
   results: SearchResponseItem[]
-}
+};
 type ISearchRequestSlot = Readonly<{
   start: string;
   end: string;
@@ -66,11 +66,11 @@ export type SearchRequest = Readonly<{
     maxResultsPerSlot: number;
   }>;
   optimizationPlugin: null | string;
-}>
+}>;
 type ILocation = {
   latitude: number;
   longitude: number;
-}
+};
 
 
 @Injectable({
@@ -78,10 +78,10 @@ type ILocation = {
 })
 export class SlotSearchService {
 
-  private getHeaders(ctx: GlobalContext) {
+  private getHeaders(ctx: GlobalContext): HttpHeaders {
     return new HttpHeaders({
       'Content-Type': 'application/json',
-      'Authorization': `${ctx.authToken}`,
+      Authorization: `${ctx.authToken}`,
       'x-cloud-host': `${ctx.cloudHost}`,
       'x-account-name': `${ctx.account}`,
       'x-account-id': `${ctx.accountId}`,
@@ -92,7 +92,7 @@ export class SlotSearchService {
       'x-client-id': CLIENT_IDENTIFIER,
       'x-client-version': '0.0.0',
       'x-request-id': `${Date.now()}`,
-    })
+    });
   }
 
   constructor(
@@ -108,7 +108,8 @@ export class SlotSearchService {
 
 
     return this.auth.globalContextWithAuth$.pipe(
-      mergeMap(ctx => this.http.post<SearchResponse>(`${this.config.getApiUri()}/job-slots/actions/search`, body, { headers: this.getHeaders(ctx) })),
+      mergeMap(ctx => this.http.post<SearchResponse>(`${this.config.getApiUri()}/job-slots/actions/search`,
+        body, { headers: this.getHeaders(ctx) })),
       map(resp => {
         return {
           ...resp,
@@ -119,7 +120,7 @@ export class SlotSearchService {
 
             const hash = `${it.slot.start}-${it.slot.end}`;
 
-            const extendedItem: SearchResponseItemExteded = {
+            const extendedItem: SearchResponseItemExtended = {
               ...it,
               resourceVm: this.queryService.getResourceFromCache(it.resource)
             };
@@ -128,18 +129,20 @@ export class SlotSearchService {
 
               const group = theMap.get(hash);
               group.items = [...group.items, extendedItem].sort((a, b) => b.score - a.score);
-              group.maxScore = group.maxScore > it.score ? group.maxScore : it.score
+              group.maxScore = group.maxScore > it.score ? group.maxScore : it.score;
               group.sumScore += it.score;
 
             } else {
-              theMap.set(hash, { items: [extendedItem], hash, maxScore: it.score, sumScore: it.score, slot: it.slot })
+              theMap.set(hash, { items: [extendedItem], hash, maxScore: it.score, sumScore: it.score, slot: it.slot });
             }
 
             return theMap;
-          }, new Map<string, { items: SearchResponseItemExteded[], hash: string, maxScore: number, sumScore: number, slot: { start: string; end: string; } }>()))
+          },
+            new Map<string, { items: SearchResponseItemExtended[], hash: string, maxScore: number,
+              sumScore: number, slot: { start: string; end: string; } }>()))
             .map(([, v]) => v)
             .sort((a, b) => b.maxScore - a.maxScore)
-        }
+        };
       })
     );
   }

@@ -13,22 +13,6 @@
         </mat-select>
       </mat-form-field>
 
-
-      <button mat-button [disabled]="form.invalid" (click)="save()" color="primary" class="inline-btn">
-        <mat-icon>save</mat-icon>
-      </button>
-
-      <button mat-button [disabled]="selectedPlugin.value === 'create new (unsaved)'" (click)="delete()" color="primary"
-        class="inline-btn">
-        <mat-icon>delete</mat-icon>
-      </button>
-
-      <button mat-button [disabled]="(selectedPlugin.value !== 'create new (unsaved)') || (disableEditor$ | async)"
-        (click)="createNewFromTemplate()" color="primary" class="inline-btn">
-        <mat-icon>insert_drive_file</mat-icon>
-      </button>
-
-
     </div>
   </section>
 
@@ -38,14 +22,50 @@
     <mat-progress-bar *ngIf="!!(isLoading$ | async)" style="height: 5px;" mode="indeterminate"></mat-progress-bar>
   </div>
 
-  <input type="text" formControlName="description" style="border:0" />
+  <p>{{ form.value.description }}</p>
 
-  <ngx-monaco-editor #editorInstance class="monaco-editor" [options]="editorOptions" (onInit)="onEditorInit($event)"
-    formControlName="pluginCode" style="min-height: 700px;">
-  </ngx-monaco-editor>
+  <mat-card>
+    <mat-card-content>
+      <h2>Policy Objective Details</h2>
+      <table>
+        <tr>
+          <td><strong>Description:</strong></td>
+          <td>{{ form.value.objective?.description }}</td>
+        </tr>
+        <tr>
+          <td><strong>Is Objective Parent:</strong></td>
+          <td>{{ form.value.objective?.isObjectiveParent ? 'Yes' : 'No' }}</td>
+        </tr>
+        <tr>
+          <td><strong>Is Rule Parent:</strong></td>
+          <td>{{ form.value.objective?.isRuleParent ? 'Yes' : 'No' }}</td>
+        </tr>
+        <tr>
+          <td><strong>Object Type:</strong></td>
+          <td>{{ form.value.objective?.objectType }}</td>
+        </tr>
+        <tr>
+          <td><strong>Origin:</strong></td>
+          <td>{{ form.value.objective?.origin }}</td>
+        </tr>
+      </table>
+      <h3>Parameters:</h3>
+      <table class="parameters">
+        <tr>
+          <th>Description</th>
+          <th>Value</th>
+        </tr>
+        <tr *ngFor="let parameter of form.value.objective?.parameters; let i = index">
+          <td>{{ parameter?.description }}</td>
+          <td><pre>{{ parameter?.value | json }}</pre></td>
+        </tr>
+      </table>
+    </mat-card-content>
+  </mat-card>
+
 
 </form>
 
-<!-- 
+<!--
   <pre>{{ form.value | json }}</pre>
 -->

@@ -30,10 +30,10 @@ export class BookingService {
     private query: QueryService
   ) { }
 
-  private getHeaders(ctx: GlobalContext) {
+  private getHeaders(ctx: GlobalContext): HttpHeaders {
     return new HttpHeaders({
       'Content-Type': 'application/json',
-      'Authorization': `${ctx.authToken}`,
+      Authorization: `${ctx.authToken}`,
       'x-cloud-host': `${ctx.cloudHost}`,
       'x-account-name': `${ctx.account}`,
       'x-account-id': `${ctx.accountId}`,
@@ -44,17 +44,19 @@ export class BookingService {
       'x-client-id': CLIENT_IDENTIFIER,
       'x-client-version': '0.0.0',
       'x-request-id': `${Date.now()}`,
-    })
+    });
   }
 
+  // tslint:disable-next-line:typedef
   private book(bookable: SearchResponseItem, job: Job, activityId: string = 'create-activity') {
     return this.auth.globalContextWithAuth$.pipe(
-      mergeMap(ctx => this.http.post<{}>(`${this.config.getApiUri()}/booking/actions/book/${activityId}`, { job, bookable }, { headers: this.getHeaders(ctx) }))
+      mergeMap(ctx => this.http.post<{}>(`${this.config.getApiUri()}/booking/actions/book/${activityId}`,
+        { job, bookable }, { headers: this.getHeaders(ctx) }))
     );
   }
 
 
-  public tryBookAll(list: SearchResponseItem[], job: Job) {
+  public tryBookAll(list: SearchResponseItem[], job: Job): Observable<Progress> {
 
     return new Observable<Progress>((op) => {
 
@@ -68,7 +70,7 @@ export class BookingService {
           current: (idx + 1),
           result: null,
           activityId,
-        }
+        };
 
 
         const person = this.query.getResourceFromCache(bookable.resource);
@@ -83,25 +85,26 @@ export class BookingService {
               success: true,
               message: `🎉🎉 we booked a slot with ${person.firstName} ${person.lastName} from ${moment(bookable.start).format('HH:mm')} to ${moment(bookable.end).format('HH:mm')} `,
               result
-            })
+            });
           })
           .catch(errorRep => {
+            // tslint:disable-next-line:no-shadowed-variable
             let activityId: string;
             // if the backend returns a 422 - creation of temp data was okay but booking failed.
-            // use [activityId] for next try to not recreate data 
+            // use [activityId] for next try to not recreate data
             if (errorRep instanceof HttpErrorResponse && errorRep.status === 422 && errorRep.error) {
-              activityId = errorRep.error.activityId || ''
+              activityId = errorRep.error.activityId || '';
             }
 
             throw { ...progress, activityId: activityId ? activityId : '' };
           });
-      }
+      };
 
-      // setup chain 
+      // setup chain
       const work = list.reduce(
         (promise, it, idx) => promise.catch((progress: Progress) => tryBook(idx, it, progress.blockedList, progress.activityId)),
         Promise.reject({ message: `init`, blockedList: [], success: false, total: list.length, current: -1 })
-      )
+      );
 
       // run chain
       work
@@ -110,15 +113,15 @@ export class BookingService {
           op.complete();
         })
         .catch((error: Progress) => {
-          op.next({ ...error, message: '❌ slot booking failed, all technicains are booked already ...' });
+          op.next({ ...error, message: '❌ slot booking failed, all technicians are booked already ...' });
           op.error(error);
         });
 
       return () => {
-        // clean ups
-      }
-    })
+        // clean-ups
+      };
+    });
 
-  };
+  }
 
 }
