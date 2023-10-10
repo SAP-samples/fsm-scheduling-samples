@@ -19,7 +19,7 @@ export class QueryController {
 
     const coreApiClient = this.factory.fromContext(ctx);
     const all_dto_versions = this.factory.ALL_DTO_VERSIONS
-    delete all_dto_versions["CrowdExecutionRecord"]
+    delete all_dto_versions["CrowdExecutionRecord"] // TODO remove this line after fsm-sdk has been updated
 
 
     const dto_names = Object.keys(all_dto_versions) as DTOName[]
@@ -39,7 +39,7 @@ export class QueryController {
       return this.query(ctx, { query: `SELECT it.tag, it.person FROM Skill it WHERE it.tag = '${tag.id}' LIMIT 500` })
         .then((resp: QueryResponse<{ it: { person: string } }>) => ({ ...tag, persons: resp.data.map(({ it }) => it.person) }))
         .catch(error => {
-          console.debug(error)
+          console.error("List of Tags could not be collected due to: ", error)
         return { ...tag, persons: [] };
         });
     });

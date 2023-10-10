@@ -98,7 +98,6 @@ export class QueryService {
 
   // tslint:disable-next-line:max-line-length
   private _query<T_LIST extends QueryResponse<T_ITEM>, T_ITEM extends {}>(query: string): Observable<Observable<T_LIST> extends ObservableInput<infer T> ? T : never> {
-    // console.debug(query);
     return this.auth.globalContextWithAuth$.pipe(
       mergeMap(ctx => this.http.post<T_LIST>(`${this.config.getApiUri()}/query`, { query }, { headers: this.getHeaders(ctx) }))
     );
