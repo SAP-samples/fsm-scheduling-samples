@@ -7,13 +7,17 @@ import { CLIENT_IDENTIFIER } from '../contants';
 import { AuthService, GlobalContext } from './auth.service';
 
 export type PluginDto = {
-  id: string;
+  id: string,
   name: string;
   description: string;
   defaultPlugin: boolean;
-  pluginCode?: string;
-  scheduleConfigId?: string;
-  objective: PolicyObjectiveDto;
+  standardPlugin: boolean;
+  pluginCode: string;
+  scheduleConfigId: string;
+};
+
+export type PluginFetchResultDTO = {
+  results: PluginDto[]
 };
 
 export type PolicyObjectiveDto = {
@@ -70,9 +74,9 @@ export class PluginService {
   }
 
 
-  fetchAll(): Observable<PluginDto[]> {
+  fetchAll(): Observable<PluginFetchResultDTO> {
     return this.auth.globalContextWithAuth$.pipe(
-      mergeMap(ctx => this.http.get<PluginDto[]>(`${this.config.getApiUri()}/plugin`, { headers: this.getHeaders(ctx) })),
+      mergeMap(ctx => this.http.get<PluginFetchResultDTO>(`${this.config.getApiUri()}/plugin`, { headers: this.getHeaders(ctx) })),
     );
   }
 
