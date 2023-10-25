@@ -25,6 +25,7 @@ export class QueryController {
     const dto_names = Object.keys(all_dto_versions) as DTOName[]
     return await coreApiClient.query(query, dto_names)
       .then(x =>{
+        console.log(x);
         return x})
       .catch(e => {
         throw e;
