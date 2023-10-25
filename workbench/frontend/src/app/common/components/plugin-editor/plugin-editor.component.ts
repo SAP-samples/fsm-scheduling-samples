@@ -6,7 +6,7 @@ import { BehaviorSubject, merge, Observable, of, Subject } from 'rxjs';
 import { catchError, filter, map, mergeMap, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 import { SaveDialog } from './save-dialog/save-dialog.component';
 import { pluginTemplate } from './plugin-template';
-import { PluginDto, PluginService, PolicyObjectiveDto } from '../../services/plugin.service';
+import { PluginDto, PluginFetchResultDTO, PluginService, PolicyObjectiveDto } from '../../services/plugin.service';
 import { MatSnackBar, MatSnackBarRef, TextOnlySnackBar } from '@angular/material/snack-bar';
 
 export interface PluginEditorData {
@@ -36,11 +36,6 @@ export class PluginEditorComponent implements OnInit, OnDestroy, AfterContentIni
   private onDestroy$ = new Subject();
   private refresh = new BehaviorSubject<boolean>(false);
 
-  public editorOptions = {
-    theme: 'vs-light',
-    language: 'java'
-  };
-
   @Output() changePlugin = new EventEmitter<string>();
   @ViewChild('editorInstance') editorInstance: EditorComponent;
 
@@ -53,29 +48,6 @@ export class PluginEditorComponent implements OnInit, OnDestroy, AfterContentIni
 
   private infoMessage(msg: string): MatSnackBarRef<TextOnlySnackBar> {
     return this.snackBar.open(msg, 'ok', { duration: 3000 });
-  }
-
-  public onEditorInit(editor): void {
-    // how to key bind
-    // https://microsoft.github.io/monaco-editor/playground.html#interacting-with-the-editor-adding-an-action-to-an-editor-instance
-    editor.addAction({
-      id: 'cmd+s-to-save',
-      label: 'Save (cmd+s)',
-      keybindings: [
-        monaco.KeyMod.CtrlCmd || monaco.KeyCode.KEY_S,
-      ],
-      precondition: null,
-      keybindingContext: null,
-      contextMenuGroupId: 'navigation',
-      contextMenuOrder: 1.5,
-      run: _ed => {
-        if (this.form.invalid) {
-          return null;
-        }
-        this.save();
-        return null;
-      }
-    });
   }
 
   public ngAfterContentInit(): void {
@@ -95,13 +67,14 @@ export class PluginEditorComponent implements OnInit, OnDestroy, AfterContentIni
         console.error(error);
         this.infoMessage(`[❌ ERROR ❌] 'could not read plugins, disabled editor'`);
         this.disableEditor$.next(true);
-        return of([] as PluginDto[]);
+        return of({} as PluginFetchResultDTO);
       })
     );
 
     this.selectList$ = pluginList$.pipe(
-      map((list) => {
-        const defaultPlugin = list.find(x => x.name === DEFAULT_BUILD_IN) || list.find(x => !!x.defaultPlugin);
+      map((pluginFetch) => {
+        const defaultPlugin = pluginFetch.results.find(x => x.name === DEFAULT_BUILD_IN) ||
+          pluginFetch.results.find(x => !!x.defaultPlugin);
         if (defaultPlugin) {
           // select first [real] plugin
           setTimeout(() => this.selectedPlugin.patchValue(defaultPlugin.name), 500);
@@ -109,7 +82,7 @@ export class PluginEditorComponent implements OnInit, OnDestroy, AfterContentIni
 
         return []
           .concat(
-            list
+            pluginFetch.results
               .map(it => ({ text: it.name, value: it.name }))
               .sort((a, b) => a.value > b.value ? 0 : 1)
           );
