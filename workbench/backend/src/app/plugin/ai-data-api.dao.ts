@@ -76,9 +76,10 @@ export class AiDataAPIDAO {
   }
 
   getAll(ctx: Context) {
+    const cloudHost = ctx.cloudHost.replace("dev.coresuite.com", "fsm-dev.cloud.sap")
     return this.request<PluginFetchResultDTO>({
       method: 'GET',
-      url: `${this.resolveHost(ctx.cloudHost)}/optimization/api/v1/plugins`,
+      url: `https://${cloudHost}/optimization/api/v1/plugins`,
       headers: this.getHeaders(ctx),
       params: this.getParams(ctx),
       responseType: 'json',
