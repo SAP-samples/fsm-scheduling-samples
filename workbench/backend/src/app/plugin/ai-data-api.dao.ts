@@ -3,7 +3,7 @@ import { Context } from '../../ctx.decorator';
 import { AxiosRequestConfig, AxiosError } from 'axios';
 import { tap, catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
-import { FSM_HOSTS_CORESUITE_TO_COREINFRA } from 'src/common/constants';
+import { FSM_HOSTS_CORESUITE_TO_COREINFRA, FSM_HOSTS_CORESUITE_TO_SAPCLOUD } from 'src/common/constants';
 
 export type PluginDto = {
   id: string,
@@ -26,6 +26,10 @@ export class AiDataAPIDAO {
 
   private resolveHost(host: string) {
     return `https://${FSM_HOSTS_CORESUITE_TO_COREINFRA.get(host.toLowerCase()) || ''}`;
+  }
+
+  private resolveSAPCloudHost(host: string) {
+    return `https://${FSM_HOSTS_CORESUITE_TO_SAPCLOUD.get(host.toLowerCase()) || ''}`;
   }
 
   private getParams(ctx: Context) {
@@ -76,10 +80,9 @@ export class AiDataAPIDAO {
   }
 
   getAll(ctx: Context) {
-    const cloudHost = ctx.cloudHost.replace("dev.coresuite.com", "fsm-dev.cloud.sap")
     return this.request<PluginFetchResultDTO>({
       method: 'GET',
-      url: `https://${cloudHost}/optimization/api/v1/plugins`,
+      url: `${this.resolveSAPCloudHost(ctx.cloudHost)}/optimization/api/v1/plugins`,
       headers: this.getHeaders(ctx),
       params: this.getParams(ctx),
       responseType: 'json',
