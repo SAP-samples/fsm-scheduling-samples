@@ -25,6 +25,7 @@ to build and run the source code:
 # Getting started, Download and Installation
 
 Checkout the [how-to.md](./docs/how-to.md) quick guide in the `/docs`-folder.
+HTTP requests may be found in ``/workbench/backend/http_requests`` directory. You will need to [set an environment](https://www.jetbrains.com/help/idea/http-client-in-product-code-editor.html) with with several variables in order to execute the requests. 
 
 ## Running pre build docker container locally
 ```bash
@@ -51,7 +52,7 @@ d -> deploy
 - Refer to [constraints and limitations](https://help.sap.com/viewer/fsm_ai/Cloud/en-US/constraints-limitations.html) documentation
 
 # Known Issues
-- There are no known issues for the moment.
+- Maintainers of the project have to observe changes in the DTO Model and make sure the [fsm-sdk dependency is updated](https://github.com/SAP/fsm-sdk/blob/master/src/test/update-dto-versions.ts) accordingly, otherwise the query API will fail. The update in fsm-sdk has to be manually executed.
 
 # Supplements
 On top of the workbench application, you can also configure Business Rules to trigger reoptimization and avoid scenarios like overlapping jobs for a Technician. Refer to [business-rules](/business-rules) folder.

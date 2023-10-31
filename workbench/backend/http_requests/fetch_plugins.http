@@ -1,0 +1,12 @@
+GET https://qt.fsm-dev.cloud.sap/optimization/api/v1/plugins
+accept: application/json
+Authorization: {{Token}}
+X-Request-Id: {{X-Request-Id}}
+X-Client-Id: {{X-Client-Id}}
+X-Client-Version: 0.0.0
+X-Account-Id: {{X-Account-Id}}
+X-Account-Name: {{X-Account-Name}}
+X-Company-Id: {{X-Company-Id}}
+X-Company-Name: {{X-Company-Name}}
+X-User-Id: {{X-User-Id}}
+X-User-Name: {{X-User-Name}}

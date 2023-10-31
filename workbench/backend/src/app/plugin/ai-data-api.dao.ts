@@ -3,15 +3,20 @@ import { Context } from '../../ctx.decorator';
 import { AxiosRequestConfig, AxiosError } from 'axios';
 import { tap, catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
-import { FSM_HOSTS_CORESUITE_TO_COREINFRA } from 'src/common/constants';
+import { FSM_HOSTS_CORESUITE_TO_COREINFRA, FSM_HOSTS_CORESUITE_TO_SAPCLOUD } from 'src/common/constants';
 
 export type PluginDto = {
-  is: string,
+  id: string,
   name: string;
   description: string;
   defaultPlugin: boolean;
+  standardPlugin: boolean;
   pluginCode: string;
   scheduleConfigId: string;
+}
+
+export type PluginFetchResultDTO = {
+  results: PluginDto[]
 }
 
 @Injectable()
@@ -21,6 +26,10 @@ export class AiDataAPIDAO {
 
   private resolveHost(host: string) {
     return `https://${FSM_HOSTS_CORESUITE_TO_COREINFRA.get(host.toLowerCase()) || ''}`;
+  }
+
+  private resolveSAPCloudHost(host: string) {
+    return `https://${FSM_HOSTS_CORESUITE_TO_SAPCLOUD.get(host.toLowerCase()) || ''}`;
   }
 
   private getParams(ctx: Context) {
@@ -71,9 +80,9 @@ export class AiDataAPIDAO {
   }
 
   getAll(ctx: Context) {
-    return this.request<PluginDto[]>({
+    return this.request<PluginFetchResultDTO>({
       method: 'GET',
-      url: `${this.resolveHost(ctx.cloudHost)}/cloud-ai-policy-designer/api/optimization/v1/policies`,
+      url: `${this.resolveSAPCloudHost(ctx.cloudHost)}/optimization/api/v1/plugins`,
       headers: this.getHeaders(ctx),
       params: this.getParams(ctx),
       responseType: 'json',
