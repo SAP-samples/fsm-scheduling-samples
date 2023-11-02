@@ -65,7 +65,7 @@ export type SearchRequest = Readonly<{
   options: Readonly<{
     maxResultsPerSlot: number;
   }>;
-  optimizationPlugin: null | string;
+  policy: null | string;
 }>;
 type ILocation = {
   latitude: number;

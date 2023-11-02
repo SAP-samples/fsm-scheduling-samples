@@ -80,7 +80,7 @@ export class SlotBookingComponent implements OnInit, OnDestroy {
               maxResultsPerSlot: 8
             },
 
-            optimizationPlugin: pluginEditor,
+            policy: pluginEditor,
 
           }
         })
@@ -128,6 +128,8 @@ export class SlotBookingComponent implements OnInit, OnDestroy {
     this.requestPayload$.pipe(
       take(1),
       mergeMap(payload => {
+
+        console.log(payload);
 
         // options here
 
