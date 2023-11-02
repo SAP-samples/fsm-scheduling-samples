@@ -3,7 +3,26 @@
 
 
 <div style="display: flex;">
-  <div style="width: 30%;">
+
+  <div style="margin-bottom: 20px; width: 30%;">
+    <!-- Filter dropdowns -->
+    <mat-form-field>
+      <mat-select placeholder="Filter Attribute" [formControl]="filterAttributeControl" multiple>
+        <mat-option *ngFor="let attribute of filterAttributes" [value]="attribute">{{ attribute }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-select placeholder="Filter Value" [formControl]="filterValueControl" multiple>
+        <mat-option *ngFor="let value of filterValues" [value]="value">{{ value }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <button mat-raised-button (click)="applyFilter()" color="primary" class="margin-10" style="margin-left: 16px;">Filter</button>
+  </div>
+
+
+  <div style="width: 70%;">
     <mat-chip-list style="margin-bottom: 20px;">
       <mat-chip *ngFor="let resource of (resources$ | async)" [removable]="true" (removed)="remove(resource)">
         <mat-icon matChipRemove>delete</mat-icon>
@@ -11,15 +30,16 @@
       </mat-chip>
     </mat-chip-list>
   </div>
+  <!--
   <div style="width: 70%;">
-    
+
     <button mat-raised-button (click)="doQuery()" color="primary" class="margin-10">run query</button>
     query-templates:
     <button mat-button (click)="applyTmpl('default')"  class="margin-10">default</button>
     <button mat-button (click)="applyTmpl('skill')"  class="margin-10">by skill</button>
     <button mat-button (click)="applyTmpl('region')"  class="margin-10">by region</button>
-    
-    
+
+
     <div style="height: 5px; margin-top: 15px;">
       <mat-progress-bar *ngIf="(isLoading$ | async)" style="height: 5px;" mode="indeterminate"></mat-progress-bar>
     </div>
@@ -29,4 +49,5 @@
       </ngx-monaco-editor>
     </form>
   </div>
+  -->
 </div>
