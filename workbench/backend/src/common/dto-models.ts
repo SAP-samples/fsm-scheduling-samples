@@ -53,3 +53,34 @@ export type AddressDTO = {
   udfValues: null
   zipCode: string
 }
+
+export type AGHResponseDTO = { // TODO there are other DTOs using results: Array pattern, maybe merge as generic and reuse
+  results: TechniciansDTO[]
+}
+
+export type AGHRequestDTO = {
+  companyNames: string[],
+  options: {
+    geocodedOnly: boolean,
+    includeInternalPersons: boolean,
+    includeCrowdPersons: boolean
+  },
+  bookingsFilter: {
+    earliest: string,
+    latest: string,
+    activitiesToExclude: string[],
+    considerReleasedAsExclusive: boolean,
+    considerPlannedAsExclusive: boolean
+  },
+  personIds: string[]
+}
+
+export type TechniciansDTO = {
+  id: string,
+  name: string;
+  description: string;
+  defaultPlugin: boolean;
+  standardPlugin: boolean;
+  pluginCode: string;
+  scheduleConfigId: string;
+}
