@@ -1,11 +1,13 @@
-POST https://ingress.qt-1.coreinfra.io/aggregation-hub/api/v1/resources
+POST http://localhost:8000/api/technicians
 Accept: application/json
 X-Client-Id: {{X-Client-Id}}
 X-Client-Version: 6.137.0-rc41
+x-cloud-host: qt.dev.coresuite.com
 X-Account-Id: {{X-Account-Id}}
 X-Account-Name: {{X-Account-Name}}
 X-Company-Id: {{X-Company-Id}}
 X-Company-Name: {{X-Company-Name}}
+X-Request-ID: {{X-Request-Id}}
 Authorization: {{Token}}
 Content-Type: application/json
 
@@ -19,8 +21,6 @@ Content-Type: application/json
     "includeCrowdPersons": false
   },
   "bookingsFilter": {
-    "earliest": "2022-06-18T05:30:00.550Z",
-    "latest": "2022-06-24T19:30:00.550Z",
     "activitiesToExclude": [],
     "considerReleasedAsExclusive": true,
     "considerPlannedAsExclusive": true
