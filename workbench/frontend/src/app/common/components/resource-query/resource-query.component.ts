@@ -1,54 +1,11 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { BehaviorSubject, merge, of, Subject } from 'rxjs';
-import { catchError, mergeMap, take, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
+import { BehaviorSubject, of, Subject } from 'rxjs';
+import { catchError, takeUntil, tap } from 'rxjs/operators';
 import { QueryService } from '../../services/query.service';
-
-const TEMPLATES = {
-  default: `
-SELECT 
-  resource.id as id,
-  resource.firstName as firstName,
-  resource.lastName as lastName
-FROM 
-  UnifiedPerson resource 
-WHERE 
-  resource.plannableResource = true 
-  AND resource.inactive != true
-LIMIT 25
-`,
-  skill: `
-SELECT 
-  resource.id as id,
-  resource.firstName as firstName,
-  resource.lastName as lastName
-FROM 
-  Tag tag 
-  LEFT JOIN Skill skill ON skill.tag = tag.id
-  LEFT JOIN UnifiedPerson resource ON resource.id = skill.person
-WHERE
-  resource.plannableResource = true 
-  AND resource.inactive != true 
-  AND tag.name = '<insert-skill-here>'
-LIMIT 25
-`,
-  region: `
-SELECT
-  resource.id as id,
-  resource.firstName as firstName,
-  resource.lastName as lastName
-FROM 
-  UnifiedPerson resource 
-  LEFT JOIN Region region ON region.name = '<insert-region-here>'
-WHERE 
-  region.id IN resource.regions
-  AND resource.plannableResource = true 
-  AND resource.inactive != true 
-LIMIT 25
-`
-}
+import { AGHRequestDTO, AGHResponseDTO, TechnicianService } from '../../services/technician.service';
 
 @Component({
   selector: 'resource-query',
@@ -57,90 +14,99 @@ LIMIT 25
 })
 export class ResourceQueryComponent implements OnInit, OnDestroy {
 
-  private onQuery = new Subject();
   public resources$ = new BehaviorSubject<Partial<{ id: string; firstName: string, lastName: string }>[]>([]);
   public isLoading$ = new BehaviorSubject<boolean>(false);
 
-  @Output() change = new EventEmitter<string[]>();
+  @Output() changeResource = new EventEmitter<string[]>();
 
   public form: FormGroup;
-  private onDistroy$ = new Subject();
-  public editorOptions = {
-    theme: 'vs-dark',
-    language: 'pgsql',
-    fontSize: 15
-  };
+  private onDestroy$ = new Subject();
+
+  public filterAttributeControl = new FormControl([]);
+  public filterValueControl = new FormControl([]);
+  public filterAttributes: string[] = ['Attribute 1', 'Attribute 2', 'Attribute 3'];
+  public filterValues: string[] = ['Value 1', 'Value 2', 'Value 3'];
 
   constructor(
     private fb: FormBuilder,
     private svc: QueryService,
     private snackBar: MatSnackBar,
+    private technicianService: TechnicianService
   ) { }
 
-  public ngOnDestroy() {
-    this.onDistroy$.next();
+  public ngOnDestroy(): void {
+    this.onDestroy$.next();
   }
 
-  public ngOnInit(): void {
-    this.form = this.fb.group({
-      query: [TEMPLATES.default],
-    });
+  ngOnInit(): void {
 
-    this.resources$.pipe(
-      tap(list => {
-        if (list.length) {
-          this.change.next(list.map(it => it.id));
-        }
-      }),
-      takeUntil(this.onDistroy$)
-    ).subscribe();
+    const requestObject: AGHRequestDTO = {
+      companyNames: [
+        'sap-warriors'
+      ],
+      options: {
+        geocodedOnly: true,
+        includeInternalPersons: true,
+        includeCrowdPersons: false
+      },
+      bookingsFilter: {
+        activitiesToExclude: [],
+        considerReleasedAsExclusive: true,
+        considerPlannedAsExclusive: true
+      },
+      personIds: []
+    };
 
-    this.onQuery.pipe(
-      withLatestFrom(merge(of(this.form.value), this.form.valueChanges)),
-      mergeMap(([_, form]) => {
-        this.isLoading$.next(true);
-        return this.svc.queryResource(form.query).pipe(
-          catchError(error => {
-            console.error(error);
+    this.resources$
+      .pipe(
+        tap(list => {
+          if (list.length) {
+            this.changeResource.next(list.map(it => it.id));
+          }
+        }),
+        takeUntil(this.onDestroy$)
+      )
+      .subscribe();
 
-            let errorMessage = error;
-            if (error instanceof HttpErrorResponse) {
-              errorMessage = `Error [❌ ${error.status} ❌ ]\n\n${error.message}`;
-            }
+    this.isLoading$.next(true); // Display loading indicator
 
-            const snackBarRef = this.snackBar.open(errorMessage, 'ok', { duration: 3000 });
+    this.technicianService.fetchAll(requestObject)
+      .pipe(
+        catchError(error => {
+          console.error(error);
 
-            return of([]);
-          })
-        )
-      }),
-      tap(list => {
-        this.isLoading$.next(false);
-        this.resources$.next(list);
-      }),
-      takeUntil(this.onDistroy$)
-    ).subscribe();
+          let errorMessage = error;
+          if (error instanceof HttpErrorResponse) {
+            errorMessage = `Error [❌ ${error.status} ❌ ]\n\n${error.message}`;
+          }
 
-    setTimeout(() => this.onQuery.next(), 100);
+          this.snackBar.open(errorMessage, 'ok', { duration: 3000 });
+
+          return of({} as AGHResponseDTO);
+        })
+      )
+      .subscribe(
+        response => {
+          this.isLoading$.next(false); // Hide loading indicator
+          this.resources$.next(response.results); // Update resources with the technician data
+          this.snackBar.open('Technicians retrieved successfully!', 'ok', { duration: 3000 });
+        });
+
+    // setTimeout(() => this.onQuery.next(), 100);
   }
 
-  public onEditor(editor) {
-    // let line = editor.getPosition();
+
+  public applyFilter(): void {
+    // Get selected filter attributes and values from the form controls
+    const selectedAttributes = this.filterAttributeControl.value as string[];
+    const selectedValues = this.filterValueControl.value as string[];
+
+    // Perform filtering logic with selected attributes and values
+
+    // Call API with the selected filters ?
+
   }
 
-  public remove(item: { id: string }) {
-    this.resources$.pipe(
-      take(1),
-      tap(current => this.resources$.next(current.filter(it => it.id !== item.id)))
-    ).subscribe();
-  }
 
-  public doQuery() {
-    this.onQuery.next();
-  }
-
-  public applyTmpl(t: keyof typeof TEMPLATES) {
-    this.form.patchValue({ query: TEMPLATES[t] });
-  }
 
 }
