@@ -12,6 +12,8 @@ import { ServiceManagementAPIDAO } from './app/booking/service-management-api.da
 import { TimeoutInterceptor } from './common/timeout.interceptor';
 import { ReOptimizeController } from './app/re-optimize/re-optimize.controller';
 import { ErrorFilter } from './common/error.filter';
+import { TechnicianController } from './app/technician/technician.controller';
+import { AghApiDao } from './app/technician/agh-api.dao';
 
 @Module({
   imports: [HttpModule],
@@ -21,13 +23,15 @@ import { ErrorFilter } from './common/error.filter';
     PluginController,
     QueryController,
     ReOptimizeController,
-    AppController
+    AppController,
+    TechnicianController
   ],
   providers: [
     AiDataAPIDAO,
     OptimisationAPIDAO,
     ServiceManagementAPIDAO,
     FsmAPIClientFactory,
+    AghApiDao,
     { provide: APP_INTERCEPTOR, useClass: TimeoutInterceptor },
     { provide: APP_FILTER, useClass: ErrorFilter }
   ],

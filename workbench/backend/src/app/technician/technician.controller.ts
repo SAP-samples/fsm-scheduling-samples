@@ -14,5 +14,4 @@ export class TechnicianController {
     const { data } = await this.dao.getTechnicians(ctx, aghRequest).toPromise();
     return data;
   }
-
 }

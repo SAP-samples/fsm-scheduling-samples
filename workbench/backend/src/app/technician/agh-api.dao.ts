@@ -81,9 +81,7 @@ export class AghApiDao {
   getTechnicians(ctx: Context, data: Partial<AGHRequestDTO>) {
     return this.request<AGHResponseDTO>({
       method: 'POST',
-      url: `${this.resolveHost(
-        ctx.cloudHost,
-      )}/aggregation-hub/api/v1/resources`,
+      url: `${this.resolveHost(ctx.cloudHost)}/aggregation-hub/api/v1/resources`,
       headers: this.getHeaders(ctx),
       params: this.getParams(ctx),
       responseType: 'json',
