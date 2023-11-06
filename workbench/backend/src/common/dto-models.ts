@@ -55,7 +55,7 @@ export type AddressDTO = {
 }
 
 export type AGHResponseDTO = { // TODO there are other DTOs using results: Array pattern, maybe merge as generic and reuse
-  results: TechniciansDTO[]
+  results: TechnicianDTO[]
 }
 
 export type AGHRequestDTO = {
@@ -75,7 +75,7 @@ export type AGHRequestDTO = {
   personIds: string[]
 }
 
-export type TechniciansDTO = {
+export type TechnicianDTO = {
   id: string,
   name: string;
   description: string;
