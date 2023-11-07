@@ -111,10 +111,10 @@
     <mat-icon>search</mat-icon> Search for slots
   </button>
 
-  using <mat-chip>/api/v2/job-slots/actions/search</mat-chip> Search Job Slot API see
+  using <mat-chip>/api/v3/job-slots/actions/search</mat-chip> Search Job Slot API see
 
   <a target="_blank" style="margin-top: 15px;"
-    href="https://eu.coresystems.net/optimization/api/v1/swagger-ui/#/Search%20Job%20Slot/post_api_v2_job_slots_actions_search">
+    href="https://eu.coresystems.net/optimization/api/v1/swagger-ui/#/Search%20Job%20Slot/post_api_v3_job_slots_actions_search">
     documentation
   </a>
 
@@ -172,7 +172,7 @@
   <mat-expansion-panel-header>
     <mat-panel-title>
       <strong class="panel-title">🤖&nbsp;&nbsp;How / AI-Plugin</strong>
-      <mat-chip class="panel-title-chip">{{ (requestPayload$ | async)?.optimizationPlugin }}</mat-chip>
+      <mat-chip class="panel-title-chip">{{ (requestPayload$ | async)?.policy }}</mat-chip>
     </mat-panel-title>
     <mat-panel-description></mat-panel-description>
   </mat-expansion-panel-header>

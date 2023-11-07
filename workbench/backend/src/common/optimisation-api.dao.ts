@@ -15,14 +15,15 @@ export type SearchRequest = Readonly<{
     udfValues: {
       [key: string]: string;
     }
-  }>; slots: ISearchRequestSlot[];
+  }>;
+  slots: ISearchRequestSlot[];
   resources: {
     personIds: string[]
   },
   options: Readonly<{
     maxResultsPerSlot: number;
   }>;
-  optimizationPlugin: null | string;
+  policy: null | string;
 }>;
 
 export type ReOptimizeRequest = Readonly<{
@@ -117,11 +118,11 @@ export class OptimisationAPIDAO {
       tap(response => {
         try {
           const elapsedMilliseconds: number = new Date().getTime() - requestStart.getTime();
-          console.debug(
-            `[OptimisationAPIDAO:${config.method}] url: [${config.url}] response: [${JSON.stringify(response ? response.status : null)}], time: [${elapsedMilliseconds}]`,
+          console.info(
+            `[OptimisationAPIDAO:${config.method}] url: [${config.url}] response: [${JSON.stringify(response ? response.request : null)}], time: [${elapsedMilliseconds}]`,
           );
         } catch {
-          console.debug(`[OptimisationAPIDAO:${config.method}] url: [${config.url}] response[UNPROCESSIBLE]`);
+          console.info(`[OptimisationAPIDAO:${config.method}] url: [${config.url}] response[UNPROCESSIBLE]`);
         }
       }),
       catchError((error: AxiosError) => {
@@ -134,7 +135,7 @@ export class OptimisationAPIDAO {
   public slotsSearch(ctx: Context, data: SearchRequest) {
     return this.request<SearchResponse>({
       method: 'POST',
-      url: `${this.resolveHost(ctx.cloudHost)}/optimization/api/v2/job-slots/actions/search`,
+      url: `${this.resolveHost(ctx.cloudHost)}/optimization/api/v3/job-slots/actions/search`,
       headers: this.getHeaders(ctx),
       params: this.getParams(ctx),
       responseType: 'json',
