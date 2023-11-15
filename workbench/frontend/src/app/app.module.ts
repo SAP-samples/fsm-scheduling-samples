@@ -2,7 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MonacoEditorModule } from 'ngx-monaco-editor';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
@@ -38,6 +38,7 @@ import { ResourceQueryComponent } from './common/components/resource-query/resou
 import { SaveDialog } from './common/components/plugin-editor/save-dialog/save-dialog.component';
 import { SelectSheet } from './common/components/select-sheet/select-sheet.component';
 import { PluginEditorComponent } from './common/components/plugin-editor/plugin-editor.component';
+import { MatRadioModule } from '@angular/material/radio';
 
 
 @NgModule({
@@ -65,7 +66,9 @@ import { PluginEditorComponent } from './common/components/plugin-editor/plugin-
     ReactiveFormsModule,
     MonacoEditorModule.forRoot(ngxMonacoEditorConfig),
     FlexLayoutModule,
-    ...MatModules
+    ...MatModules,
+    MatRadioModule,
+    FormsModule
   ],
   providers: [
     ConfigService,

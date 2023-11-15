@@ -1,7 +1,6 @@
 <h2>resources: {{ (resources$ | async)?.length }}</h2>
 
 
-
 <div style="display: flex;">
   <div style="width: 30%;">
     <mat-chip-list style="margin-bottom: 20px;">
@@ -12,21 +11,49 @@
     </mat-chip-list>
   </div>
   <div style="width: 70%;">
-    
-    <button mat-raised-button (click)="doQuery()" color="primary" class="margin-10">run query</button>
-    query-templates:
-    <button mat-button (click)="applyTmpl('default')"  class="margin-10">default</button>
-    <button mat-button (click)="applyTmpl('skill')"  class="margin-10">by skill</button>
-    <button mat-button (click)="applyTmpl('region')"  class="margin-10">by region</button>
-    
-    
-    <div style="height: 5px; margin-top: 15px;">
-      <mat-progress-bar *ngIf="(isLoading$ | async)" style="height: 5px;" mode="indeterminate"></mat-progress-bar>
+
+    <div style="display: inline-flex; flex-wrap: wrap; margin-bottom: 16px;">
+      <div style="display: flex; flex-direction: column;">
+        <mat-checkbox>Crowd</mat-checkbox>
+        <mat-checkbox>Internal</mat-checkbox>
+      </div>
+      <form [formGroup]="form">
+        <mat-form-field style="margin-left: 24px;">
+          <mat-label>Skills</mat-label>
+
+          <mat-select formControlName="selectedSkills" multiple>
+            <mat-select-trigger>
+              {{ form.get('selectedSkills').value ? form.get('selectedSkills').value.length + ' selected' : 'Select Skills' }}
+            </mat-select-trigger>
+
+            <mat-option *ngFor="let skill of allSkills" [value]="skill">
+              {{ skill }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </form>
     </div>
-    <form [formGroup]="form">
-      <ngx-monaco-editor class="monaco-editor" [options]="editorOptions" (onInit)="onEditor($event)"
-        formControlName="query" style="min-height: 400px;">
-      </ngx-monaco-editor>
-    </form>
+
+      <hr style="margin-top: 16px; margin-bottom: 16px; border: 1px solid #ddd;">
+
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>SQL Query</mat-expansion-panel-header>
+        <button mat-raised-button (click)="doQuery()" color="primary" class="margin-10">run query</button>
+        query-templates:
+        <button mat-button (click)="applyTmpl('default')" class="margin-10">default</button>
+        <button mat-button (click)="applyTmpl('skill')" class="margin-10">by skill</button>
+        <button mat-button (click)="applyTmpl('region')" class="margin-10">by region</button>
+
+
+        <div style="height: 5px; margin-top: 15px;">
+          <mat-progress-bar *ngIf="(isLoading$ | async)" style="height: 5px;" mode="indeterminate"></mat-progress-bar>
+        </div>
+        <form [formGroup]="form">
+          <ngx-monaco-editor class="monaco-editor" [options]="editorOptions" (onInit)="onEditor($event)"
+                             formControlName="query" style="min-height: 400px;">
+          </ngx-monaco-editor>
+        </form>
+      </mat-expansion-panel>
+
+    </div>
   </div>
-</div>
