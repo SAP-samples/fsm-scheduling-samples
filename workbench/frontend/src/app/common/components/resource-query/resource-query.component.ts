@@ -1,53 +1,45 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { BehaviorSubject, merge, of, Subject } from 'rxjs';
 import { catchError, mergeMap, take, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
 import { QueryService } from '../../services/query.service';
+import { SharedSkillsService } from '../../services/shared-skill.service';
 
 const TEMPLATES = {
   default: `
-SELECT
-  resource.id as id,
-  resource.firstName as firstName,
-  resource.lastName as lastName
-FROM
-  UnifiedPerson resource
-WHERE
-  resource.plannableResource = true
-  AND resource.inactive != true
-LIMIT 25
-`,
+    SELECT resource.id        as id,
+           resource.firstName as firstName,
+           resource.lastName  as lastName
+    FROM UnifiedPerson resource
+    WHERE resource.plannableResource = true
+      AND resource.inactive != true
+    LIMIT 25
+  `,
   skill: `
-SELECT
-  resource.id as id,
-  resource.firstName as firstName,
-  resource.lastName as lastName
-FROM
-  Tag tag
-  LEFT JOIN Skill skill ON skill.tag = tag.id
-  LEFT JOIN UnifiedPerson resource ON resource.id = skill.person
-WHERE
-  resource.plannableResource = true
-  AND resource.inactive != true
-  AND tag.name = '<insert-skill-here>'
-LIMIT 25
-`,
+    SELECT resource.id        as id,
+           resource.firstName as firstName,
+           resource.lastName  as lastName
+    FROM Tag tag
+           LEFT JOIN Skill skill ON skill.tag = tag.id
+           LEFT JOIN UnifiedPerson resource ON resource.id = skill.person
+    WHERE resource.plannableResource = true
+      AND resource.inactive != true
+      AND tag.name = '<insert-skill-here>'
+    LIMIT 25
+  `,
   region: `
-SELECT
-  resource.id as id,
-  resource.firstName as firstName,
-  resource.lastName as lastName
-FROM
-  UnifiedPerson resource
-  LEFT JOIN Region region ON region.name = '<insert-region-here>'
-WHERE
-  region.id IN resource.regions
+    SELECT resource.id        as id,
+           resource.firstName as firstName,
+           resource.lastName  as lastName
+    FROM UnifiedPerson resource
+           LEFT JOIN Region region ON region.name = '<insert-region-here>'
+    WHERE region.id IN resource.regions
   AND resource.plannableResource = true
   AND resource.inactive != true
-LIMIT 25
-`
+    LIMIT 25
+  `
 };
 
 @Component({
@@ -62,11 +54,11 @@ export class ResourceQueryComponent implements OnInit, OnDestroy {
   public isLoading$ = new BehaviorSubject<boolean>(false);
 
   public allSkills = [];
-  public skillResourcesMap: Map<string, any[]> = new Map();
+  public skillResourcesMap: Map<string, Set<any>> = new Map();
   public allResources: any[] = [];
   public selectedSkills: string[] = [];
 
-
+  @Input() selectedMandatorySkills: string[];
   @Output() change = new EventEmitter<string[]>();
 
   public form: FormGroup;
@@ -81,7 +73,9 @@ export class ResourceQueryComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private svc: QueryService,
     private snackBar: MatSnackBar,
-  ) { }
+    private sharedSkillsService: SharedSkillsService
+  ) {
+  }
 
   public ngOnDestroy(): void {
     this.onDestroy$.next();
@@ -101,9 +95,9 @@ export class ResourceQueryComponent implements OnInit, OnDestroy {
         resource.skills.forEach(skill => {
           const key = skill.name.toLowerCase();
           if (!this.skillResourcesMap.has(key)) {
-            this.skillResourcesMap.set(key, []);
+            this.skillResourcesMap.set(key, new Set());
           }
-          this.skillResourcesMap.get(key).push(resource);
+          this.skillResourcesMap.get(key).add(resource);
         });
       });
 
@@ -115,7 +109,11 @@ export class ResourceQueryComponent implements OnInit, OnDestroy {
       takeUntil(this.onDestroy$)
     ).subscribe(selectedSkills => {
       this.selectedSkills = selectedSkills;
-      this.updateResources();
+      this.updateResources(this.selectedSkills);
+    });
+
+    this.sharedSkillsService.selectedSkills$.subscribe((selectedSkills) => {
+      this.updateResources(selectedSkills);
     });
 
     this.onQuery.pipe(
@@ -165,17 +163,17 @@ export class ResourceQueryComponent implements OnInit, OnDestroy {
     this.form.patchValue({ query: TEMPLATES[t] });
   }
 
-  private updateResources(): void {
-    if (this.selectedSkills.length > 0) {
-      const filteredResourcesSet = new Set<any>();
+  private updateResources(skills): void {
+    if (skills.length > 0) {
+      const firstSkill = skills[0];
+      const firstResourceSet = this.skillResourcesMap.get(firstSkill.toLowerCase()) || new Set();
 
-      this.selectedSkills.forEach(skill => {
-        const resourcesForSkill = this.skillResourcesMap.get(skill.toLowerCase()) || [];
-        resourcesForSkill.forEach(resource => filteredResourcesSet.add(resource));
-      });
+      const intersection = skills.slice(1).reduce((commonResources, skill) => {
+        const resourceSet = this.skillResourcesMap.get(skill.toLowerCase()) || new Set();
+        return new Set([...commonResources].filter(resource => resourceSet.has(resource)));
+      }, firstResourceSet);
 
-      this.resources$.next(Array.from(filteredResourcesSet));
-      console.log(this.resources$);
+      this.resources$.next(Array.from(intersection));
     } else {
       this.resources$.next(this.allResources);
     }
