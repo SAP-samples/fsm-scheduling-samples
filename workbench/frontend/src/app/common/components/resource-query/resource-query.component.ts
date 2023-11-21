@@ -143,8 +143,16 @@ export class ResourceQueryComponent implements OnInit, OnDestroy {
       takeUntil(this.onDestroy$)
     ).subscribe();
 
-    // Trigger the initial query after a delay
     setTimeout(() => this.onQuery.next(), 100);
+
+    this.resources$.pipe(
+      tap(list => {
+        if (list.length) {
+          this.change.next(list.map(it => it.id));
+        }
+      }),
+      takeUntil(this.onDestroy$)
+    ).subscribe();
   }
 
   public onEditor(editor): void {
