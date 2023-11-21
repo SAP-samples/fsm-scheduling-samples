@@ -1,0 +1,17 @@
+.selected {
+  background-color: #e0e0e0; /* Greyish color for selected tab */
+  color: #333; /* Adjust text color for better contrast */
+  border-bottom: 3px solid #ccc; /* Border color for selected tab */
+}
+
+.mat-button {
+  transition: background-color 0.3s; /* Add a smooth transition for background color */
+}
+
+.mat-button:not(.selected):hover {
+  background-color: #e0e0e0; /* Change background color on hover for non-selected buttons */
+}
+
+.selected:hover {
+  background-color: #e0e0e0; /* Change background color on hover for non-selected buttons */
+}

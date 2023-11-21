@@ -58,6 +58,9 @@ export class ResourceQueryComponent implements OnInit, OnDestroy {
   public allResources: any[] = [];
   public selectedSkills: string[] = [];
 
+  public selectedTemplate = 'default';
+
+
   @Input() selectedMandatorySkills: string[];
   @Output() change = new EventEmitter<string[]>();
 
@@ -87,7 +90,7 @@ export class ResourceQueryComponent implements OnInit, OnDestroy {
       selectedSkills: []
     });
 
-    this.svc.queryResource(TEMPLATES.default).subscribe(resources => {
+    this.svc.queryResourceSkills(TEMPLATES.default).subscribe(resources => {
       this.allResources = resources;
       this.skillResourcesMap.clear();
 
@@ -120,7 +123,7 @@ export class ResourceQueryComponent implements OnInit, OnDestroy {
       withLatestFrom(merge(of(this.form.value), this.form.valueChanges)),
       mergeMap(([_, form]) => {
         this.isLoading$.next(true);
-        return this.svc.queryResource(form.query).pipe(
+        return this.svc.queryResourceSkills(form.query).pipe(
           catchError(error => {
             console.error(error);
 
@@ -160,6 +163,7 @@ export class ResourceQueryComponent implements OnInit, OnDestroy {
   }
 
   public applyTmpl(t: keyof typeof TEMPLATES): void {
+    this.selectedTemplate = t;
     this.form.patchValue({ query: TEMPLATES[t] });
   }
 

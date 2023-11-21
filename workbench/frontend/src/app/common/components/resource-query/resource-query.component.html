@@ -1,8 +1,6 @@
-<h2>resources: {{ (resources$ | async)?.length }}</h2>
-
-
 <div style="display: flex;">
   <div style="width: 30%;">
+    <h2>Resources: {{ (resources$ | async)?.length }}</h2>
     <mat-chip-list style="margin-bottom: 20px;">
       <mat-chip *ngFor="let resource of (resources$ | async)" [removable]="true" (removed)="remove(resource)">
         <mat-icon matChipRemove>delete</mat-icon>
@@ -11,12 +9,19 @@
     </mat-chip-list>
   </div>
   <div style="width: 70%;">
+    <h2>Query Templates:</h2>
 
-    <button mat-raised-button (click)="doQuery()" color="primary" class="margin-10">run query</button>
-    query-templates:
-    <button mat-button (click)="applyTmpl('default')" class="margin-10">default</button>
-    <button mat-button (click)="applyTmpl('skill')" class="margin-10">by skill</button>
-    <button mat-button (click)="applyTmpl('region')" class="margin-10">by region</button>
+    <div class="tab-container">
+      <button mat-button (click)="applyTmpl('default')" [ngClass]="{'selected': selectedTemplate === 'default'}"
+              class="margin-10">Default
+      </button>
+      <button mat-button (click)="applyTmpl('skill')" [ngClass]="{'selected': selectedTemplate === 'skill'}"
+              class="margin-10">By Skill
+      </button>
+      <button mat-button (click)="applyTmpl('region')" [ngClass]="{'selected': selectedTemplate === 'region'}"
+              class="margin-10">By Region
+      </button>
+    </div>
 
 
     <div style="height: 5px; margin-top: 15px;">
@@ -30,16 +35,14 @@
 
     <hr style="margin-top: 16px; margin-bottom: 16px; border: 1px solid #ddd;">
 
-    <mat-expansion-panel>
-
-      <mat-expansion-panel-header>Filter</mat-expansion-panel-header>
+    <div style="display: flex; justify-content: space-between; align-items: start; margin-top: 15px;">
 
       <div style="display: inline-flex; flex-wrap: wrap; margin-bottom: 16px;">
         <div style="display: flex; flex-direction: column;">
           <mat-checkbox>Crowd</mat-checkbox>
           <mat-checkbox>Internal</mat-checkbox>
         </div>
-        <form [formGroup]="form">
+        <!--<form [formGroup]="form">
           <mat-form-field style="margin-left: 24px;">
             <mat-label>Skills</mat-label>
 
@@ -53,10 +56,11 @@
               </mat-option>
             </mat-select>
           </mat-form-field>
-        </form>
+        </form>-->
       </div>
 
-    </mat-expansion-panel>
+      <button mat-raised-button (click)="doQuery()" style="" color="primary" class="margin-10">run query</button>
+    </div>
 
 
   </div>
