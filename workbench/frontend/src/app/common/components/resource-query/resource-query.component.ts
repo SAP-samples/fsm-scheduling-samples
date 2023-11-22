@@ -59,6 +59,8 @@ export class ResourceQueryComponent implements OnInit, OnDestroy {
   public selectedSkills: string[] = [];
 
   public selectedTemplate = 'default';
+  public crowdChecked = false;
+  public internalChecked = false;
 
 
   @Input() selectedMandatorySkills: string[];
@@ -173,6 +175,7 @@ export class ResourceQueryComponent implements OnInit, OnDestroy {
   public applyTmpl(t: keyof typeof TEMPLATES): void {
     this.selectedTemplate = t;
     this.form.patchValue({ query: TEMPLATES[t] });
+    this.updateSqlCode();
   }
 
   private updateResources(skills): void {
@@ -190,5 +193,44 @@ export class ResourceQueryComponent implements OnInit, OnDestroy {
       this.resources$.next(this.allResources);
     }
   }
+
+  public updateSqlCode(): void {
+    const updateCondition = (conditionToAdd: string, include: boolean): void => {
+      const query = this.form.value.query;
+
+      if (query.trim() !== '') {
+        if (include) {
+          // If including, add the new condition
+          const updatedQuery = this.insertTextAfterWhere(query, conditionToAdd);
+          this.form.patchValue({ query: updatedQuery });
+        } else {
+          // If excluding, remove the existing condition
+          const modifiedQuery = this.removeCondition(query, conditionToAdd);
+          this.form.patchValue({ query: modifiedQuery });
+        }
+      }
+    };
+
+    updateCondition('resource.crowdType LIKE \'Crowd\'\n\tAND ', this.crowdChecked);
+    updateCondition('resource.crowdType LIKE \'Non_Crowd\'\n\tAND ', this.internalChecked);
+  }
+
+  private insertTextAfterWhere(input: string, newText: string): string {
+    const whereRegex = /\bWHERE\b/i;  // case-insensitive match for WHERE
+    const whereMatch = whereRegex.exec(input);
+
+    if (whereMatch) {
+      const insertionIndex = whereMatch.index + whereMatch[0].length;
+
+      return `${input.slice(0, insertionIndex)} ${newText}${input.slice(insertionIndex)}`;
+    } else {
+      return `${input}\n${newText}`;
+    }
+  }
+
+  private removeCondition(query: string, conditionToRemove: string): string {
+    return query.replace(conditionToRemove, '');
+  }
+
 
 }

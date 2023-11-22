@@ -25,8 +25,8 @@
 
     <div style="display: inline-flex; flex-wrap: wrap; margin-top: 16px;">
       <div style="display: flex; flex-direction: row;">
-        <mat-checkbox style="margin-right: 16px;">Crowd</mat-checkbox>
-        <mat-checkbox>Internal</mat-checkbox>
+        <mat-checkbox style="margin-right: 16px;" [(ngModel)]="crowdChecked" (change)="updateSqlCode()">Crowd</mat-checkbox>
+        <mat-checkbox [(ngModel)]="internalChecked" (change)="updateSqlCode()">Internal</mat-checkbox>
       </div>
     </div>
 
