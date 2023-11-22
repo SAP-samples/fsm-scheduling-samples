@@ -211,8 +211,8 @@ export class ResourceQueryComponent implements OnInit, OnDestroy {
       }
     };
 
-    updateCondition('resource.crowdType LIKE \'Crowd\'\n\tAND ', this.crowdChecked);
-    updateCondition('resource.crowdType LIKE \'Non_Crowd\'\n\tAND ', this.internalChecked);
+    updateCondition('resource.crowdType LIKE \'CROWD\'\n\tAND ', this.crowdChecked);
+    updateCondition('resource.crowdType LIKE \'NON_CROWD\'\n\tAND ', this.internalChecked);
   }
 
   private insertTextAfterWhere(input: string, newText: string): string {
