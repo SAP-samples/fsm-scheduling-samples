@@ -1,31 +1,19 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnDestroy, OnInit, } from '@angular/core';
-import { Form, FormBuilder, FormGroup } from '@angular/forms';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
 import { catchError, filter, map, mergeMap, pairwise, take, takeUntil, tap } from 'rxjs/operators';
 import { AuthService } from '../common/services/auth.service';
 import { Slot } from './components/slot-builder/slot-builder.component';
-import { SlotSearchService, SearchRequest, SearchResponseWrapper, ResourceFilters } from './services/slot-booking.service';
+import { ResourceFilters, SearchRequest, SearchResponseWrapper, SlotSearchService } from './services/slot-booking.service';
 import { Job } from './services/job.service';
 import { Event } from '@angular/router';
-import { animate, state, style, transition, trigger } from '@angular/animations';
 
 @Component({
   selector: 'slot-booking',
   templateUrl: './slot-booking.component.html',
   styleUrls: ['./slot-booking.component.scss'],
-  animations: [
-    trigger('highlight', [
-      state('start', style({
-        backgroundColor: 'yellow',
-      })),
-      state('end', style({
-        backgroundColor: 'transparent',
-      })),
-      transition('* => *', animate('500ms')),
-    ]),
-  ],
 })
 export class SlotBookingComponent implements OnInit, OnDestroy {
 
@@ -41,10 +29,11 @@ export class SlotBookingComponent implements OnInit, OnDestroy {
   private onDistroy$ = new Subject();
 
   public filterBased = false;
-  public internalChecked = false;
-  public crowdChecked = false;
+  public internalChecked = true;
+  public crowdChecked = true;
   public skillsChecked = false;
   public filters$ = new BehaviorSubject<ResourceFilters | null>(null);
+  public requestPayloadResources = null;
 
   animationState = 'end';
 
@@ -130,16 +119,12 @@ export class SlotBookingComponent implements OnInit, OnDestroy {
 
     this.requestPayload$.pipe(
       tap(_ => this.animationState = 'start'),
-      // Add any other operators or transformations you need here
     ).subscribe(requestPayload => {
-      // Process the requestPayload as needed
       this.updateRequestPayload();
-      // After a short delay, reset the animation state
       setTimeout(() => {
         this.animationState = 'end';
-      }, 1000); // Adjust the delay as needed
+      }, 1000);
     });
-
   }
 
 
@@ -164,7 +149,9 @@ export class SlotBookingComponent implements OnInit, OnDestroy {
         pluginEditor && slots && job && (personIds.length || filters)
       )),
       map(([pluginEditor, slots, job, personIds, filters]): SearchRequest => {
-        console.log(this.filterBased ? filters : { personIds });
+
+        const newResources = this.filterBased ? filters : { personIds };
+
         return {
           job: {
             durationMinutes: job.durationMinutes,
@@ -174,7 +161,7 @@ export class SlotBookingComponent implements OnInit, OnDestroy {
             udfValues: {}
           },
           slots,
-          resources: this.filterBased ? filters : { personIds },
+          resources: newResources,
           options: {
             maxResultsPerSlot: 8
           },

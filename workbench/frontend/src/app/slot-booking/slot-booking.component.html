@@ -82,7 +82,7 @@
 
         <mat-expansion-panel #request_payload style="margin: 10px;">
           <mat-expansion-panel-header>Full JSON Request</mat-expansion-panel-header>
-          <pre *ngIf="requestPayload$" [@highlight]="animationState">{{ requestPayload$ | async | json }}</pre>
+          <pre *ngIf="requestPayload$">{{ requestPayload$ | async | json }}</pre>
         </mat-expansion-panel>
 
       </div>
@@ -103,11 +103,10 @@
 
 </mat-expansion-panel>
 
-
 <mat-card class="margin-10">
 
   <div [formGroup]="requestOptions" style="margin-top: 15px; display: flex;">
-    <mat-slide-toggle formControlName="filterBasedToggle" (change)="onFilterBasedToggleChange($event); request_response.open(); request_payload.open();" class="margin-10">Filter Based</mat-slide-toggle>
+    <mat-slide-toggle formControlName="filterBasedToggle" (change)="onFilterBasedToggleChange($event);" class="margin-10">Filter Based</mat-slide-toggle>
   </div>
 
   <div class="checkbox-container" style="display: flex; flex-direction: row;">
