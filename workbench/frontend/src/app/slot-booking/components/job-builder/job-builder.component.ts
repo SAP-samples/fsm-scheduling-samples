@@ -121,6 +121,10 @@ export class JobBuilderComponent implements OnInit, OnDestroy, AfterContentInit 
       takeUntil(this.onDestroy$)
     ).subscribe();
 
+    this.sharedSkillsService.selectedSkills$.subscribe(() =>
+      this.selectedMandatorySkills$ = this.sharedSkillsService.selectedSkills$
+    );
+
     this.selectedOptionalSkills$.pipe(
       tap((list) => this.form.patchValue({ optionalSkills: list })),
       takeUntil(this.onDestroy$)

@@ -2,8 +2,8 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { BehaviorSubject, merge, of, Subject } from 'rxjs';
-import { catchError, mergeMap, take, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
+import { BehaviorSubject, merge, Observable, of, Subject } from 'rxjs';
+import { catchError, map, mergeMap, take, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
 import { QueryService } from '../../services/query.service';
 import { SharedSkillsService } from '../../services/shared-skill.service';
 
@@ -56,7 +56,7 @@ export class ResourceQueryComponent implements OnInit, OnDestroy {
   public allSkills = [];
   public skillResourcesMap: Map<string, Set<any>> = new Map();
   public allResources: any[] = [];
-  public selectedSkills: string[] = [];
+  public selectedSkills$ = new BehaviorSubject<string[]>([]);
 
   public selectedTemplate = 'default';
   public crowdChecked = false;
@@ -89,7 +89,6 @@ export class ResourceQueryComponent implements OnInit, OnDestroy {
   public ngOnInit(): void {
     this.form = this.fb.group({
       query: [TEMPLATES.default],
-      selectedSkills: []
     });
 
     this.svc.queryResourceSkills(TEMPLATES.default).subscribe(resources => {
@@ -110,12 +109,7 @@ export class ResourceQueryComponent implements OnInit, OnDestroy {
       this.allSkills = Array.from(this.skillResourcesMap.keys());
     });
 
-    this.form.get('selectedSkills').valueChanges.pipe(
-      takeUntil(this.onDestroy$)
-    ).subscribe(selectedSkills => {
-      this.selectedSkills = selectedSkills;
-      this.updateResources(this.selectedSkills);
-    });
+    this.selectedSkills$ = this.sharedSkillsService.selectedSkills$;
 
     this.sharedSkillsService.selectedSkills$.subscribe((selectedSkills) => {
       this.updateResources(selectedSkills);
@@ -166,6 +160,17 @@ export class ResourceQueryComponent implements OnInit, OnDestroy {
       take(1),
       tap(current => this.resources$.next(current.filter(it => it.id !== item.id)))
     ).subscribe();
+  }
+
+
+  public removeSkill(skill: string): void {
+    this.sharedSkillsService.selectedSkills$.pipe(
+      take(1), // Take only one emission to avoid unnecessary subscriptions
+      map((selectedSkills) => selectedSkills.filter((s) => s !== skill))
+    ).subscribe((updatedSkills) => {
+      this.selectedSkills$.next(updatedSkills);
+    });
+    this.selectedSkills$ = this.sharedSkillsService.selectedSkills$;
   }
 
   public doQuery(): void {

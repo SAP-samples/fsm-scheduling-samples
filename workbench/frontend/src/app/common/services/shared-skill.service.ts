@@ -7,7 +7,7 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class SharedSkillsService {
   private selectedSkillsSubject = new BehaviorSubject<string[]>([]);
-  selectedSkills$ = this.selectedSkillsSubject.asObservable();
+  selectedSkills$ = this.selectedSkillsSubject;
 
   updateSelectedSkills(selectedSkills: string[]): void {
     this.selectedSkillsSubject.next(selectedSkills);

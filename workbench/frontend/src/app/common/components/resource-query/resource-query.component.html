@@ -1,10 +1,22 @@
 <div style="display: flex;">
-  <div style="width: 30%;">
+  <div style="width: 30%; margin-right: 24px;">
     <h2>Resources: {{ (resources$ | async)?.length }}</h2>
+    <div style="display: inline-flex; flex-direction: row; align-items: center;">
+
+    <h3 *ngIf="(selectedSkills$ | async)?.length > 0" style="white-space: nowrap; font-weight: bold;">Selected Skills:</h3>
+
+    <mat-chip-list style="margin-left: 16px; margin-bottom: 20px;">
+      <mat-chip *ngFor="let skill of (selectedSkills$ | async)" [removable]="true" (removed)="removeSkill(skill)">
+        {{ skill }}
+        <mat-icon matChipRemove style="margin-left: 4px;">close</mat-icon>
+      </mat-chip>
+    </mat-chip-list>
+    </div>
+
     <mat-chip-list style="margin-bottom: 20px;">
-      <mat-chip *ngFor="let resource of (resources$ | async)" [removable]="true" (removed)="remove(resource)">
-        <mat-icon matChipRemove>delete</mat-icon>
+      <mat-chip style="white-space: nowrap;" *ngFor="let resource of (resources$ | async)" [removable]="true" (removed)="remove(resource)">
         [{{ resource.id | slice:0:6 }}] {{ resource.firstName }} {{ resource.lastName }}
+        <mat-icon matChipRemove>close</mat-icon>
       </mat-chip>
     </mat-chip-list>
   </div>
