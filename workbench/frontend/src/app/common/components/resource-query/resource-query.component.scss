@@ -1,17 +1,17 @@
 .selected {
-  background-color: #e0e0e0; /* Greyish color for selected tab */
-  color: #333; /* Adjust text color for better contrast */
-  border-bottom: 3px solid #ccc; /* Border color for selected tab */
+  background-color: #e0e0e0;
+  color: #333;
+  border-bottom: 3px solid #ccc;
 }
 
 .mat-button {
-  transition: background-color 0.3s; /* Add a smooth transition for background color */
+  transition: background-color 0.3s;
 }
 
 .mat-button:not(.selected):hover {
-  background-color: #e0e0e0; /* Change background color on hover for non-selected buttons */
+  background-color: #e0e0e0;
 }
 
 .selected:hover {
-  background-color: #e0e0e0; /* Change background color on hover for non-selected buttons */
+  background-color: #e0e0e0;
 }

@@ -38,7 +38,6 @@ import { ResourceQueryComponent } from './common/components/resource-query/resou
 import { SaveDialog } from './common/components/plugin-editor/save-dialog/save-dialog.component';
 import { SelectSheet } from './common/components/select-sheet/select-sheet.component';
 import { PluginEditorComponent } from './common/components/plugin-editor/plugin-editor.component';
-import { MatRadioModule } from '@angular/material/radio';
 
 
 @NgModule({
@@ -67,7 +66,6 @@ import { MatRadioModule } from '@angular/material/radio';
     MonacoEditorModule.forRoot(ngxMonacoEditorConfig),
     FlexLayoutModule,
     ...MatModules,
-    MatRadioModule,
     FormsModule
   ],
   providers: [

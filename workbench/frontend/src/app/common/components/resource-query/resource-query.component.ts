@@ -2,7 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { BehaviorSubject, merge, Observable, of, Subject } from 'rxjs';
+import { BehaviorSubject, merge, of, Subject } from 'rxjs';
 import { catchError, map, mergeMap, take, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
 import { QueryService } from '../../services/query.service';
 import { SharedSkillsService } from '../../services/shared-skill.service';
@@ -165,7 +165,7 @@ export class ResourceQueryComponent implements OnInit, OnDestroy {
 
   public removeSkill(skill: string): void {
     this.sharedSkillsService.selectedSkills$.pipe(
-      take(1), // Take only one emission to avoid unnecessary subscriptions
+      take(1),
       map((selectedSkills) => selectedSkills.filter((s) => s !== skill))
     ).subscribe((updatedSkills) => {
       this.selectedSkills$.next(updatedSkills);
@@ -199,17 +199,27 @@ export class ResourceQueryComponent implements OnInit, OnDestroy {
     }
   }
 
+
+  public switchCrowdInternal(changed: string): void {
+    if (changed === 'CROWD' && this.crowdChecked) {
+      this.internalChecked = false;
+    }
+    else if (changed === 'INTERNAL' && this.internalChecked) {
+      this.crowdChecked = false;
+    }
+
+    this.updateSqlCode();
+  }
+
   public updateSqlCode(): void {
     const updateCondition = (conditionToAdd: string, include: boolean): void => {
       const query = this.form.value.query;
 
       if (query.trim() !== '') {
         if (include) {
-          // If including, add the new condition
           const updatedQuery = this.insertTextAfterWhere(query, conditionToAdd);
           this.form.patchValue({ query: updatedQuery });
         } else {
-          // If excluding, remove the existing condition
           const modifiedQuery = this.removeCondition(query, conditionToAdd);
           this.form.patchValue({ query: modifiedQuery });
         }
@@ -221,7 +231,7 @@ export class ResourceQueryComponent implements OnInit, OnDestroy {
   }
 
   private insertTextAfterWhere(input: string, newText: string): string {
-    const whereRegex = /\bWHERE\b/i;  // case-insensitive match for WHERE
+    const whereRegex = /\bWHERE\b/i;
     const whereMatch = whereRegex.exec(input);
 
     if (whereMatch) {
@@ -236,6 +246,4 @@ export class ResourceQueryComponent implements OnInit, OnDestroy {
   private removeCondition(query: string, conditionToRemove: string): string {
     return query.replace(conditionToRemove, '');
   }
-
-
 }
