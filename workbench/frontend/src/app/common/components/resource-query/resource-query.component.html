@@ -1,32 +1,60 @@
-<h2>resources: {{ (resources$ | async)?.length }}</h2>
-
-
-
 <div style="display: flex;">
-  <div style="width: 30%;">
+  <div style="width: 30%; margin-right: 24px;">
+    <h2>Resources: {{ (resources$ | async)?.length }}</h2>
+    <div style="display: inline-flex; flex-direction: row; align-items: center;">
+
+    <h3 *ngIf="(selectedSkills$ | async)?.length > 0" style="white-space: nowrap; font-weight: bold;">Selected Skills:</h3>
+
+    <mat-chip-list style="margin-left: 16px; margin-bottom: 20px;">
+      <mat-chip *ngFor="let skill of (selectedSkills$ | async)" [removable]="true" (removed)="removeSkill(skill)">
+        {{ skill }}
+        <mat-icon matChipRemove style="margin-left: 4px;">close</mat-icon>
+      </mat-chip>
+    </mat-chip-list>
+    </div>
+
     <mat-chip-list style="margin-bottom: 20px;">
-      <mat-chip *ngFor="let resource of (resources$ | async)" [removable]="true" (removed)="remove(resource)">
-        <mat-icon matChipRemove>delete</mat-icon>
+      <mat-chip style="white-space: nowrap;" *ngFor="let resource of (resources$ | async)" [removable]="true" (removed)="remove(resource)">
         [{{ resource.id | slice:0:6 }}] {{ resource.firstName }} {{ resource.lastName }}
+        <mat-icon matChipRemove>close</mat-icon>
       </mat-chip>
     </mat-chip-list>
   </div>
   <div style="width: 70%;">
-    
-    <button mat-raised-button (click)="doQuery()" color="primary" class="margin-10">run query</button>
-    query-templates:
-    <button mat-button (click)="applyTmpl('default')"  class="margin-10">default</button>
-    <button mat-button (click)="applyTmpl('skill')"  class="margin-10">by skill</button>
-    <button mat-button (click)="applyTmpl('region')"  class="margin-10">by region</button>
-    
-    
+    <h2>Query Templates:</h2>
+
+    <div class="tab-container">
+      <button mat-button (click)="applyTmpl('default')" [ngClass]="{'selected': selectedTemplate === 'default'}"
+              class="margin-10">Default
+      </button>
+      <button mat-button (click)="applyTmpl('skill')" [ngClass]="{'selected': selectedTemplate === 'skill'}"
+              class="margin-10">By Skill
+      </button>
+      <button mat-button (click)="applyTmpl('region')" [ngClass]="{'selected': selectedTemplate === 'region'}"
+              class="margin-10">By Region
+      </button>
+    </div>
+
+    <div style="display: inline-flex; flex-wrap: wrap; margin-top: 16px;">
+      <div style="display: flex; flex-direction: row;">
+        <mat-checkbox style="margin-right: 16px;" [(ngModel)]="crowdChecked" (change)="switchCrowdInternal('CROWD')">Crowd</mat-checkbox>
+        <mat-checkbox [(ngModel)]="internalChecked" (change)="switchCrowdInternal('INTERNAL')">Internal</mat-checkbox>
+      </div>
+    </div>
+
     <div style="height: 5px; margin-top: 15px;">
       <mat-progress-bar *ngIf="(isLoading$ | async)" style="height: 5px;" mode="indeterminate"></mat-progress-bar>
     </div>
     <form [formGroup]="form">
       <ngx-monaco-editor class="monaco-editor" [options]="editorOptions" (onInit)="onEditor($event)"
-        formControlName="query" style="min-height: 400px;">
+                         formControlName="query" style="min-height: 400px;">
       </ngx-monaco-editor>
     </form>
+
+    <div style="display: flex; justify-content: right; align-items: start; margin-top: 15px;">
+      <button mat-raised-button (click)="doQuery()" style="" color="primary" class="margin-10">run query</button>
+    </div>
+
+
   </div>
 </div>

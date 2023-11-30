@@ -111,48 +111,48 @@ export class QueryService {
   }
 
 
-  public queryResource<list extends QueryResponse<item>, item extends {
+  public queryResourceSkills<list extends QueryResponse<item>, item extends {
     id: string,
     firstName: string,
-    lastName: string
+    lastName: string,
+    skills: { name: string, start: string, end: string }[]
   }>(query: string): Observable<any> {
     return combineLatest([
       this._query<list, item>(query),
       this._query<QueryResponse<TagObj>, TagObj>(`SELECT tag.id as id, tag.name as name
-                                     FROM Tag tag
-                                     WHERE tag.inactive = false`),
+                                                  FROM Tag tag
+                                                  WHERE tag.inactive = false`),
       this._query<QueryResponse<SkillObj>, SkillObj>(`SELECT skill.id        as id,
-                                                skill.tag       as tag,
-                                                skill.person    as person,
-                                                skill.startDate as startDate,
-                                                skill.endDate   as endDate
-                                         FROM Skill skill
-                                         WHERE skill.inactive = false`)
-    ])
-      .pipe(
-        map(([resources, tags, skills]) => {
-          const tagMap = tags.data.reduce((m, { id, name }) => m.set(id, name), new Map<string, string>());
-          const skillMap = skills.data.reduce((m, skill) => {
-            const currentItem = {
-              name: (tagMap.get(skill.tag) || skill.tag),
-              start: skill.startDate === 'null' ? null : skill.startDate,
-              end: skill.endDate === 'null' ? null : skill.endDate
-            };
-            if (m.has(skill.person)) {
-              m.get(skill.person)?.push(currentItem);
-            } else {
-              m.set(skill.person, [currentItem]);
-            }
-            return m;
-          }, new Map<string, { name: string, start: string, end: string }[]>());
+                                                             skill.tag       as tag,
+                                                             skill.person    as person,
+                                                             skill.startDate as startDate,
+                                                             skill.endDate   as endDate
+                                                      FROM Skill skill
+                                                      WHERE skill.inactive = false`)
+    ]).pipe(
+      map(([resources, tags, skills]) => {
+        const tagMap = tags.data.reduce((m, { id, name }) => m.set(id, name), new Map<string, string>());
+        const skillMap = skills.data.reduce((m, skill) => {
+          const currentItem = {
+            name: (tagMap.get(skill.tag) || skill.tag),
+            start: skill.startDate === 'null' ? null : skill.startDate,
+            end: skill.endDate === 'null' ? null : skill.endDate
+          };
+          if (m.has(skill.person)) {
+            m.get(skill.person)?.push(currentItem);
+          } else {
+            m.set(skill.person, [currentItem]);
+          }
+          return m;
+        }, new Map<string, { name: string, start: string, end: string }[]>());
 
-          return resources.data.map(it => ({
-            ...it,
-            skills: skillMap.has(it.id) ? skillMap.get(it.id).sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0)) : []
-          }));
-        }),
-        tap((currentList) => this.addToCache('resource', currentList))
-      );
+        return resources.data.map(it => ({
+          ...it,
+          skills: skillMap.has(it.id) ? skillMap.get(it.id).sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0)) : []
+        }));
+      }),
+      tap((currentList) => this.addToCache('resource', currentList))
+    );
   }
 
   public getResourceFromCache(id: string): PersonObj {

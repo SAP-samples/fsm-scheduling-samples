@@ -3,24 +3,24 @@
 }
 
 .error-box {
-  width: 100%; 
-  border-radius: 10px; 
-  background-color: #ab4545; 
-  color:#fff; 
+  width: 100%;
+  border-radius: 10px;
+  background-color: #ab4545;
+  color:#fff;
   padding: 10px;
 }
 
 .panel-title {
-  padding-top:5px; 
+  padding-top:5px;
   margin-right: 10px;
 }
 
 .matching-tech {
   display: inline-grid;
-  text-align: center; 
-  width: 300px; 
+  text-align: center;
+  width: 300px;
   border: 2px solid #c1c1c1;
-  border-radius: 10px; 
+  border-radius: 10px;
   padding: 10px;
   margin-left: 10px;
   margin-bottom: 10px;
@@ -30,7 +30,7 @@
 .tech-info {
   margin-bottom: 12px;
   display: flex;
-  
+
   mat-icon {
     margin-right: 10px;
   }

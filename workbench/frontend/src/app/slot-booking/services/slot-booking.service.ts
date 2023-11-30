@@ -59,9 +59,7 @@ export type SearchRequest = Readonly<{
     }
   }>;
   slots: ISearchRequestSlot[];
-  resources: {
-    personIds: string[]
-  },
+  resources: {personIds: string[]} | ResourceFilters,
   options: Readonly<{
     maxResultsPerSlot: number;
   }>;
@@ -72,6 +70,13 @@ type ILocation = {
   longitude: number;
 };
 
+export type ResourceFilters = {
+  filters: {
+    includeInternalPersons: boolean,
+    includeCrowdPersons: boolean,
+    includeMandatorySkills: boolean
+  }
+};
 
 @Injectable({
   providedIn: 'root'

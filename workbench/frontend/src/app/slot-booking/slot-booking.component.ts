@@ -1,18 +1,19 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnDestroy, OnInit, } from '@angular/core';
-import { FormBuilder, FormGroup, } from '@angular/forms';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
 import { catchError, filter, map, mergeMap, pairwise, take, takeUntil, tap } from 'rxjs/operators';
 import { AuthService } from '../common/services/auth.service';
 import { Slot } from './components/slot-builder/slot-builder.component';
-import { SlotSearchService, SearchRequest, SearchResponseWrapper } from './services/slot-booking.service';
+import { ResourceFilters, SearchRequest, SearchResponseWrapper, SlotSearchService } from './services/slot-booking.service';
 import { Job } from './services/job.service';
+import { Event } from '@angular/router';
 
 @Component({
   selector: 'slot-booking',
   templateUrl: './slot-booking.component.html',
-  styleUrls: ['./slot-booking.component.scss']
+  styleUrls: ['./slot-booking.component.scss'],
 })
 export class SlotBookingComponent implements OnInit, OnDestroy {
 
@@ -27,6 +28,16 @@ export class SlotBookingComponent implements OnInit, OnDestroy {
   public requestOptions: FormGroup;
   private onDistroy$ = new Subject();
 
+  public filterBased = false;
+  public internalChecked = true;
+  public crowdChecked = true;
+  public skillsChecked = false;
+  public filters$ = new BehaviorSubject<ResourceFilters | null>(null);
+  public requestPayloadResources = null;
+
+  animationState = 'end';
+
+
   constructor(
     private fb: FormBuilder,
     private service: SlotSearchService,
@@ -38,7 +49,7 @@ export class SlotBookingComponent implements OnInit, OnDestroy {
 
     const autoRefresh$ = new Observable((op) => {
       const timer = setInterval(() => {
-        const { refresh } = this.requestOptions.value
+        const { refresh } = this.requestOptions.value;
         if (refresh && !this.isLoading$.value && !!this.response$.value && !this.response$.value.isError) {
           this.doRequest();
           op.next();
@@ -47,7 +58,7 @@ export class SlotBookingComponent implements OnInit, OnDestroy {
 
       return () => {
         clearInterval(timer);
-      }
+      };
     });
 
     autoRefresh$.pipe(
@@ -56,72 +67,111 @@ export class SlotBookingComponent implements OnInit, OnDestroy {
 
 
     this.isLoggedIn$ = this.auth.isLoggedIn$;
-    this.requestPayload$ = combineLatest([this.pluginEditor$, this.slotBuilder$, this.jobBuilder$, this.personIds$])
-      .pipe(
-        filter(([pluginEditor, slots, job, personIds]) => !!(pluginEditor && slots && job && personIds.length)),
-        map(([pluginEditor, slots, job, personIds]): SearchRequest => {
-          return {
-
-            job: {
-              durationMinutes: job.durationMinutes,
-              location: job.location,
-              mandatorySkills: job.mandatorySkills,
-              optionalSkills: job.optionalSkills,
-              udfValues: {}
-            },
-
-            slots,
-
-            resources: {
-              personIds
-            },
-
-            options: {
-              maxResultsPerSlot: 8
-            },
-
-            policy: pluginEditor,
-
-          }
-        })
-      );
+    this.updateRequestPayload();
 
 
     this.requestOptions = this.fb.group({
-      refresh: [false]
+      refresh: [false],
+      filterBasedToggle: [false]
     });
+
 
     this.response$.pipe(
       filter(it => !!it),
       map(it => it.time),
       pairwise(),
+      // tslint:disable-next-line:no-console
       tap(r => console.debug(r)),
       takeUntil(this.onDistroy$)
     ).subscribe();
 
   }
 
-  public ngOnDestroy() {
+  public ngOnDestroy(): void {
     this.onDistroy$.next();
   }
 
-  public onChangeSlots(windows: Slot[]) {
+  public onChangeSlots(windows: Slot[]): void {
     this.slotBuilder$.next(windows);
   }
 
-  public onChangePluginEditor(name: string) {
+  public onChangePluginEditor(name: string): void {
     this.pluginEditor$.next(name);
   }
 
-  public onChangeJobBuilder(job: Job) {
+  public onChangeJobBuilder(job: Job): void {
     this.jobBuilder$.next(job);
   }
 
-  public onChangePersonIds(ids: string[]) {
+  public onChangePersonIds(ids: string[]): void {
     this.personIds$.next(ids);
   }
 
-  public doRequest() {
+  public onCheckboxChange(): void {
+    this.filters$.next(this.buildFilters());
+    this.updateRequestPayload();
+  }
+
+  public onFilterBasedToggleChange(event: Event): void {
+    this.filterBased = !this.filterBased;
+    this.filters$.next(this.buildFilters());
+    const prevRequest = this.requestPayload$?.pipe();
+
+    this.requestPayload$.pipe(
+      tap(_ => this.animationState = 'start'),
+    ).subscribe(requestPayload => {
+      this.updateRequestPayload();
+      setTimeout(() => {
+        this.animationState = 'end';
+      }, 1000);
+    });
+  }
+
+
+  private buildFilters(): ResourceFilters {
+    return {filters: {
+        includeInternalPersons: this.internalChecked,
+        includeCrowdPersons: this.crowdChecked,
+        includeMandatorySkills: this.skillsChecked
+      }};
+  }
+
+
+  private updateRequestPayload(): void {
+    this.requestPayload$ = combineLatest([
+      this.pluginEditor$,
+      this.slotBuilder$,
+      this.jobBuilder$,
+      this.personIds$,
+      this.filters$
+    ]).pipe(
+      filter(([pluginEditor, slots, job, personIds, filters]) => !!(
+        pluginEditor && slots && job && (personIds.length || filters)
+      )),
+      map(([pluginEditor, slots, job, personIds, filters]): SearchRequest => {
+
+        const newResources = this.filterBased ? filters : { personIds };
+
+        return {
+          job: {
+            durationMinutes: job.durationMinutes,
+            location: job.location,
+            mandatorySkills: job.mandatorySkills,
+            optionalSkills: job.optionalSkills,
+            udfValues: {}
+          },
+          slots,
+          resources: newResources,
+          options: {
+            maxResultsPerSlot: 8
+          },
+          policy: pluginEditor,
+        };
+      })
+    );
+  }
+
+  public doRequest(): void {
 
     this.isLoading$.next(true);
 
@@ -166,13 +216,13 @@ export class SlotBookingComponent implements OnInit, OnDestroy {
               time: -1,
               grouped: [],
               results: []
-            })
+            });
 
           })
-        )
+        );
       }),
       tap(value => {
-        this.isLoading$.next(false)
+        this.isLoading$.next(false);
         if (value) {
           this.response$.next(value);
         }
@@ -180,7 +230,7 @@ export class SlotBookingComponent implements OnInit, OnDestroy {
     ).subscribe();
   }
 
-  public bookingLoading(isLoading: boolean) {
+  public bookingLoading(isLoading: boolean): void {
     this.isLoading$.next(isLoading);
   }
 

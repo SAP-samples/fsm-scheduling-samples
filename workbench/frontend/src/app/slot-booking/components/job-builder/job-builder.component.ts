@@ -7,6 +7,7 @@ import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { filter, map, take, takeUntil, tap } from 'rxjs/operators';
+import { SharedSkillsService } from '../../../common/services/shared-skill.service';
 
 @Component({
   selector: 'job-builder',
@@ -32,17 +33,19 @@ export class JobBuilderComponent implements OnInit, OnDestroy, AfterContentInit 
   @ViewChild('mandatorySkillsInput') mandatorySkillsInput: ElementRef<HTMLInputElement>;
   @ViewChild('optionalSkillsInput') optionalSkillsInput: ElementRef<HTMLInputElement>;
   @Output() change = new EventEmitter<Job>();
+
   form: FormGroup;
   selectedAddress: FormControl;
 
-  onDistroy$ = new Subject();
+  onDestroy$ = new Subject();
 
   constructor(
     private fb: FormBuilder,
     private service: JobService,
+    private sharedSkillsService: SharedSkillsService
   ) { }
 
-  public ngAfterContentInit() {
+  public ngAfterContentInit(): void {
 
   }
 
@@ -55,10 +58,10 @@ export class JobBuilderComponent implements OnInit, OnDestroy, AfterContentInit 
         this.form.patchValue({
           location_latitude: item.location.latitude,
           location_longitude: item.location.longitude
-        })
+        });
         this.selectedAddress.patchValue(null);
       }),
-      takeUntil(this.onDistroy$)
+      takeUntil(this.onDestroy$)
     ).subscribe();
 
     this.allAddress$ = this.service.fetchAllAddress().pipe(
@@ -71,7 +74,7 @@ export class JobBuilderComponent implements OnInit, OnDestroy, AfterContentInit 
       )
     );
 
-    const alltags = this.service.fetchAllTags()
+    const alltags = this.service.fetchAllTags();
 
 
     alltags.pipe(
@@ -83,15 +86,15 @@ export class JobBuilderComponent implements OnInit, OnDestroy, AfterContentInit 
             // select mandatory skill
             // this.selectedMandatorySkills$.next([first.name]);
           }
-        }, 100)
+        }, 100);
       })
-    ).subscribe()
+    ).subscribe();
 
     this.matchingResources$ = combineLatest([this.selectedMandatorySkills$, alltags]).pipe(
       map(([selected, all]) => selected.map(tagName => all.find(x => x.name === tagName))
         .filter(it => !!it)
         .reduce((theSet, it) => {
-          it.persons.forEach(p => theSet.add(p))
+          it.persons.forEach(p => theSet.add(p));
           return theSet;
         }, new Set<string>())),
       map((theSet) => Array.from(theSet)),
@@ -115,12 +118,16 @@ export class JobBuilderComponent implements OnInit, OnDestroy, AfterContentInit 
 
     this.selectedMandatorySkills$.pipe(
       tap((list) => this.form.patchValue({ mandatorySkills: list })),
-      takeUntil(this.onDistroy$)
+      takeUntil(this.onDestroy$)
     ).subscribe();
+
+    this.sharedSkillsService.selectedSkills$.subscribe(() =>
+      this.selectedMandatorySkills$ = this.sharedSkillsService.selectedSkills$
+    );
 
     this.selectedOptionalSkills$.pipe(
       tap((list) => this.form.patchValue({ optionalSkills: list })),
-      takeUntil(this.onDistroy$)
+      takeUntil(this.onDestroy$)
     ).subscribe();
 
     const form$ = merge(of(this.form.value), this.form.valueChanges);
@@ -141,24 +148,25 @@ export class JobBuilderComponent implements OnInit, OnDestroy, AfterContentInit 
         };
         this.change.next(job);
       }),
-      takeUntil(this.onDistroy$)
+      takeUntil(this.onDestroy$)
     ).subscribe();
   }
 
-  public ngOnDestroy() {
-    this.onDistroy$.next();
+  public ngOnDestroy(): void {
+    this.onDestroy$.next();
   }
 
-  public mandatorySkillsSelectionChanged(event: MatAutocompleteSelectedEvent) {
+  public mandatorySkillsSelectionChanged(event: MatAutocompleteSelectedEvent): void {
     this.selectedMandatorySkills$.next([...this.selectedMandatorySkills$.value, event.option.value]);
     this.mandatorySkillsInput.nativeElement.value = '';
     this.mandatorySkillsCtrl.setValue(null);
+    this.sharedSkillsService.updateSelectedSkills(this.selectedMandatorySkills$.value);
   }
 
-  public addMandatorySkill(event: MatChipInputEvent) {
+  public addMandatorySkill(event: MatChipInputEvent): void {
     const input = event.input;
     const value = event.value;
-    if (!value) return;
+    if (!value) { return; }
 
     this.selectedMandatorySkills$.next([...this.selectedMandatorySkills$.value, value.trim()]);
     if (input) {
@@ -166,20 +174,21 @@ export class JobBuilderComponent implements OnInit, OnDestroy, AfterContentInit 
     }
   }
 
-  public removeMandatorySkill(tagName: string) {
+  public removeMandatorySkill(tagName: string): void {
     this.selectedMandatorySkills$.next(this.selectedMandatorySkills$.value.filter(it => (it !== tagName)));
+    this.sharedSkillsService.updateSelectedSkills(this.selectedMandatorySkills$.value);
   }
 
-  public optionalSkillsSelectionChanged(event: MatAutocompleteSelectedEvent) {
+  public optionalSkillsSelectionChanged(event: MatAutocompleteSelectedEvent): void {
     this.selectedOptionalSkills$.next([...this.selectedOptionalSkills$.value, event.option.value]);
     this.optionalSkillsInput.nativeElement.value = '';
     this.optionalSkillsCtrl.setValue(null);
   }
 
-  public addOptionalSkill(event: MatChipInputEvent) {
+  public addOptionalSkill(event: MatChipInputEvent): void {
     const input = event.input;
     const value = event.value;
-    if (!value) return;
+    if (!value) { return; }
 
     this.selectedOptionalSkills$.next([...this.selectedOptionalSkills$.value, value.trim()]);
     if (input) {
@@ -187,23 +196,23 @@ export class JobBuilderComponent implements OnInit, OnDestroy, AfterContentInit 
     }
   }
 
-  public removeOptionalSkill(tagName: string) {
+  public removeOptionalSkill(tagName: string): void {
     this.selectedOptionalSkills$.next(this.selectedOptionalSkills$.value.filter(it => (it !== tagName)));
   }
 
-  public locationClear() {
-    this.selectedAddress.patchValue(null)
+  public locationClear(): void {
+    this.selectedAddress.patchValue(null);
     this.form.patchValue({
       location_latitude: null,
       location_longitude: null
     });
   }
 
-  public pickFromMap() {
+  public pickFromMap(): void {
     this.isPicking$.next(true);
   }
 
-  public mapSelect({ latitude, longitude }: { latitude: number; longitude: number; }) {
+  public mapSelect({ latitude, longitude }: { latitude: number; longitude: number; }): void {
     if (this.isPicking$.value) {
       this.form.patchValue({
         location_latitude: latitude,
