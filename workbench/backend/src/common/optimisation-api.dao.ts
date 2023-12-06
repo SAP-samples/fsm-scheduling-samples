@@ -3,7 +3,7 @@ import { AxiosRequestConfig, AxiosError } from 'axios';
 import { tap, catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 import { Context } from '../ctx.decorator';
-import { FSM_HOSTS_CORESUITE_TO_CORESYSTEMS } from './constants';
+import { FSM_HOSTS_CORESUITE_TO_CORESYSTEMS, FSM_HOSTS_CORESUITE_TO_SAPCLOUD } from './constants';
 import { configService } from 'src/common/config.service';
 
 export type SearchRequest = Readonly<{
@@ -86,6 +86,10 @@ export class OptimisationAPIDAO {
       || `https://${FSM_HOSTS_CORESUITE_TO_CORESYSTEMS.get(host.toLowerCase()) || ''}`;
   }
 
+  private resolveSAPCloudHost(host: string) {
+    return `https://${FSM_HOSTS_CORESUITE_TO_SAPCLOUD.get(host.toLowerCase()) || ''}`;
+  }
+
   private getParams(ctx: Context) {
     return {
       companyId: ctx.companyId,
@@ -135,7 +139,7 @@ export class OptimisationAPIDAO {
   public slotsSearch(ctx: Context, data: SearchRequest) {
     return this.request<SearchResponse>({
       method: 'POST',
-      url: `${this.resolveHost(ctx.cloudHost)}/optimization/api/v3/job-slots/actions/search`,
+      url: `${this.resolveSAPCloudHost(ctx.cloudHost)}/optimization/api/v3/job-slots/actions/search`,
       headers: this.getHeaders(ctx),
       params: this.getParams(ctx),
       responseType: 'json',
