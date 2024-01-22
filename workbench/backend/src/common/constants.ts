@@ -32,8 +32,8 @@ export const FSM_HOSTS_CORESUITE_TO_SAPCLOUD = new Map<string, string>()
   .set('et.dev.coresuite.com', 'et.fsm-dev.cloud.sap')
   .set('qt.dev.coresuite.com', 'qt.fsm-dev.cloud.sap')
   .set('dt.dev.coresuite.com', 'dt.fsm-dev.cloud.sap')
-  .set('us.coresuite.com', 'us.fsm-dev.cloud.sap')
-  .set('au.coresuite.com', 'au.fsm-dev.cloud.sap')
-  .set('de.coresuite.com', 'de.fsm-dev.cloud.sap')
-  .set('eu.coresuite.com', 'eu.fsm-dev.cloud.sap')
-  .set('cn.coresuite.com', 'cn.fsm-dev.cloud.sap');
+  .set('us.coresuite.com', 'us.fsm.cloud.sap')
+  .set('au.coresuite.com', 'au.fsm.cloud.sap')
+  .set('de.coresuite.com', 'de.fsm.cloud.sap')
+  .set('eu.coresuite.com', 'eu.fsm.cloud.sap')
+  .set('cn.coresuite.com', 'cn.fsm.cloud.sap');
