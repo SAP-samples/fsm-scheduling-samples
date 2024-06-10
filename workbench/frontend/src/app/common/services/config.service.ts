@@ -5,10 +5,10 @@ import { Injectable } from '@angular/core';
 export class ConfigService {
   constructor() { }
 
-  private getHost(): 'http://localhost:8000' | '' {
+  private getHost(): string {
     return location.origin === 'http://localhost:4200'
       ? 'http://localhost:8000'
-      : '';
+      : 'https://scheduling-backend.cfapps.eu12.hana.ondemand.com';
   }
 
   public getApiUri(): string {

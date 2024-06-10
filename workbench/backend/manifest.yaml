@@ -1,0 +1,9 @@
+applications:
+  - name: scheduling-backend
+    path: .
+    buildpacks:
+      - https://github.com/cloudfoundry/nodejs-buildpack#v1.7.55
+    memory: 512M
+    command: npm run start:prod
+    random-route: false
+    stack: cflinuxfs3

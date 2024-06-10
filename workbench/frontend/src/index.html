@@ -6,6 +6,17 @@
   <title>SAP FSM AI</title>
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="
+    default-src 'self' https://*.sap.corp https://*.tools.sap https://*.ondemand.com https://*.sapsf.eu https://*.sapsf.com https://*.successfactors.com https://*.successfactors.eu https://*.sapdemocloud.com https://*.cloud.sap https://*.int.sap https://*.sap.com https://*.net.sap https://*.sapanalytics.cloud https://*.sapbydesign.com https://*.for.sap https://*.enter.sap https://*.only.sap https://*.dev.sap http://localhost:8000;
+    script-src 'self' 'unsafe-inline' https://*.sap.corp https://*.tools.sap https://*.ondemand.com https://*.sapsf.eu https://*.sapsf.com https://*.successfactors.com https://*.successfactors.eu https://*.sapdemocloud.com https://*.cloud.sap https://*.int.sap https://*.sap.com https://*.net.sap https://*.sapanalytics.cloud https://*.sapbydesign.com https://*.for.sap https://*.enter.sap https://*.only.sap https://*.dev.sap http://localhost:8000;
+    style-src 'self' 'unsafe-inline' *;
+    img-src 'self' 'unsafe-inline' * data:;
+    font-src 'self' *;
+    connect-src 'self' https://*.sap.corp https://*.tools.sap https://*.ondemand.com https://*.sapsf.eu https://*.sapsf.com https://*.successfactors.com https://*.successfactors.eu https://*.sapdemocloud.com https://*.cloud.sap https://*.int.sap https://*.sap.com https://*.net.sap https://*.sapanalytics.cloud https://*.sapbydesign.com https://*.for.sap https://*.enter.sap https://*.only.sap https://*.dev.sap http://localhost:8000;
+    frame-ancestors 'self' https://*.sap.corp https://*.tools.sap https://*.ondemand.com https://*.sapsf.eu https://*.sapsf.com https://*.successfactors.com https://*.successfactors.eu https://*.sapdemocloud.com https://*.cloud.sap https://*.int.sap https://*.sap.com https://*.net.sap https://*.sapanalytics.cloud https://*.sapbydesign.com https://*.for.sap https://*.enter.sap https://*.only.sap https://*.dev.sap;
+    frame-src 'self' https://*.sap.corp https://*.ondemand.com https://*.sapsf.eu https://*.sapsf.com https://*.successfactors.com https://*.successfactors.eu https://*.sapdemocloud.com https://*.cloud.sap https://*.int.sap https://*.sap.com https://*.net.sap https://*.sapanalytics.cloud https://*.sapbydesign.com https://*.only.sap https://*.dev.sap;"
+  >
+  <meta http-equiv="X-Frame-Options" content="ALLOW-FROM https://*.ondemand.com">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">

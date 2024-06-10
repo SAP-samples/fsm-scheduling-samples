@@ -1,9 +1,8 @@
 {
   "name": "backend",
-  "license": "see LICENSES-folder in repository",
   "version": "0.0.0",
   "scripts": {
-    "prebuild": "rimraf dist && npm run license-checker",
+    "prebuild": "rimraf dist",
     "build": "nest build",
     "postbuild": "npm run build:copy:static",
     "build:copy:static": "cp-cli src/static dist/static",
@@ -17,8 +16,11 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "postinstall": "npm run license-checker",
     "license-checker": "license-checker --csv --out ../../docs/3rd-party-licenses/backend-full.csv"
+  },
+  "engines": {
+    "node": "14.x",
+    "npm": "6.x"
   },
   "dependencies": {
     "@nestjs/common": "^7.0.0",
@@ -29,7 +31,8 @@
     "moment": "^2.29.1",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
-    "rxjs": "^6.5.4"
+    "rxjs": "^6.5.4",
+    "license-checker": "^25.0.1"
   },
   "devDependencies": {
     "@nestjs/cli": "^7.0.0",
