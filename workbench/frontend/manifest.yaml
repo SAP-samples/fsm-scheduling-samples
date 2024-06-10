@@ -1,0 +1,10 @@
+applications:
+  - name: scheduling
+    path: ./dist/frontend
+    memory: 64M
+    buildpack: staticfile_buildpack
+    routes:
+      - route: scheduling.cfapps.eu12.hana.ondemand.com
+      - route: scheduling.cfapps.eu12.hana.ondemand.com/api
+        destination: scheduling-backend.cfapps.eu12.hana.ondemand.com/api
+
